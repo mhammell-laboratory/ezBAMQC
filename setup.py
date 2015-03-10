@@ -32,6 +32,7 @@ except:
 def main():
 	setup(  name = "BAMQC",
             version = "0.4",
+	    description = "Quality analysis of sequencing data using aligned files (BAM)"
             py_modules = [ 'psyco_full' ],
             packages = find_packages( 'lib' ),
             package_dir = { '': 'lib' },
@@ -42,8 +43,8 @@ def main():
             setup_requires = ['nose>=0.10.4','cython>=0.12'],
             author = "Ying Jin",
             author_email ="yjin@cshl.edu",
+	    license="MIT"
 	    platforms = ['Linux','MacOS'],
-            description = "BAM QC Package",
             url = "http://hammelllab.labsites.cshl.edu/software#BAMqc",
             zip_safe = False,
             dependency_links = [],
