@@ -1,0 +1,671 @@
+#!/usr/bin/env python2.7
+'''
+Created on July 24, 2014
+
+@author: Ying Jin
+@contact: yjin@cshl.edu
+@status: 
+@version: 
+'''
+import argparse
+import re
+import subprocess
+import sys, os
+import time
+
+if sys.version_info[0] != 2 or sys.version_info[1] != 7:
+    print >>sys.stderr, "\nYou are using python" + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + " BAMQC needs python2.7!\n"
+    sys.exit()
+    
+from math import floor
+
+import re
+import string
+#from optparse import OptionParser
+import warnings
+import string
+import collections
+import math
+import sets
+from time import strftime
+from datetime import datetime
+import logging
+
+#import third-party modules
+from bx.bitset import *
+from bx.bitset_builders import *
+from bx.intervals import *
+from bx.intervals.intersection import Interval, IntervalTree
+
+#import my own modules
+from qcmodule import SAM
+#from qcmodule import Results
+#changes to the paths
+
+#import third-party modules
+from bx.binned_array import BinnedArray
+from bx_extras.fpconst import isNaN
+from bx.bitset_utils import *
+
+#import my own modules
+from qcmodule import BED
+from qcmodule import bam_cigar
+
+
+def cal_size(list):
+    '''calcualte bed list total size'''
+    size=0
+    for l in list:
+        size += l[2] - l[1]
+    return size
+
+def build_intervalTree(list):
+    '''build intevalTree from list'''
+    ranges={}
+    for l in list:
+        chrom =l[0].upper()
+        st = int(l[1])
+        end = int(l[2])
+        name = ""
+        if len(l) == 4 :
+            name = l[3]
+        if chrom not in ranges:
+            ranges[chrom] = IntervalTree()
+        if name is not "":
+          #  iv = Interval(st,end,value=name)
+            ranges[chrom].insert(st,end,name)
+           # sys.stderr.write(iv.value+"\n")
+        #else :
+         #   ranges[chrom].add_interval( Interval( st, end ) )
+            
+    return ranges
+
+def build_bitsets(list):
+    '''build intevalTree from list'''
+    ranges={}
+    for l in list:
+        chrom =l[0].upper()
+        st = int(l[1])
+        end = int(l[2])
+        name = ""
+        if len(l) == 4 :
+            name = l[3]
+        if chrom not in ranges:
+            ranges[chrom] = Intersecter()
+        if name is not "":
+          #  iv = Interval(st,end,value=name)
+            ranges[chrom].add_interval(Interval(st,end,value=name))
+           # sys.stderr.write(iv.value+"\n")
+        else :
+            ranges[chrom].add_interval( Interval( st, end ) )
+            
+    return ranges
+
+def process_gene_model(gene_model):
+    
+    obj = BED.ParseBED(gene_model)
+    utr_3 = obj.getUTR(utr=3)
+    utr_5 = obj.getUTR(utr=5)
+    cds_exon1 = obj.getCDSExon()
+    intron = obj.getIntron()
+    exon = obj.getExon()
+    
+    intron = BED.unionBed3(intron)
+    cds_exon=BED.unionBed3(cds_exon1)
+    utr_5 = BED.unionBed3(utr_5)
+    utr_3 = BED.unionBed3(utr_3)
+    
+    utr_5 = BED.subtractBed3(utr_5,cds_exon)
+    utr_3 = BED.subtractBed3(utr_3,cds_exon)
+    intron = BED.subtractBed3(intron,cds_exon)
+    intron = BED.subtractBed3(intron,utr_5)
+    intron = BED.subtractBed3(intron,utr_3)
+    
+    intergenic_up_1kb = obj.getIntergenic(direction="up",size=1000)
+    intergenic_down_1kb = obj.getIntergenic(direction="down",size=1000)
+ #   intergenic_up_5kb = obj.getIntergenic(direction="up",size=5000)
+ #   intergenic_down_5kb = obj.getIntergenic(direction="down",size=5000)    
+ #   intergenic_up_10kb = obj.getIntergenic(direction="up",size=10000)
+ #   intergenic_down_10kb = obj.getIntergenic(direction="down",size=10000)
+    
+    #merge integenic region
+    intergenic_up_1kb=BED.unionBed3(intergenic_up_1kb)
+ #   intergenic_up_5kb=BED.unionBed3(intergenic_up_5kb)
+ #   intergenic_up_10kb=BED.unionBed3(intergenic_up_10kb)
+    intergenic_down_1kb=BED.unionBed3(intergenic_down_1kb)
+ #   intergenic_down_5kb=BED.unionBed3(intergenic_down_5kb)
+ #   intergenic_down_10kb=BED.unionBed3(intergenic_down_10kb)    
+    
+    #purify intergenic region
+    intergenic_up_1kb=BED.subtractBed3(intergenic_up_1kb,cds_exon)
+    intergenic_up_1kb=BED.subtractBed3(intergenic_up_1kb,utr_5)
+    intergenic_up_1kb=BED.subtractBed3(intergenic_up_1kb,utr_3)
+    intergenic_up_1kb=BED.subtractBed3(intergenic_up_1kb,intron)
+    intergenic_down_1kb=BED.subtractBed3(intergenic_down_1kb,cds_exon)
+    intergenic_down_1kb=BED.subtractBed3(intergenic_down_1kb,utr_5)
+    intergenic_down_1kb=BED.subtractBed3(intergenic_down_1kb,utr_3)
+    intergenic_down_1kb=BED.subtractBed3(intergenic_down_1kb,intron)    
+
+    #purify intergenic region
+ #   intergenic_up_5kb=BED.subtractBed3(intergenic_up_5kb,cds_exon)
+#    intergenic_up_5kb=BED.subtractBed3(intergenic_up_5kb,utr_5)
+ #   intergenic_up_5kb=BED.subtractBed3(intergenic_up_5kb,utr_3)
+ #   intergenic_up_5kb=BED.subtractBed3(intergenic_up_5kb,intron)
+ #   intergenic_down_5kb=BED.subtractBed3(intergenic_down_5kb,cds_exon)
+ #   intergenic_down_5kb=BED.subtractBed3(intergenic_down_5kb,utr_5)
+ #   intergenic_down_5kb=BED.subtractBed3(intergenic_down_5kb,utr_3)
+ #   intergenic_down_5kb=BED.subtractBed3(intergenic_down_5kb,intron)    
+    
+    #purify intergenic region
+ #   intergenic_up_10kb=BED.subtractBed3(intergenic_up_10kb,cds_exon)
+ #   intergenic_up_10kb=BED.subtractBed3(intergenic_up_10kb,utr_5)
+ #   intergenic_up_10kb=BED.subtractBed3(intergenic_up_10kb,utr_3)
+ #   intergenic_up_10kb=BED.subtractBed3(intergenic_up_10kb,intron)
+ #   intergenic_down_10kb=BED.subtractBed3(intergenic_down_10kb,cds_exon)
+ #   intergenic_down_10kb=BED.subtractBed3(intergenic_down_10kb,utr_5)
+ #   intergenic_down_10kb=BED.subtractBed3(intergenic_down_10kb,utr_3)
+ #   intergenic_down_10kb=BED.subtractBed3(intergenic_down_10kb,intron)    
+    
+    #build intervalTree 
+    cds_exon_ranges = build_bitsets(cds_exon)
+    utr_5_ranges = build_bitsets(utr_5)
+    utr_3_ranges = build_bitsets(utr_3)
+    intron_ranges = build_bitsets(intron)
+    interg_ranges_up_1kb_ranges = build_bitsets(intergenic_up_1kb)
+    exon_ranges = build_intervalTree(exon)
+ #   interg_ranges_up_5kb_ranges = build_bitsets(intergenic_up_5kb)
+ #   interg_ranges_up_10kb_ranges = build_bitsets(intergenic_up_10kb)
+    interg_ranges_down_1kb_ranges = build_bitsets(intergenic_down_1kb)
+ #   interg_ranges_down_5kb_ranges = build_bitsets(intergenic_down_5kb)
+ #   interg_ranges_down_10kb_ranges = build_bitsets(intergenic_down_10kb)
+    
+    exon_size = cal_size(cds_exon)
+    intron_size = cal_size(intron)
+    utr3_size = cal_size(utr_3)
+    utr5_size = cal_size(utr_5)
+    int_up1k_size = cal_size(intergenic_up_1kb)
+ #   int_up5k_size = cal_size(intergenic_up_5kb)
+ #   int_up10k_size = cal_size(intergenic_up_10kb)
+    int_down1k_size = cal_size(intergenic_down_1kb)
+ #   int_down5k_size = cal_size(intergenic_down_5kb)
+ #   int_down10k_size = cal_size(intergenic_down_10kb)
+    
+    #print >>sys.stderr, "Done"
+    return (exon_ranges,cds_exon1,cds_exon_ranges,intron_ranges,utr_5_ranges,utr_3_ranges,\
+            interg_ranges_up_1kb_ranges,interg_ranges_down_1kb_ranges,\
+            exon_size,intron_size,utr5_size,utr3_size,\
+            int_up1k_size,int_down1k_size)
+    
+  
+def main():
+    args = read_opts(prepare_parser())    
+    
+    info = args.info
+    warn = args.warn
+    debug = args.debug
+    error = args.error
+    crit = args.critical
+    
+    info("*** Starting BAMqc run. ***\n")
+    
+    smp_res = dict()
+
+    cur_dir = args.dir
+    cur_fig_dir = cur_dir+"/figs/"
+    cur_data_dir = cur_dir + "/data/"
+    data_file = cur_dir+"summary_data.txt"
+    html_file = "bamqc_output.html"
+    
+    try :
+        if os.path.exists(cur_dir) :
+            error("Folder already exists!\n")
+            sys.exit(1)
+        if not os.path.exists(cur_dir) :
+            os.makedirs(cur_dir)
+        if not os.path.exists(cur_fig_dir):
+            os.makedirs(cur_fig_dir)
+        if not os.path.exists(cur_data_dir):
+            os.makedirs(cur_data_dir)
+    except :
+        error("Error in create output folder.\n")
+        sys.exit(1)
+    
+    try:
+            info("*** Processing " + args.ref_gene_model + '...')
+            (exon_r,cds_exon,cds_exon_r, intron_r, utr_5_r, utr_3_r,\
+            intergenic_up_1kb_r,intergenic_down_1kb_r,\
+            cds_exon_base,intron_base,utr_5_base,utr_3_base,\
+            intergenic_up1kb_base,intergenic_down1kb_base) = process_gene_model(args.ref_gene_model)
+            info("*** Gene model parsing done ***\n")
+    except:
+            error("Error in parsing annotation file.\n")
+            sys.exit(1)    
+            
+    for i in range(len(args.ifiles)) :
+        ifile = args.ifiles[i]
+        output_prefix_data = cur_data_dir+args.labels[i]
+        output_prefix_fig = cur_fig_dir+args.labels[i]
+        
+        obj = SAM.ParseBAM(ifile)
+
+        info("--- Processing BAM: %s. ---\n" % (args.labels[i]))
+        info("*** Calculating mapping statistics ***")
+        paired = False
+        #res = Results()
+                        
+        res = obj.stat(exon_r,cds_exon,args.ref_gene_model,args.mapq,output_prefix_fig,output_prefix_data,cds_exon_r, intron_r, utr_5_r, utr_3_r,intergenic_up_1kb_r,intergenic_down_1kb_r)
+        
+        try:
+            subprocess.call("Rscript "+output_prefix_data+'.read_distr.r',shell=True)
+        except :
+            error("Error in plotting read distributions.\n")
+            res.read_dist_plot_file = ""
+            pass
+
+        info("*** Mapping statistics completed ***\n")
+        
+        res.filename = ifile
+        info("*** Assessing clipping profile ***")
+        
+        #res.clipping_plot_file = obj.clipping_profile(outfile_data=output_prefix_data,outfile_fig=output_prefix_fig)
+       # clipping_plot_file = output_prefix + '.clipping_profile.png'
+        #res.clipping_plot_file = clipping_plot_file
+        if os.path.isfile(output_prefix_data+'.clipping_profile.r') :
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.clipping_profile.r',shell=True)
+                #    subprocess.call("rm -rf "+ output_prefix + '.clipping_profile.r',shell=True)
+            except:
+                    error("Cannot generate png file form " + output_prefix_data + '.clipping_profile.r\n')
+                    res.clipping_plot_file = ""
+                    pass
+        else :
+            res.no_clipping = True
+
+        info("*** Clipping profile completed***\n")
+    
+        info("*** Read coverage over Gene body ***")
+        #res.read_cov_plot_file = obj.coverageGeneBody(outfile=output_prefix_data,outfile_fig=output_prefix_fig,refbed=args.ref_gene_model)
+        try:
+            subprocess.call("Rscript " + output_prefix_data + '.geneBodyCoverage_plot.r',shell=True)
+            
+        except:
+            error("Cannot generate png file from " + output_prefix_data + '.geneBodyCoverage_plot.r\n')
+            res.read_cov_plot_file = ""
+            pass
+
+        info("*** Read coverage completed ***\n")
+        
+        if res.is_pairEnd :
+            info("*** Insertion size estimation ***")
+            #res.insert_plot_file = obj.mRNA_inner_distance(outfile=output_prefix_data,outfile_fig = output_prefix_fig,low_bound=args.lb,up_bound=args.ub,step=args.step_size,refbed=args.refgene,sample_size=1000000, q_cut = args.mapq)
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.inner_distance_plot.r',shell=True)
+            except:
+                error("Cannot generate png file form " + output_prefix_data + '.inner_distance_plot.r\n')
+                res.insert_plot_file = ""
+                pass
+
+            info("*** Insertion size estimation completed ***\n")
+        
+        #info("****************** Read count estimation *************\n")
+        #if args.trIdx is not None :
+        #    try:
+        #        subprocess.call("sailfish quant -p 4 --no_bias_correct -a -i "+args.trIdx +" -r "+res.filename + " -o "+output_prefix_data) 
+        #        res.geneCount_file = output_prefix_data + "/quant.sf"
+        #    except:
+        #        error("Gene level read count estimation failed.\n")
+        #        pass            
+    
+    
+        info("*** Determining read duplication ***")
+        #res.read_dup_plot_file = obj.readDupRate(outfile=output_prefix_data,outfile_fig=output_prefix_fig,up_bound=500)
+        try:
+            subprocess.call("Rscript " + output_prefix_data +  ".DupRate_plot.r", shell=True)            
+            
+        except:
+            error("Cannot generate png file form " + output_prefix_data + '.DupRate_plot.r\n')
+            pass
+
+        info("*** Read duplication completed ***\n")
+
+        #info("******************* rRNA contamination ***************")
+    
+        smp_res[args.labels[i]] = res
+
+        info("--- BAM QC completed for %s. ---\n" % (args.labels[i]))
+    
+    smp_corr_plot_file = ""
+    
+    if len(smp_res) > 0  :        
+        smp_corr_plot_file = cur_fig_dir+"smp_corr.png"
+        smp_corr_plot_file2 = cur_fig_dir+"smp_corr_PCA.png"
+        smp_summary_file = cur_data_dir +"smp_summary.txt"
+        #f = open(smp_summary_file,'w')
+        
+        smp_cnt = 0
+        header = 'c('
+        cmd_str = "multijoin --filler 0 --labels -h -k 1 -v 2"
+        for k in range(len(args.labels)) :
+            key = args.labels[k]
+            if not smp_res[key].geneCount_file == "" :
+                #f.write(key+"\t"+smp_res[key].geneCount_file)
+                cmd_str += " "+smp_res[key].geneCount_file+" "+key
+                smp_cnt += 1
+                header += '"'+key+'",'
+                
+        header = header[0:len(header)-1] + ')'
+        
+        if smp_cnt > 1 :
+            info("*** Sample Correlation ***")
+            try :
+                subprocess.call(cmd_str+" >"+smp_summary_file, shell=True)
+                
+                smp_corr_r = cur_data_dir+"smp_correlation.r"    
+                smp_corr_r2 = cur_data_dir+"smp_PCA_correlation.r"    
+                f = open(smp_corr_r,'w')
+                f.write("library(corrplot)\n")
+                f.write('srcfile = "'+smp_summary_file+'"\n')
+                f.write('destfile = "'+smp_corr_plot_file+'"\n')
+                f.write("M<-read.delim(srcfile,header=T)\n")
+                f.write("MM<-as.matrix(M[,-1])\n")
+                f.write('rownames(MM)=M[,1]\n')
+                f.write('colnames(MM)='+header+'\n')
+                f.write('libSize<-colSums(MM)\n')
+                f.write('MM<-t(t(MM)*1000000/libSize)\n')
+                f.write("M.cor<-cor(MM,method='pear')\n")
+                f.write("M.cor[is.na(M.cor)]<-0\n")
+                f.write("png(destfile)\n")
+                f.write("corrplot(scale(M.cor),is.corr=F,order='FPC',method='color',type='full',add=F,diag=T)\n")
+                f.write("dev.state = dev.off()\n")  
+                f.close()
+                
+                subprocess.call("Rscript " + smp_corr_r , shell=True)
+                
+                f = open(smp_corr_r2,'w')
+                f.write('srcfile = "'+smp_summary_file+'"\n')
+                f.write('destfile = "'+smp_corr_plot_file2+'"\n')
+                f.write("M<-read.delim(srcfile,header=T)\n")
+                f.write("MM<-as.matrix(M[,-1])\n")
+                f.write('rownames(MM)=M[,1]\n')
+                f.write('colnames(MM)='+header+'\n')
+                f.write('libSize<-colSums(MM)\n')
+                f.write('MM<-t(t(MM)*1000000/libSize)\n')
+                f.write("M.pc<-prcomp(t(MM))\n")
+                #f.write("M.cor[is.na(M.cor)]<-0\n")
+                f.write("png(destfile)\n")
+                f.write("plot(M.pc$x[,1]~M.pc$x[,2])\n")
+                f.write("dev.state = dev.off()\n")  
+                f.close()
+                
+                subprocess.call("Rscript " + smp_corr_r , shell=True)                
+                                
+            except:
+                sys.stderr.write("Error in computing sample correlation.\n")
+                smp_corr_plot_file = ""
+                pass 
+
+            info("*** Correlation completed ***\n")
+    
+    outputToHTML(smp_res,args.labels,smp_corr_plot_file,html_file)
+    info("*** BAM QC run completed. ***\n")
+    
+def outputToHTML(res_list,smps,corr_plot_file,html_file):
+    
+    #smps = res_list.keys()
+    tohtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">\n'
+    tohtml += '<html>\n'
+    tohtml += '<head><title>BAMQC Report</title>\n'
+    tohtml += '<style type="text/css">\n'
+    #/*ul Styles*/
+    tohtml += 'html,body{margin:0;padding:0;height:100%;width:1000px}\n'
+    tohtml += 'div#header{background-color:#F3F2ED;}\n'
+    tohtml += 'div#header h1{text-align:center; height:80px;line-height:80px;margin:0;padding-left:10px;}\n'
+    tohtml += 'div#container{text-align:left;height:100%;width:1000px}\n'
+    tohtml += 'div#navigation{background:#F6F0E0;}\n'
+    tohtml += 'div#navigation{float:left;width:200px;height:100%}\n'
+
+    tohtml += '.menu-item ul { \n'
+    tohtml += 'background: #F6F0E0; \n'
+    tohtml += 'font-size: 13px; \n'
+    tohtml += 'line-height: 30px; \n'
+    tohtml += 'height: 0px; \n'
+    tohtml += 'list-style-type: none;'
+    tohtml += 'overflow: hidden; \n'
+    tohtml += 'padding: 0px; }\n'
+    
+    tohtml += '.menu-item:hover ul {  height: 220px; }\n '
+    #/* table *
+    tohtml += 'table{ margin:0;padding:0;width:800px;table-layout:fixed;text-align:left; }\n'
+    tohtml += 'table > thead > tr.tableizer-firstrow > th {  padding: 10px;  background: lavenderblush;} \n'
+    #/*border: 4px solid #fff;*/ /*text-overflow: ellipsis;*/ /*overflow: hidden;*/
+    tohtml += 'table > tbody > tr > td{ padding: 10px; background: #f8f8f8; word-wrap: break word; } \n'
+    tohtml += 'div#footer{background:#BFBD93;}\n'
+    tohtml += 'div#footer p{margin:0;padding:5px 10px}\n'
+    tohtml += 'div#footer{clear:both;width:100%;text-align:center}\n'
+    tohtml += 'div#main{float:right;width:800px}\n'
+    tohtml += 'a{text-decoration:none; color:#000000;}\n'
+    tohtml += 'a:hover {text-decoration: underline; }\n'
+    
+
+    tohtml += '</style> </head>\n'
+    tohtml += '<body>\n'
+    tohtml += '<div id ="container">\n'
+    tohtml += '<div id="header"><h1>BAMQC Report</h1><p text-align="left">Created On: '+datetime.now().strftime('%m-%d-%Y')+'</p></div>\n'
+
+    i = 0    
+    tohtml += '<div id="wrapper">\n'
+    tohtml += '<div class="summary" id="navigation">\n'
+    #tohtml += '<div id="update_time">\n'
+    #tohtml += 
+    #tohtml += '</div>\n'
+    tohtml += '<h2>Summary</h2>\n'
+    tohtml += '<ul>\n'
+        
+    #i = 0
+    for i in range(len(smps)) :
+        key = smps[i]
+        tohtml += '<li>'
+        tohtml += '<div class="menu-item">\n'
+        tohtml += '<h4>'+key+'</h4>\n'
+        tohtml += '<ul>\n'
+        tohtml += '<li><a href="#M'+str(i)+'0">Basic Statistics</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'1">Read Distribution</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'2">Mappability Profile</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'3">Read Coverage</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'4">Insertion Size</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'5">Read Duplication Levels</a></li>\n'
+        #tohtml += '<li><a href="#M'+str(i)+'6">rRNA contamination</a></li>\n'
+        tohtml += '</ul></div></li>\n'   
+        #i += 1 
+    
+    smp_corr_pos = len(smps)*6 +100
+    
+    if len(res_list) > 1:
+        tohtml += '<li><div class="menu-item"><a href="#M'+str(smp_corr_pos)+'"><h4>Sample Correlation</h4></a></div></li>\n'
+        
+    tohtml += '</ul>\n'    
+    tohtml += '</div>\n'     
+    
+        
+    tohtml += '<div id="main" >\n'
+    for i in range(len(smps)):
+        key = smps[i] 
+        res = res_list[key]
+
+        tohtml += '<h2>'+res.filename+'</h2>\n'
+        tohtml += '<div class="module"><h2 id="M'+str(i)+'0">Basic Statistics</h2>\n'
+        tohtml += '<table>\n'
+        tohtml += '<thead><tr class=\"tableizer-firstrow\">\n';
+        tohtml += '<th>Measure</th><th>Value</th></tr></thead>\n'
+        tohtml += '<tbody><tr><td>Total Reads</td><td>'+str(res.total_reads)+'</td></tr>\n'
+        if not res.is_pairEnd :
+            tohtml += '<tr><td>Unique Reads</td><td>'+str(res.uniq_mapped_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Multi-reads</td><td>'+str(res.multi_mapped_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Unmapped Reads</td><td>'+str(res.unmapped_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Low Quality Reads</td><td>'+str(res.low_qual)+'</td></tr>\n'
+            tohtml += '<tr><td>Forward Reads</td><td>'+str(res.forward_read)+'</td></tr>\n'
+            tohtml += '<tr><td>Reverse Reads</td><td>'+str(res.reverse_read)+'</td></tr>\n'
+            tohtml += '<tr><td>Splice Reads</td><td>'+str(res.splice)+'</td></tr>\n'
+            tohtml += '<tr><td>Non-Splice Reads</td><td>'+str(res.noSplice)+'</td></tr></tbody></table></div>\n'
+        else : # paired read
+            tohtml += '<tr><td>Paired reads</td><td>'+str(res.paired_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Mapped read1</td><td>'+str(res.mapped_read1)+'</td></tr>\n'
+            tohtml += '<tr><td>Mapped read2</td><td>'+str(res.mapped_read2)+'</td></tr>\n'
+            tohtml += '<tr><td>Multi-reads</td><td>'+str(res.multi_mapped_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Unmapped Read1</td><td>'+str(res.unmapped_read1)+'</td></tr>\n'
+            tohtml += '<tr><td>Unmapped Read2</td><td>'+str(res.unmapped_read2)+'</td></tr>\n'
+            tohtml += '<tr><td>Fraction of read mapped "+,-" </td><td>'+str(res.mapped_plus_minus)+'</td></tr>\n'
+            tohtml += '<tr><td>Fraction of read mapped "+,+" </td><td>'+str(res.mapped_plus_plus)+'</td></tr>\n'
+            tohtml += '<tr><td>Fraction of read mapped "-,+" </td><td>'+str(res.mapped_minus_plus)+'</td></tr>\n'
+            tohtml += '<tr><td>Fraction of read mapped "-,-" </td><td>'+str(res.mapped_minus_minus)+'</td></tr>\n'            
+            tohtml += '<tr><td>Low Quality Reads</td><td>'+str(res.low_qual)+'</td></tr>\n'
+            tohtml += '<tr><td>Forward Reads</td><td>'+str(res.forward_read)+'</td></tr>\n'
+            tohtml += '<tr><td>Reverse Reads</td><td>'+str(res.reverse_read)+'</td></tr>\n'
+            tohtml += '<tr><td>Splice Reads</td><td>'+str(res.splice)+'</td></tr>\n'
+            tohtml += '<tr><td>Non-Splice Reads</td><td>'+str(res.noSplice)+'</td></tr>\n'
+            tohtml += '<tr><td>Pairs mapped to different chromosomes</td><td>'+str(res.paired_diff_chrom)+'</td></tr></tbody></table></div>\n'
+            
+        tohtml += '<div class="module"><h2 id="M'+str(i)+'1">Read Distribution</h2>\n'
+        tohtml += '<p><img class="indented" src="'+res.read_dist_plot_file+'" alt="Read Distribution"></p></div>\n'
+        if res.no_clipping :
+            tohtml += '<div class="module"><h2 id="M'+str(i)+'2">Mappability Profile</h2>\n'
+            tohtml += '<p>There is no soft clipping.</p></div>\n'
+        else :
+            tohtml += '<div class="module"><h2 id="M'+str(i)+'2">Mappability Profile</h2>\n'
+            tohtml += '<p><img class="indented" src="'+res.clipping_plot_file+'" alt="Mappablity Profile"></p></div>\n'
+                        
+        tohtml += '<div class="module"><h2 id="M'+str(i)+'3">Read Coverage</h2>\n'
+        tohtml += '<p><img class="indented" src="'+res.read_cov_plot_file+'" alt="Read Coverage"></p></div>\n'
+          
+        if res.is_pairEnd :
+                tohtml += '<div class="module"><h2 id="M'+str(i)+'4">Insertion Size</h2>\n'
+                tohtml += '<p><img class="indented" src="'+res.insert_plot_file+'" alt="Read Coverage"></p></div>\n'
+        else :
+                tohtml += '<div class="module"><h2 id="M'+str(i)+'4">Insertion Size</h2>\n'
+                tohtml += '<p>Not Available</p></div>\n'
+                
+        tohtml += '<div class="module"><h2 id="M'+str(i)+'5">Read Duplication Levels</h2>\n'
+        tohtml += '<p><img class="indented" src="'+res.read_dup_plot_file +'" alt="Read Duplication"></p></div>\n'
+       # tohtml += '<div class="module"><h2 id="M'+str(i)+'6">rRNA Contamination</h2>\n'
+       # tohtml += '<p></p></div>\n'
+        
+    
+    if len(res_list) >1 :
+        tohtml += '<div class="Smp_corr"><h2 id="M'+str(smp_corr_pos)+'">Sample Correlation</h2>\n'
+        tohtml += '<p><img class="indented" src="'+corr_plot_file+'" alt="Not available"></p></div>\n'
+        
+    tohtml += '</div>\n'
+
+
+    tohtml += '<div id="footer"><p>Produced by Bioinformatics Shared Resource at CSHL (version 0.2)</p></div></div></div></body></html>\n'    
+    
+    try :
+        f = open(html_file,'w')
+    
+        f.write(tohtml+"\n")
+        f.close()
+    except :
+        sys.stderr.write("Cannot generate the final report. \n")
+        sys.exit(1)
+    
+    
+
+def prepare_parser ():
+    """ inputs(parameters) required/allowed in this pipeline """
+    desc = "Quality analysis of sequencing data using aligned files (BAM) ." 
+                                                                                        
+                                                                                                   
+    exmp = "Example: BAMqc -f treat1.bam treat2.bam treat3.bam -r mm9_refGene.bed" 
+    parser = argparse.ArgumentParser(description = desc,epilog = exmp) 
+    parser.add_argument('-f', '--inputFile', metavar = 'alignment_files', dest = 'ifiles', nargs = '+', required = True,
+                   help = 'Alignment files. Could be multiple BAM files separated by space.')
+    parser.add_argument('-r', '--refgene', metavar = 'refgene', dest='ref_gene_model', nargs = '?', type=str, required = True,
+                   help = 'refGene BED12 file.')
+    parser.add_argument('-o', '--outputDir', metavar = 'dir', dest='dir', nargs = '?', type=str, required = True,
+                   help = 'output directory.')
+    parser.add_argument('-i', '--index', metavar = 'transript_Index', dest='trIdx', nargs = '?',
+                   help = 'Transcriptome index file.')
+    parser.add_argument('-q', '--mapq', metavar = 'mapq', dest='mapq', nargs = '?', default=30, type=int,
+                   help = 'Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30')
+    parser.add_argument('-l', '--lowBound', metavar = 'lb', dest='lb', nargs = '?', default=-250, type=int,
+                   help = 'Lower bound for plotting insert size distribution. DEFAULT:-250')
+    parser.add_argument('-u', '--upperBound', metavar = 'ub', dest='ub', nargs = '?', default=250, type=int,
+                   help = 'Upper bound for plotting insert size distribution. DEFAULT:250')
+    parser.add_argument('-s', '--stepSize', metavar = 'stepsize', dest='step_size', nargs = '?', default=5, type=int,
+                   help = 'Upper bound for plotting insert size distribution. DEFAULT:5')
+    parser.add_argument('-t','--label',metavar = 'labels', dest = 'labels', nargs = '+', 
+                   help = 'Labels of input files. DEFAULT:smp1 smp2 ...')
+
+    return parser
+
+
+
+def read_opts(parser):
+    ''' object parser contains parsed options '''
+    
+    args = parser.parse_args()
+
+    # logging object
+    logging.basicConfig(level=20,
+                        format='%(levelname)-5s @ %(asctime)s: %(message)s ',
+                        datefmt='%a, %d %b %Y %H:%M:%S',
+                        stream=sys.stderr,
+                        filemode="w"
+                        )
+    
+    #treatment files
+    if args.labels is not None :
+        if len(args.labels) >0 and len(args.ifiles) != len(args.labels) :
+            logging.error("Number of labels does not match with the number of samples.\n")
+            sys.exit(1)
+    
+    
+    if args.labels is None :
+        args.labels = []
+            
+    for i in range(len(args.ifiles)) :
+        if not os.path.isfile(args.ifiles[i]) :
+            logging.error("No such file: %s !\n" % (args.ifiles[i]))
+            sys.exit(1)
+        if len(args.labels) < len(args.ifiles) :            
+            args.labels.append("smp"+str(i))
+        
+
+    if args.trIdx is None :
+        logging.warning("Trancsriptome index file is not available.\n")
+        
+    else :
+        if not os.path.isfile(args.trIdx) :
+            logging.error("No such file : %s !\n" %(args.trIdx))
+            sys.exit(1)
+    
+    if args.mapq is None :
+        args.mapq = 30
+                
+    if args.ref_gene_model is None :
+        logging.error("reference gene model is required.\n")
+        sys.exit(1)
+    else :
+        if not os.path.isfile(args.ref_gene_model) :
+            logging.error("No such file : %s !\n" %(args.ref_gene_model))
+            sys.exit(1)
+                         
+    # logging alias
+    args.critical = logging.critical
+    args.error   = logging.error
+    args.warn    = logging.warning
+    args.debug   = logging.debug
+    args.info    = logging.info        
+ 
+    return args 
+
+
+if __name__ == '__main__':
+    try:
+        start_time = time.time()
+        main()
+        end_time = time.time()
+        sys.stderr.write("Elapsed time was " + str(round((end_time - start_time) / 60, 2)) + " minutes.\n")
+    except KeyboardInterrupt:
+        sys.stderr.write("User interrupt !\n")
+        sys.exit(0)

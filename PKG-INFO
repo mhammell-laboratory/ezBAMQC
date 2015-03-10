@@ -1,0 +1,10 @@
+Metadata-Version: 0.4
+Name: BAMQC
+Version: 0.4
+Summary: RNA-seq and ChIP-seq QC Package
+Author: Ying Jin
+Author-email: yjin@cshl.edu
+License: UNKNOWN
+Description: UNKNOWN
+Platform: Linux
+Platform: MacOS
