@@ -28,28 +28,45 @@ try:
 	have_numpy = True
 except:
 	have_numpy = False
-       
+
+def readme():
+	with open('README.rst') as f:
+		return f.read()
+
 def main():
-	setup(  name = "BAMQC",
-            version = "0.4",
-	    description = "Quality analysis of sequencing data using aligned files (BAM)"
-            py_modules = [ 'psyco_full' ],
-            packages = find_packages( 'lib' ),
-            package_dir = { '': 'lib' },
-            package_data = { '': ['*.ps'] },
-            scripts = glob( "BAMqc"),
-            ext_modules = get_extension_modules(),
-            test_suite = 'nose.collector',
-            setup_requires = ['nose>=0.10.4','cython>=0.12'],
-            author = "Ying Jin",
-            author_email ="yjin@cshl.edu",
-	    license="MIT"
-	    platforms = ['Linux','MacOS'],
-            url = "http://hammelllab.labsites.cshl.edu/software#BAMqc",
-            zip_safe = False,
-            dependency_links = [],
-            install_requires=['argparse'],
-            cmdclass=command_classes )
+	setup(name = "BAMQC",
+	      version = "0.4",
+	      description = "Quality analysis of sequencing data using aligned files (BAM)",
+	      long_description = readme(),
+	      py_modules = [
+		'psyco_full'
+	      ],
+	      packages = find_packages( 'lib' ),
+	      package_dir = { '': 'lib' },
+	      package_data = { '': ['*.ps'] },
+	      scripts = glob( "BAMqc"),
+	      ext_modules = get_extension_modules(),
+	      test_suite = 'nose.collector',
+	      setup_requires = [
+		'nose>=0.10.4',
+		'cython>=0.12'
+	      ],
+	      author = "Ying Jin and Molly Hammell",
+	      author_email ="yjin@cshl.edu",
+	      license="MIT"
+	      platforms = [
+		'Linux',
+		'MacOS'
+	      ],
+	      url = "http://hammelllab.labsites.cshl.edu/software#BAMqc",
+	      zip_safe = False,
+	      dependency_links = [],
+	      install_requires=[
+		'argparse'
+	      ],
+	      cmdclass=command_classes
+	      )
+
 
 # ---- Commands -------------------------------------------------------------
 

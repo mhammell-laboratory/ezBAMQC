@@ -7,7 +7,7 @@ Quality analysis of sequencing data using aligned files (BAM)
 
 `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
-Created by Ying Jin & Molly Hammell, August 2014
+Created by Ying Jin & Molly Hammell, July 2014
 
 Copyright (C) 2014-2015 Ying Jin & Molly Hammell
 
@@ -17,7 +17,7 @@ Contact: Ying Jin (yjin@cshl.edu)
 Requirements
 ------------
 
-Python:      2.6.x or 2.7.x (not tested in Python 3.x)
+Python:      2.7.x (not tested in Python 3.x)
 
 
 Installation
