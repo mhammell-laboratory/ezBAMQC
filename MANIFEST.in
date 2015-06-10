@@ -6,6 +6,8 @@ recursive-include lib *.c
 recursive-include lib *.pyx
 recursive-include doc *
 
+include README.rst
+
 #include MANIFEST.in
 #include KNOWN_BUGS
 #include ez_setup.py
