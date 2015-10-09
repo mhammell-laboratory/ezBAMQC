@@ -26,7 +26,7 @@ except:
 setup(name = "BAMQC",
       version = "0.5.1",
       description = 'Quality control tools for NGS alignment file',
-      #long_description=readme(),
+      long_description=readme(),
       keywords='Quality control BAM file',
       packages = ['libBAMQC'],
       classifiers=[
