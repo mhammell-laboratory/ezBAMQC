@@ -1,3 +1,0 @@
-argparse
-pysam>=0.8
-pp
