@@ -1,0 +1,9 @@
+('/home/dmolik/BAM_QC/BAMQC-0.5/build/BAMqc_mp/BAMqc_mp',
+ True,
+ False,
+ None,
+ None,
+ [],
+ None,
+ False,
+ 1442252832)
