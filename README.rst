@@ -17,6 +17,7 @@ Installation guide for BAMQC for from source installs
 Below is an example of installing BAMQC on Linux system using BASH. You need to change '--root' directory, PYTHONPATH and PATH accordingly
 
 ::
+
     tar zxf BAMQC-VERSION.tar.gz
     cd BAMQC-VERSION
     python setup.py install will install BAMQC in system level. require root previledge
