@@ -24,10 +24,12 @@ Below is an example of installing BAMQC on Linux system using BASH. You need to 
      export PYTHONPATH=/home/user/BAMQC/usr/local/lib/python2.7/site-packages:$PYTHONPATH.     #setup PYTHONPATH, so that BAMQC knows where to import modules
      export PATH=/home/user/BAMQC/usr/local/bin:$PATH     #setup PATH, so that system knows where to find executable file 
 
+
 *NOTE:*
-    * To install BAMQC on MAC OSX, user need to download and install Xcode beforehand.
-    * To produce graphical outputs, R must be installed.
-    * If the installation failed with error like: /usr/bin/ld: cannot find -lz, you may need to install a shared zlib library on your system. 
+
+* To install BAMQC on MAC OSX, user need to download and install Xcode beforehand.
+* To produce graphical outputs, R must be installed.
+* If the installation failed with error like: /usr/bin/ld: cannot find -lz, you may need to install a shared zlib library on your system. 
 
 Contacts
 --------
