@@ -2,7 +2,7 @@ Installation guide for BAMQC
 
 Prerequisite:
    * python2.7
-   * R (corrplot)
+   * GCC 4.9 or greater
 
 Below is an example of installing BAMQC on Linux system using BASH. You need to change '--root' directory, PYTHONPATH and PATH accordingly
 
