@@ -1,7 +1,7 @@
-Metadata-Version: 0.4
+Metadata-Version: 0.5
 Name: BAMQC
-Version: 0.4
-Summary: RNA-seq and ChIP-seq QC Package
+Version: 0.5
+Summary: NGS data alignment file QC Package
 Author: Ying Jin
 Author-email: yjin@cshl.edu
 License: UNKNOWN

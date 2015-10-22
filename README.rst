@@ -1,88 +1,74 @@
-BAMqc
-======
+BAMQC
+=====
 
-Version: X.X.X
+`Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
-Quality analysis of sequencing data using aligned files (BAM)
+`Pypi Page <https://pypi.python.org/pypi/BAMQC>`
 
 `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
-Created by Ying Jin & Molly Hammell, July 2014
+Installation guide for BAMQC for from source installs
+-----------------------------------------------------
 
-Copyright (C) 2014-2015 Ying Jin & Molly Hammell
+*Prerequisites:*
+   * python2.7
+   * R (corrplot package)
+   * GCC 4.8.1 or greater
 
-Contact: Ying Jin (yjin@cshl.edu)
+Below is an example of installing BAMQC on Linux system using BASH. You need to change '--prefix' directory, PYTHONPATH and PATH accordingly
 
+::
 
-Requirements
-------------
+    tar zxf BAMQC-VERSION.tar.gz
+    cd BAMQC-VERSION
 
-Python:      2.7.x (not tested in Python 3.x)
+To install BAMQC at the system level (which will require root privileges):
 
+::
+    python setup.py install
 
-Installation
--------------
+To install BAMQC in a custom location (e.g. /home/user/BAMQC):
 
-1. Download compressed tarball.
-2. Unpack tarball.
-3. Navigate into unpacked directory.
-4. Run the following::
-
-    $ python setup.py install
-
-If you want to install locally (e.g. /local/home/usr),
-run this command instead::
-
-    $ python setup.py install --prefix /local/home/usr
-
-*NOTE* In the above example, you must add
-
-    /local/home/usr/bin
-
-to the PATH variable, and
-
-     /local/home/usr/lib/python2.X/site-packages 
-
-to the PYTHONPATH variable, where python2.X refers to the 
-python version (e.g. python2.7 if using python version 2.7.x).
+::
+    export PYTHONPATH=/home/user/BAMQC/lib/python2.7/site-packages:$PYTHONPATH.
+    # This sets up PYTHONPATH so that BAMQC knows where to install, later import, BAMQC modules.
+    export PATH=/home/user/BAMQC/bin:$PATH
+    # This sets up PATH, so that system knows where to find the executable file.
+    python setup.py install --prefix=/home/user/BAMQC
+    # This will install BAMQC at the user specified location (/home/user/BAMQC)
 
 
-Usage
------
+*NOTE:*
 
-    usage: BAMqc [-h] -f alignment_files [alignment_files ...] -r [refgene] -o
-             [dir] [-i [transript_Index]] [-q [mapq]] [-l [lb]] [-u [ub]]
-             [-s [stepsize]] [-t labels [labels ...]]
+* To install BAMQC on MAC OSX, user need to download and install Xcode >=4.2 beforehand.
+* To produce graphical outputs, R (and the corrplot R package) must be installed.
+* If the installation failed with error like: /usr/bin/ld: cannot find -lz, you may need to install a shared zlib library on your system.
 
-    Optional arguments:
-      -h, --help            show this help message and exit
-      -f alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]
-                        Alignment files. Could be multiple BAM files separated
-                        by space.
-      -r [refgene], --refgene [refgene]
-                        refGene BED12 file.
-      -o [dir], --outputDir [dir]
-                        output directory.
-      -i [transript_Index], --index [transript_Index]
-                        Transcriptome index file.
-      -q [mapq], --mapq [mapq]
-                        Minimum mapping quality (phred scaled) for an
-                        alignment to be called uniquely mapped. DEFAULT:30
-      -l [lb], --lowBound [lb]
-                        Lower bound for plotting insert size distribution.
-                        DEFAULT:-250
-      -u [ub], --upperBound [ub]
-                        Upper bound for plotting insert size distribution.
-                        DEFAULT:250
-      -s [stepsize], --stepSize [stepsize]
-                        Upper bound for plotting insert size distribution.
-                        DEFAULT:5
-      -t labels [labels ...], --label labels [labels ...]
-                        Labels of input files. DEFAULT:smp1 smp2 ...
+Contacts
+--------
 
+Ying Jin: yjin@cshl.edu
 
-Example Command Lines
----------------------
+Acknowledgements goes to
+------------------------
 
-    BAMqc -f treat1.bam treat2.bam treat3.bam -r mm9_refGene.bed
+1. Samtools and pysam contributors
+2. Molly Hammell and members in Molly Hammell's Laboratory (Cold Spring Harbor Laboratory)
+3. Users' valuable feedback
+
+Copying & distribution
+----------------------
+
+BAMQC is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but *WITHOUT ANY WARRANTY*; without even the implied warranty of
+*MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE*.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with BAMQC.  If not, see `this website <http://www.gnu.org/licenses/>`_.
 
