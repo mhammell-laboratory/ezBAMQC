@@ -47,6 +47,7 @@ def fetch_intron( st, cigar,format):
             continue
         
     return intron_bound
+        return intron_bound
 
 
 def fetch_exon(chrom, st, cigar,format):
