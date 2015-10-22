@@ -13,7 +13,7 @@ Installation guide for BAMQC for from source installs
 *Prerequisites:*
    * python2.7
    * R (corrplot package)
-   * GCC 4.8.1 or greater
+   * GCC 4.8.1 or greater (Linux), Xcode 4.2 or greater (MacOSX)
 
 Below is an example of installing BAMQC on Linux system using BASH. You need to change '--prefix' directory, PYTHONPATH and PATH accordingly
 
@@ -25,11 +25,13 @@ Below is an example of installing BAMQC on Linux system using BASH. You need to 
 To install BAMQC at the system level (which will require root privileges):
 
 ::
+
     python setup.py install
 
 To install BAMQC in a custom location (e.g. /home/user/BAMQC):
 
 ::
+
     export PYTHONPATH=/home/user/BAMQC/lib/python2.7/site-packages:$PYTHONPATH.
     # This sets up PYTHONPATH so that BAMQC knows where to install, later import, BAMQC modules.
     export PATH=/home/user/BAMQC/bin:$PATH
@@ -40,7 +42,6 @@ To install BAMQC in a custom location (e.g. /home/user/BAMQC):
 
 *NOTE:*
 
-* To install BAMQC on MAC OSX, user need to download and install Xcode >=4.2 beforehand.
 * To produce graphical outputs, R (and the corrplot R package) must be installed.
 * If the installation failed with error like: /usr/bin/ld: cannot find -lz, you may need to install a shared zlib library on your system.
 
