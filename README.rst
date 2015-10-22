@@ -3,7 +3,7 @@ BAMQC
 
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
-`Pypi Page <https://pypi.python.org/pypi/BAMQC>`
+`Pypi Page <https://pypi.python.org/pypi/BAMQC>`_
 
 `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
@@ -54,7 +54,7 @@ Acknowledgements goes to
 ------------------------
 
 1. Samtools and pysam contributors
-2. Molly Hammell and members in Molly Hammell's Laboratory (Cold Spring Harbor Laboratory)
+2. Molly Hammell and members of her laboratory at Cold Spring Harbor Laboratory
 3. Users' valuable feedback
 
 Copying & distribution
