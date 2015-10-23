@@ -1,0 +1,1160 @@
+#!/usr/bin/env python2.7
+'''
+Created on July 24, 2015
+
+@author: Ying Jin
+@contact: yjin@cshl.edu
+@status: 
+@version: 
+'''
+import argparse, subprocess,traceback
+import sys, os, time, string, re
+from math import floor
+import warnings, logging
+import collections
+import math, copy
+import sets
+from time import strftime
+from datetime import datetime
+
+import multiprocessing,threading,Queue
+
+
+if sys.version_info[0] != 2 or sys.version_info[1] != 7:
+    print >>sys.stderr, "\nYou are using python" + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + " BAMQC needs python2.7!\n"
+    sys.exit()
+    
+#from libBAMQC.IntervalTree_new import *
+#from libBAMQC.IntervalTree import *
+#from libBAMQC.GeneFeatures import *
+from PyGeneFeatures import *
+from libBAMQC.parseBAM import *
+from libBAMQC.Results import *
+#from libBAMQC.rRNA import *
+
+#parallel computing
+#import pp
+#from matplotlib import pyplot as plt
+
+#rRNAIdx = rRNA()
+#geneIdx = GeneFeatures()
+
+
+def plot_multi_dup(smp_names,cur_data_dir,cur_fig_dir,reslist) :
+    try:
+        values= []
+        names = 'c("'
+        for smp in smp_names :
+            for i in range(100) :
+                names += smp + '",'
+            seqdup = round(reslist[smp].seqDeDup_percent,0)
+            v = [1]*100
+            v[0:seqdup] = [0]*seqdup
+            values.extend(v)
+        
+        names = names[0:len(names)-1] + ')'
+        multi_dup = cur_data_dir+"multi_smp_dup.r"
+        destfile = cur_fig_dir + "multi_smp_dup.png"
+        f = open(multi_dup,'w')
+        
+        f.write('png("' + destfile + '",width=500,height=500,units="px")\n')
+        f.write('names = ' + names+'\n')
+        f.write('values = c(' + ','.join(values) +')\n')
+        f.write('data = table(values,names)\n')
+        f.write('barplot(data,main="Duplication rate",xlab="Samples",ylab="Percentage 100%",col=c("darkblue","red"),legend=c("Distinct","Duplication"))\n')
+        f.write("dev.state = dev.off()\n")
+        f.close()
+                
+        subprocess.call("Rscript " + multi_dup , shell=True)
+            
+    except:
+        sys.stderr.write("Error in computing sample correlation.\n")
+        return ""
+
+    return destfile
+
+
+def worker_mt(in_queue,out_queue,queueLock1,queueLock2) :
+    #for (label,fname,param) in iter(in_queue.get,'STOP'):
+    queueLock1.acquire()
+    (label,fname,cur_data_dir,cur_fig_dir,mapq,stranded) = in_queue.get()
+    queueLock1.release()
+    
+    #global rRNAIdx
+    #global geneIdx
+    (label,res) = runQC_mp(fname,label,cur_data_dir,cur_fig_dir,rRNAIdx,geneIdx,mapq,stranded)
+    queueLock2.acquire()
+    out_queue.put((label,res))
+    queueLock2.release()
+
+def worker(in_queue,out_queue) :
+    #for (label,fname,param) in iter(in_queue.get,'STOP'):
+    (fname,label,cur_data_dir,cur_fig_dir,rRNA_model,ref_gene_model,attrID,mapq,stranded) = in_queue.get()
+    if fname is not None :
+        (label,res) = runQC_mp2(fname,label,cur_data_dir,cur_fig_dir,rRNA_model,ref_gene_model,attrID,mapq,stranded)
+        out_queue.put((label,res))
+
+# multithread
+def distr_mt_jobs(args,rRNAIdx,geneIdx,cur_data_dir,cur_fig_dir):
+    
+    #lock_rRNA = multiprocessing.Lock()
+    #lock_gene = multiprocessing.Lock()
+    
+    smp_res = dict()
+    try:
+        #mgr = multiprocessing.Manager()
+        #param = [cur_data_dir,cur_fig_dir,args.mapq,args.stranded]
+        if args.numProc <= len(args.ifiles) :
+            num_process = args.numProc
+        else :
+            num_process = len(args.ifiles)
+        
+        processed = 0
+        while processed < len(args.ifiles) :
+            
+            if processed  + num_process > len(args.ifiles) :
+                num_process = len(args.ifiles) - processed
+        
+            threads= []
+            queueLock1 = threading.Lock()
+            queueLock2 = threading.Lock()
+            result_queue = Queue.Queue(num_process)
+            input_queue = Queue.Queue(num_process)
+            
+            for i in range(processed,processed+num_process) :
+                label = args.labels[i]
+                fname = args.ifiles[i]
+                param = (label,fname,cur_data_dir,cur_fig_dir,args.mapq,args.stranded)
+                input_queue.put(param)
+                t = threading.Thread(target=worker_mt,args=[input_queue,result_queue,queueLock1,queueLock2])
+                threads.append(t)
+                t.start()
+            #task_queue.put('STOP')
+            for t in threads :
+                t.join()
+                processed += 1
+            for i in range(num_process) :
+                (label,res) = result_queue.get()
+                smp_res[label] = res
+
+    except:
+        sys.stderr.write("Error: %s\n" % str(sys.exc_info()[1]))
+        sys.stderr.write( "[Exception type: %s, raised in %s:%d]\n" %
+                         ( sys.exc_info()[1].__class__.__name__,
+                          os.path.basename(traceback.extract_tb( sys.exc_info()[2] )[-1][0]),
+                          traceback.extract_tb( sys.exc_info()[2] )[-1][1] ) )
+        sys.exit(1)
+    
+    return smp_res
+
+# multiprocess
+def distr_jobs(args,rRNAIdx,geneIdx,cur_data_dir,cur_fig_dir):
+    
+    #lock_rRNA = multiprocessing.Lock()
+    #lock_gene = multiprocessing.Lock()
+    
+    smp_res = dict()
+    try:
+        #mgr = multiprocessing.Manager()
+        #param = [cur_data_dir,cur_fig_dir,args.mapq,args.stranded]
+        if args.numProc <= len(args.ifiles) :
+            num_process = args.numProc
+        else :
+            num_process = len(args.ifiles)
+        
+        processed = 0
+        while processed < len(args.ifiles) :
+            task_queue = multiprocessing.Queue()
+            result_queue = multiprocessing.Queue()
+            
+            if processed  + num_process > len(args.ifiles) :
+                num_process = len(args.ifiles) - processed
+            
+            for i in range(processed,processed+num_process) :
+                label = args.labels[i]
+                fname = args.ifiles[i]
+                t = ((fname,label,cur_data_dir,cur_fig_dir,rRNAIdx,geneIdx,args.mapq,args.stranded))
+                task_queue.put(t)
+            
+            procs = []
+            for i in range(num_process) :
+                p = multiprocessing.Process(target=worker,args=(task_queue,result_queue))
+                #p.daemon=True
+                p.start()
+                procs.append(p)
+            #task_queue.put('STOP')
+            finished = 0
+            for p in procs :
+                p.join()
+                sys.stderr.write(p.exitcode+"\n")
+                if p.exitcode != 0 :
+                    sys.stderr.write("subprocess error %s " % (p.exitcode))
+                    sys.exit(1)
+                if p.exitcode == 0 :
+                    finished += 1
+                processed += 1
+                if finished == len(procs) :
+                    break
+    
+            for i in range(num_process) :
+                (label,res) = result_queue.get()
+                smp_res[label] = res
+                    
+    except:
+        sys.stderr.write("Error: %s\n" % str(sys.exc_info()[1]))
+        sys.stderr.write( "[Exception type: %s, raised in %s:%d]\n" %
+                         ( sys.exc_info()[1].__class__.__name__,
+                          os.path.basename(traceback.extract_tb( sys.exc_info()[2] )[-1][0]),
+                          traceback.extract_tb( sys.exc_info()[2] )[-1][1] ) )
+        sys.exit(1)
+    
+    return smp_res
+
+def distr_jobs2(args,rRNA_model,ref_gene_model,attrID,cur_data_dir,cur_fig_dir):
+    
+    #lock_rRNA = multiprocessing.Lock()
+    #lock_gene = multiprocessing.Lock()
+    #rRNAIdx = None
+    #geneIdx = None
+    
+    smp_res = dict()
+    try:
+        #mgr = multiprocessing.Manager()
+        #param = [cur_data_dir,cur_fig_dir,args.mapq,args.stranded]
+        if args.numProc <= len(args.ifiles) :
+            num_process = args.numProc
+        else :
+            num_process = len(args.ifiles)
+        
+        processed = 0
+        while processed < len(args.ifiles) :
+            task_queue = multiprocessing.Queue()
+            result_queue = multiprocessing.Queue()
+            
+            if processed  + num_process > len(args.ifiles) :
+                num_process = len(args.ifiles) - processed
+            
+            for i in range(processed,processed+num_process) :
+                label = args.labels[i]
+                fname = args.ifiles[i]
+                t = ((fname,label,cur_data_dir,cur_fig_dir,rRNA_model,ref_gene_model,attrID,args.mapq,args.stranded))
+                task_queue.put(t)
+            
+            procs = []
+            for i in range(num_process) :
+                p = multiprocessing.Process(target=worker,args=(task_queue,result_queue))
+                #p.daemon=True
+                p.start()
+                procs.append(p)
+            #task_queue.put('STOP')
+            finished = 0
+            for p in procs :
+                p.join()
+                sys.stderr.write(str(p.exitcode)+"\n")
+                if p.exitcode != 0 :
+                    sys.stderr.write("subprocess error %s " % (p.exitcode))
+                    sys.exit(1)
+                if p.exitcode == 0 :
+                    finished += 1
+                processed += 1
+                if finished == len(procs) :
+                    break
+        
+            for i in range(num_process) :
+                (label,res) = result_queue.get()
+                smp_res[label] = res
+
+    except:
+        sys.stderr.write("Error: %s\n" % str(sys.exc_info()[1]))
+        sys.stderr.write( "[Exception type: %s, raised in %s:%d]\n" %
+                         ( sys.exc_info()[1].__class__.__name__,
+                          os.path.basename(traceback.extract_tb( sys.exc_info()[2] )[-1][0]),
+                          traceback.extract_tb( sys.exc_info()[2] )[-1][1] ) )
+        sys.exit(1)
+    
+    return smp_res
+
+
+
+def main():
+    
+    #read in options
+    args = read_opts(prepare_parser())    
+    
+    info = args.info
+    warn = args.warn
+    debug = args.debug
+    error = args.error
+    crit = args.critical
+    #global rRNAIdx
+    #global geneIdx
+    rRNAIdx = None
+    geneIdx = None
+    
+    
+    info("*** Starting BAMqc run. ***\n")
+    
+    #list of qc results
+    smp_res = dict()
+
+    #working directory and output files
+    cur_dir = args.dir
+    cur_fig_dir = cur_dir+"/figs/"
+    cur_data_dir = cur_dir + "/data/"
+    data_file = cur_dir+"summary_data.txt"
+    html_file = cur_dir+"/bamqc_output.html"
+    
+    #check folders and files
+    try :
+        if os.path.exists(cur_dir) :
+            error("Folder already exists!\n")
+            sys.exit(1)
+        if not os.path.exists(cur_dir) :
+            os.makedirs(cur_dir)
+        if not os.path.exists(cur_fig_dir):
+            os.makedirs(cur_fig_dir)
+        if not os.path.exists(cur_data_dir):
+            os.makedirs(cur_data_dir)
+    except :
+        error("Error in create output folder.\n")
+        sys.exit(1)
+
+
+    if args.numProc >=2 :
+        #smp_res = distr_mt_jobs(args,rRNAIdx,geneIdx,cur_data_dir,cur_fig_dir)
+        #smp_res = distr_jobs(args,rRNAIdx,geneIdx,cur_data_dir,cur_fig_dir)
+        smp_res = distr_jobs2(args,args.rRNA_model,args.ref_gene_model,args.attrID,cur_data_dir,cur_fig_dir)
+    else :
+        if args.rRNA_model is not None and args.rRNA_model != "" :
+            info("*** Processing  rRNA annotation file ... " + args.rRNA_model+"\n")
+        try:
+            #rRNA index
+            rRNAIdx = PyrRNA(args.rRNA_model)
+            info("*** Done ")
+        except:
+            error("Error in parseing rRNA annotation file.\n")
+            error("Unexpected error: " + str(sys.exc_info()[0])+"\n")
+            sys.stderr.write( "[Exception type: %s, raised in %s:%d]\n" %
+                 ( sys.exc_info()[1].__class__.__name__,
+                  os.path.basename(traceback.extract_tb( sys.exc_info()[2] )[-1][0]),
+                  traceback.extract_tb( sys.exc_info()[2] )[-1][1] ) )
+    
+        try:
+            info("*** Processing " + args.ref_gene_model + '...\n')
+            
+            #geneIdx.set(args.ref_gene_model,args.attrID)
+            geneIdx = PyGeneFeatures(args.ref_gene_model,args.attrID)
+            info("*** Gene model parsing done \n")
+        except:
+            error("Error in parsing gene model file.\n")
+            error("Unexpected error: " + str(sys.exc_info()[0])+"\n")
+            sys.stderr.write( "[Exception type: %s, raised in %s:%d]\n" %
+                                 ( sys.exc_info()[1].__class__.__name__,
+                                  os.path.basename(traceback.extract_tb( sys.exc_info()[2] )[-1][0]),
+                                  traceback.extract_tb( sys.exc_info()[2] )[-1][1] ) )
+            sys.exit(1)
+
+
+        for i in range(len(args.ifiles)) :
+            ifile = args.ifiles[i]
+        
+            res = runQC(ifile,cur_data_dir,cur_fig_dir,args.labels[i],rRNAIdx,geneIdx,args.mapq,args.stranded,info,error)
+
+            smp_res[args.labels[i]] = res
+
+    #sample correlation
+    smp_corr_plot_file = cur_fig_dir+"smp_corr.png"
+    smp_inner_plot_file = cur_fig_dir+"smp_inner_dist.png"
+    smp_cov_plot_file = cur_fig_dir+"smp_cov.png"
+    smp_quality_plot_file = cur_fig_dir+"smp_qual.png"
+    smp_dup_plot_file = cur_fig_dir+"smp_dup.png"
+    #smp_summary_file = cur_data_dir +"smp_summary.txt"
+
+    if len(smp_res) > 1  :
+        
+        smp_cnt = 0
+        header_corr = 'c('
+        header_insert = 'c('
+        header_mapq = 'c('
+        header_dup = 'c('
+        #sys.stderr.write(','.join(smp_res.values()+"\n"))
+        
+        filenames_corr = 'c('
+        filenames_insert = 'c('
+        filenames_mapq = 'c('
+        filenames_dup_seq = 'c('
+        filenames_dup_pos = 'c('
+        pe_smp_cnt = 0
+        for k in range(len(args.labels)) :
+            key = args.labels[k]
+            if os.path.isfile(cur_data_dir+key+".pos.DupRate.xls") and os.path.isfile(cur_data_dir+key+".seq.DupRate.xls") :
+                filenames_dup_pos += '"' + cur_data_dir + key+".pos.DupRate.xls" + '",'
+                filenames_dup_seq += '"' + cur_data_dir + key+".seq.DupRate.xls" + '",'
+                header_dup += '"'+key+'",'
+            
+            if not smp_res[key].mapq_file == "" :
+                filenames_mapq += '"' + smp_res[key].mapq_file + '",'
+                header_mapq += '"'+key+'",'
+            
+            if not smp_res[key].insert_file == "" and smp_res[key].is_pairEnd:
+                pe_smp_cnt += 1
+                filenames_insert += '"' + smp_res[key].insert_file + '",'
+                header_insert += '"'+key+'",'
+            
+            if not smp_res[key].geneCount_file == "" :
+                smp_cnt += 1
+                filenames_corr += '"' + smp_res[key].geneCount_file + '",'
+                header_corr += '"'+key+'",'
+        
+        header_corr = header_corr[0:len(header_corr)-1] + ')'
+        filenames_corr = filenames_corr[0:len(filenames_corr)-1] + ')'
+        filenames_insert = filenames_insert[0:len(filenames_insert)-1] + ')'
+        header_insert = header_insert[0:len(header_insert)-1] + ')'
+        
+        header_mapq = header_mapq[0:len(header_mapq)-1] + ')'
+        filenames_mapq = filenames_mapq[0:len(filenames_mapq)-1] + ')'
+        header_dup = header_dup[0:len(header_dup)-1] + ')'
+        filenames_dup_seq = filenames_dup_seq[0:len(filenames_dup_seq)-1] + ')'
+        filenames_dup_pos = filenames_dup_pos[0:len(filenames_dup_pos)-1] + ')'
+        
+        if smp_cnt > 1 :
+            info("*** Sample Correlation ***")
+            try :
+                #subprocess.call(cmd_str+" >"+smp_summary_file, shell=True)
+                
+                smp_corr_r = cur_data_dir+"smp_correlation.r"
+                
+                f = open(smp_corr_r,'w')
+                f.write("library(corrplot)\n")
+                f.write('srcfiles = '+filenames_corr+'\n')
+                f.write('destfile = "'+smp_corr_plot_file+'"\n')
+                f.write('f1 = read.delim(srcfiles[1],header=T)\n')
+                f.write('MM=matrix(nrow=length(f1[,1]),ncol=length(srcfiles))\n')
+                f.write('rownames(MM)=f1[,1]\n')
+                f.write('MM[,1]=f1[,2]\n')
+                f.write('for (i in 2:length(srcfiles)){ \n')
+                f.write('    f = read.delim(srcfiles[i],header=T)\n')
+                f.write('    MM[,i] = f[,2] }\n')
+                f.write('colnames(MM)='+header_corr+'\n')
+                f.write('libSize<-colSums(MM)\n')
+                f.write('MM<-t(t(MM)*1000000/libSize)\n')
+                f.write('ss<-rowSums(MM)\n')
+                f.write('M1<-MM[ss>0,]\n')
+                f.write('MM_s<-t(scale(t(M1)))\n')
+                f.write("M.cor<-cor(MM_s,method='sp')\n")
+                f.write("M.cor[is.na(M.cor)]<- 0\n")
+                f.write("png(destfile,width=500,height=500,units='px')\n")
+                f.write("corrplot(M.cor,is.corr=F,order='FPC',method='color',type='full',add=F,diag=T)\n")
+                f.write("dev.state = dev.off()\n")
+                
+                #f.write('destfile = "'+smp_corr_plot_file2+'"\n')
+                #f.write("M.pc<-prcomp(t(MM_s))\n")
+                #f.write("png(destfile,width=500,height=500,units='px')\n")
+                #f.write("plot(M.pc)\n")
+                #f.write("dev.state = dev.off()\n")
+                
+                f.write('destfile = "'+smp_cov_plot_file+'"\n')
+                f.write("png(destfile,width=500,height=500,units='px')\n")
+                f.write('xname=c("<0.5","0.5-10","10-100",">=100")\n')
+                f.write('Fn_mm = matrix(0,nrow=length(xname),ncol=length(M1[1,]))\n')
+                f.write('rownames(Fn_mm) = xname \n')
+                f.write('colnames(Fn_mm) = ' + header_corr + ' \n')
+
+                f.write('for(i in 1:length(M1[1,])) { \n')
+                f.write('Fn_mm[1,i] = length(which(M1[,i]<0.5)) \n')
+                f.write('Fn_mm[2,i] = length(which(M1[,i]>=0.5 & M1[,i]<10))\n')
+                f.write('Fn_mm[3,i] = length(which(M1[,i]>=10 & M1[,i]<100))\n')
+                f.write('Fn_mm[4,i] = length(which(M1[,i]>=100)) }\n')
+
+                f.write('barplot(Fn_mm,main="Gene abundance (RPM)",xlab="Sample",ylab="Frequency",col=c("green","blue","red","yellow"),legend=xname)\n')
+                f.write("dev.state = dev.off()\n")
+                if pe_smp_cnt > 0 :
+                    f.write('srcfiles2 = '+filenames_insert+'\n')
+                    f.write('destfile2 = "'+smp_inner_plot_file+'"\n')
+                    f.write("png(destfile2,width=500,height=500,units='px')\n")
+                    f.write('f = read.delim(srcfiles2[1],header=T)\n')
+                    f.write('freq=rep(round((f[,1]+f[,2]+1)/2,0),times=f[,3])\n')
+                    f.write('smp ='+header_insert+'\n')
+                    f.write('boxplot(freq,outline=F,xlim=c(0,length(smp)+1),ylab="Inner distance (bp)",col="blue",border="black") \n')
+                    f.write('for (i in 2:length(srcfiles2)){ \n')
+                    f.write('    f = read.delim(srcfiles2[i],header=T)\n')
+                    f.write('freq=rep(round((f[,1]+f[,2]+1)/2,0),times=f[,3])\n')
+                    f.write('boxplot(freq,add=T,outline=F,at=i,col="blue",border="black") }\n')
+                    f.write('axis(1,at=seq(1,length(smp),by=1),labels=smp,las=2)\n')
+                    f.write("dev.state = dev.off()\n")
+                
+                f.write('destfile3 = "'+smp_quality_plot_file+'"\n')
+                f.write('srcfiles3 = '+filenames_mapq+'\n')
+                f.write("png(destfile3,width=500,height=500,units='px')\n")
+                f.write('xname=c("<3","3-10","10-20","20-30",">=30")\n')
+                f.write('Fn_mm = matrix(0,nrow=length(xname),ncol=length(srcfiles3))\n')
+                f.write('rownames(Fn_mm) = xname \n')
+                f.write('colnames(Fn_mm) = ' + header_mapq + ' \n')
+
+                f.write('for(i in 1:length(srcfiles3)) { \n')
+                f.write('  f = read.delim(srcfiles3[i],header=T)\n')
+                f.write(' if(length(which(f[,1]<3)) >0){ Fn_mm[1,i] = sum(f[which(f[,1]<3),3])/sum(f[which(f[,1]<3),2])} \n')
+                f.write('if(length(which(f[,1]>=3 & f[,1]<10)) >0) {Fn_mm[2,i] = sum(f[which(f[,1]<10 & f[,1]>=3),3])/sum(f[which(f[,1]<10 & f[,1]>=3),2])} \n')
+                f.write('if(length(which(f[,1]>=10 & f[,1]<20)) >0)  {Fn_mm[3,i] = sum(f[which(f[,1]<20 & f[,1]>=10),3])/sum(f[which(f[,1]<10 & f[,1]>=10),2]) }\n')
+                f.write('if(length(which(f[,1]>=20 & f[,1]<30)) >0) {Fn_mm[4,i] = sum(f[which(f[,1]<30 & f[,1]>=20),3])/sum(f[which(f[,1]<30 & f[,1]>=20),2])} \n')
+                f.write('if(length(which(f[,1]>=30)) >0) {Fn_mm[5,i] = sum(f[which(f[,1]>=30),3])/sum(f[which(f[,1]>=30),2]) }} \n')
+                
+                f.write('barplot(Fn_mm,xlab="Sample",main="Mapping Quality",ylim=c(0,1),ylab="Frequency",col=c("blue","green","yellow","orange","red"),legend=xname)\n')
+                f.write("dev.state = dev.off()\n")
+
+                f.write('destfile3 = "'+smp_dup_plot_file+'"\n')
+                f.write('srcfiles3 = '+filenames_dup_pos+'\n')
+                f.write('srcfiles4 = '+filenames_dup_seq+'\n')
+                f.write('png(destfile3,width=500,height=500,units="px")\n')
+                f.write('M = matrix(0,nrow=2,ncol=length(srcfiles3))\n')
+                f.write('colnames(M) = ' + header_dup + ' \n')
+    
+                f.write('for(i in 1:length(srcfiles3)) { \n')
+                f.write('f_pos = read.delim(srcfiles3[i],header=T) \n')
+                f.write('f_seq = read.delim(srcfiles4[i],header=T) \n')
+                f.write('total = sum(f_pos[,1]*f_pos[,2]) \n')
+                f.write('pos_dedup = round(sum(f_pos[,2])/total*100,2) \n')
+                f.write('seq_dedup = round(sum(f_seq[,2])/total*100,2) \n')
+                f.write('M[1,i] = pos_dedup \n')
+                f.write('M[2,i] = seq_dedup }\n')
+
+                f.write('rownames(M)<-c("Position","Sequence")\n')
+                f.write('barplot(M,ylim=c(0,100),beside=T,col=c("blue","red"),main="Duplication",xlab="Sample",ylab="Percentage after deduplication",legend=c("Mapping position","Sequence"),args.legend=list(bty="n"))\n')
+                f.write('dev.state = dev.off()\n')
+    
+                
+
+                #f.write("max_xx = round(log(max(MM),10),0)\n")
+                #f.write("max_avg = max_xx\n")
+                
+                #f.write("Fn_mm = matrix(0,nrow=(max_xx+1),ncol=length(MM[1,]))\n")
+                #f.write("max_xx = 10^max_xx\n")
+                
+                #f.write('Fn = ecdf(MM[,1])\n')
+                #f.write("max_x = round(log(max(knots(Fn)),10),0)\n")
+                #f.write("xx = c(0,10^seq(0,max_x,by=1))\n")
+                #f.write("y=Fn(xx)\n")
+                #f.write('plot(x=xx,y=y,type="l",col="blue",xlab="Number of Reads",ylab="CDF of Genes",xlim=c(0,max_xx),ylim=c(0,1.0))\n')
+                #f.write("Fn_mm[1:length(y),1] = y \n")
+                
+                #f.write('for(i in 2:length(MM[1,]) {\n')
+                #f.write('    Fn = ecdf(MM[,i])\n')
+                #f.write("    max_x = round(log(max(knots(Fn)),10),0)\n")
+                #f.write("    xx = c(0,10^seq(0,max_x,by=1))")
+                #f.write("    max_avg = max_avg + max_x \n")
+                #f.write("    y=Fn(xx)\n")
+                #f.write('    lines(x=xx,y=y,col="blue") }\n')
+                #f.write('    Fn_mm[1:length(y),i] = y \n')
+                
+                #f.write('max_avg = round(max_avg/length(MM[1,],0)\n')
+                #f.write('avg = rowMeans(Fn_mm)\n')
+                #f.write('sd = apply(Fn_mm,1,function(x){sd(x)}\n')
+                #f.write('polygon(c(c(0,10^seq(0,max_avg,by=1)),rev(c(0,10^seq(0,max_avg,by=1)))),c(avg[1:max_avg+1]-sd[1:max_avg+1],rev(avg[1:max_avg+1]+sd[1:max_avg+1])),col=col=rgb(0, 0, 1,0.5),border=NA)\n')
+
+                
+                f.close()
+                
+                subprocess.call("Rscript " + smp_corr_r , shell=True)
+            
+            except:
+                sys.stderr.write("Error in computing sample correlation.\n")
+                smp_corr_plot_file = ""
+                smp_corr_plot_file2 = ""
+                pass
+            
+            info("*** Correlation completed ***\n")
+
+    
+    outputToHTML(smp_res,args.labels,smp_corr_plot_file,smp_inner_plot_file, smp_quality_plot_file,smp_cov_plot_file,smp_dup_plot_file,html_file)
+    info("*** BAM QC run completed. ***\n")
+
+#multi process
+def runQC_mp(ifile,label,cur_data_dir,cur_fig_dir,rRNAIdx,geneIdx,mapq,stranded):
+    
+        output_prefix_data = cur_data_dir + label
+        output_prefix_fig = cur_fig_dir + label
+    
+        obj = parseBAM(ifile,stranded)
+        #paired = False
+        
+        res = obj.qc(rRNAIdx,geneIdx,mapq,output_prefix_fig,output_prefix_data)
+    
+        try:
+            subprocess.call("Rscript "+output_prefix_data+'.read_distr.r',shell=True)
+        except :
+            print("Error in plotting read distributions.\n")
+            res.read_dist_plot_file1 = ""
+        pass
+    
+        try:
+            subprocess.call("Rscript "+output_prefix_data+'.read_distr_pie.r',shell=True)
+        except :
+            print("Error in plotting read distributions.\n")
+            res.read_dist_plot_file2 = ""
+            pass
+
+        res.filename = ifile
+        if os.path.isfile(output_prefix_data+'.clipping_profile.r') :
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.clipping_profile.r',shell=True)
+            #    subprocess.call("rm -rf "+ output_prefix + '.clipping_profile.r',shell=True)
+            except:
+                print("Cannot generate png file form " + output_prefix_data + '.clipping_profile.r\n')
+                res.clipping_plot_file = ""
+                pass
+        else :
+            res.no_clipping = True
+        
+        if os.path.isfile(output_prefix_data+'.mapq_profile.r') :
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.mapq_profile.r',shell=True)
+            
+            except:
+                print("Cannot generate png file form " + output_prefix_data + '.mapq_profile.r\n')
+                res.mapq_plot_file = ""
+                pass
+        else :
+            res.mapq_plot_file = ""
+        try:
+            subprocess.call("Rscript " + output_prefix_data + '.geneBodyCoverage_plot.r',shell=True)
+        
+        except:
+            print("Cannot generate png file from " + output_prefix_data + '.geneBodyCoverage_plot.r\n')
+            res.read_cov_plot_file = ""
+            pass
+        
+        try:
+            subprocess.call("Rscript " + output_prefix_data + '.TransCoverage.r',shell=True)
+        
+        except:
+            print("Cannot generate png file from " + output_prefix_data + '.TransCoverage.r\n')
+            res.trans_cov_plot_file = ""
+            pass
+        try:
+            subprocess.call("Rscript " + output_prefix_data +  ".ReadLen_plot.r", shell=True)
+
+        except:
+            print("Cannot generate png file form " + output_prefix_data + '.ReadLen_plot.rn')
+            pass
+        if res.is_pairEnd :
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.inner_distance_plot.r',shell=True)
+            except:
+                print("Cannot generate png file form " + output_prefix_data + '.inner_distance_plot.r\n')
+                res.insert_plot_file = ""
+                pass
+
+        try:
+            subprocess.call("Rscript " + output_prefix_data +  ".DupRate_plot.r", shell=True)
+
+        except:
+            print ("generate png file form " + output_prefix_data + '.DupRate_plot.r\n')
+            pass
+
+        return (label,res)
+
+def runQC_mp2(ifile,label,cur_data_dir,cur_fig_dir,rRNA_model,ref_gene_model,attrID,mapq,stranded):
+    
+        output_prefix_data = cur_data_dir + label
+        output_prefix_fig = cur_fig_dir + label
+    
+        obj = parseBAM(ifile,stranded)
+        paired = False
+        
+        rRNAIdx = None
+        geneIdx = None
+        
+        if rRNA_model is not None and rRNA_model != "" :
+            #info("*** Processing  rRNA annotation file ... " + rRNA_model+"\n")
+            try:
+                #rRNA index
+                rRNAIdx = PyrRNA(rRNA_model)
+                #info("*** Done ")
+            except:
+                #error("Error in parseing rRNA annotation file.\n")
+                #error("Unexpected error: " + str(sys.exc_info()[0])+"\n")
+                sys.stderr.write( "[Exception type: %s, raised in %s:%d]\n" %
+                 ( sys.exc_info()[1].__class__.__name__,
+                  os.path.basename(traceback.extract_tb( sys.exc_info()[2] )[-1][0]),
+                  traceback.extract_tb( sys.exc_info()[2] )[-1][1] ) )
+        
+        try:
+            #("*** Processing " + ref_gene_model + '...\n')
+            
+            #geneIdx.set(args.ref_gene_model,args.attrID)
+            geneIdx = PyGeneFeatures(ref_gene_model,attrID)
+            #info("*** Gene model parsing done \n")
+        except:
+            #error("Error in parsing gene model file.\n")
+            #error("Unexpected error: " + str(sys.exc_info()[0])+"\n")
+            sys.stderr.write( "[Exception type: %s, raised in %s:%d]\n" %
+                                 ( sys.exc_info()[1].__class__.__name__,
+                                  os.path.basename(traceback.extract_tb( sys.exc_info()[2] )[-1][0]),
+                                  traceback.extract_tb( sys.exc_info()[2] )[-1][1] ) )
+            sys.exit(1)
+
+        
+        res = obj.qc(rRNAIdx,geneIdx,mapq,output_prefix_fig,output_prefix_data)
+    
+        try:
+            #subprocess.call("cat "+output_prefix_data+'.read_distr.r' + " " +output_prefix_data+'.read_distr_pie.r' + " " + output_prefix_data + '.clipping_profile.r' ,shell=True)
+            subprocess.call("Rscript "+output_prefix_data+'.read_distr.r',shell=True)
+        except :
+            print("Error in plotting read distributions.\n")
+            res.read_dist_plot_file1 = ""
+        pass
+    
+        try:
+            subprocess.call("Rscript "+output_prefix_data+'.read_distr_pie.r',shell=True)
+        except :
+            print("Error in plotting read distributions.\n")
+            res.read_dist_plot_file2 = ""
+            pass
+
+        res.filename = ifile
+        if os.path.isfile(output_prefix_data+'.clipping_profile.r') :
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.clipping_profile.r',shell=True)
+            #    subprocess.call("rm -rf "+ output_prefix + '.clipping_profile.r',shell=True)
+            except:
+                print("Cannot generate png file form " + output_prefix_data + '.clipping_profile.r\n')
+                res.clipping_plot_file = ""
+                pass
+        else :
+            res.no_clipping = True
+        
+        if os.path.isfile(output_prefix_data+'.mapq_profile.r') :
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.mapq_profile.r',shell=True)
+            
+            except:
+                print("Cannot generate png file form " + output_prefix_data + '.mapq_profile.r\n')
+                res.mapq_plot_file = ""
+                pass
+        else :
+            res.mapq_plot_file = ""
+        try:
+            subprocess.call("Rscript " + output_prefix_data + '.geneBodyCoverage_plot.r',shell=True)
+        
+        except:
+            print("Cannot generate png file from " + output_prefix_data + '.geneBodyCoverage_plot.r\n')
+            res.read_cov_plot_file = ""
+            pass
+        
+        try:
+            subprocess.call("Rscript " + output_prefix_data + '.TransCoverage.r',shell=True)
+        
+        except:
+            print("Cannot generate png file from " + output_prefix_data + '.TransCoverage.r\n')
+            res.trans_cov_plot_file = ""
+            pass
+        try:
+            subprocess.call("Rscript " + output_prefix_data +  ".ReadLen_plot.r", shell=True)
+
+        except:
+            print("Cannot generate png file form " + output_prefix_data + '.ReadLen_plot.rn')
+            pass
+        if res.is_pairEnd :
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.inner_distance_plot.r',shell=True)
+            except:
+                print("Cannot generate png file form " + output_prefix_data + '.inner_distance_plot.r\n')
+                res.insert_plot_file = ""
+                pass
+
+        try:
+            subprocess.call("Rscript " + output_prefix_data +  ".DupRate_plot.r", shell=True)
+
+        except:
+            print ("generate png file form " + output_prefix_data + '.DupRate_plot.r\n')
+            pass
+
+        return (label,res)
+
+
+
+def runQC(ifile,cur_data_dir,cur_fig_dir,label,rRNAIdx,geneIdx,mapq,stranded,info,error):
+        output_prefix_data = cur_data_dir + label
+        output_prefix_fig = cur_fig_dir + label
+        
+        info("--- Processing BAM: %s. ---\n" % (label))
+        obj = parseBAM(ifile,stranded)
+        
+        info("*** Calculating mapping statistics ***")
+        paired = False
+        
+        res = obj.qc(rRNAIdx,geneIdx,mapq,output_prefix_fig,output_prefix_data)
+        
+        try:
+            subprocess.call("Rscript "+output_prefix_data+'.read_distr.r',shell=True)
+        except :
+            error("Error in plotting read distributions.\n")
+            res.read_dist_plot_file1 = ""
+            pass
+        try:
+            subprocess.call("Rscript "+output_prefix_data+'.read_distr_pie.r',shell=True)
+        except :
+            error("Error in plotting read distributions.\n")
+            res.read_dist_plot_file2 = ""
+            pass
+        
+        info("*** Mapping statistics completed ***\n")
+        
+        res.filename = ifile
+        info("*** Assessing per base mappability ***")
+        
+        if os.path.isfile(output_prefix_data+'.clipping_profile.r') :
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.clipping_profile.r',shell=True)
+                #    subprocess.call("rm -rf "+ output_prefix + '.clipping_profile.r',shell=True)
+            except:
+                    error("Cannot generate png file form " + output_prefix_data + '.clipping_profile.r\n')
+                    res.clipping_plot_file = ""
+                    pass
+        else :
+            res.no_clipping = True
+        if os.path.isfile(output_prefix_data+'.mapq_profile.r') :
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.mapq_profile.r',shell=True)
+            
+            except:
+                error("Cannot generate png file form " + output_prefix_data + '.mapq_profile.r\n')
+                res.mapq_plot_file = ""
+                pass
+        else :
+            res.mapq_plot_file = ""
+        
+        info("*** Mappability profile completed***\n")
+        info("*** Read coverage over Gene body ***")
+        try:
+            subprocess.call("Rscript " + output_prefix_data + '.geneBodyCoverage_plot.r',shell=True)
+            
+        except:
+            error("Cannot generate png file from " + output_prefix_data + '.geneBodyCoverage_plot.r\n')
+            res.read_cov_plot_file = ""
+            pass
+        try:
+            subprocess.call("Rscript " + output_prefix_data + '.TransCoverage.r',shell=True)
+        except:
+            error("Cannot generate png file from " + output_prefix_data + '.TransCoverage.r\n')
+            res.trans_cov_plot_file = ""
+            pass
+        info("*** Read coverage completed ***\n")
+        info("*** Read length distribution ***\n")
+        try:
+            subprocess.call("Rscript " + output_prefix_data +  ".ReadLen_plot.r", shell=True)
+        except:
+            error("Cannot generate png file form " + output_prefix_data + '.ReadLen_plot.rn')
+        pass
+        info("*** Read length completed ***\n")
+        if res.is_pairEnd :
+            info("*** Insertion size estimation ***")
+            try:
+                subprocess.call("Rscript " + output_prefix_data + '.inner_distance_plot.r',shell=True)
+            except:
+                error("Cannot generate png file form " + output_prefix_data + '.inner_distance_plot.r\n')
+                res.insert_plot_file = ""
+                pass
+            info("*** Insertion size estimation completed ***\n")
+    
+        info("*** Determining read duplication ***")
+        try:
+            subprocess.call("Rscript " + output_prefix_data +  ".DupRate_plot.r", shell=True)
+            
+        except:
+            error("Cannot generate png file form " + output_prefix_data + '.DupRate_plot.r\n')
+            pass
+        info("*** Read duplication completed ***\n")
+        info("--- BAM QC completed for %s. ---\n" % (label))
+        
+        # smp_res[label] = copy.deepcopy(res)
+        return res
+
+
+def outputToHTML(res_list,smps,corr_plot_file,smp_inner_plot_file,smp_quality_plot_file,smp_cov_plot_file,smp_dup_plot_file,html_file):
+    
+    #smps = res_list.keys()
+    tohtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">\n'
+    tohtml += '<html>\n'
+    tohtml += '<head><title>BAMQC Report</title>\n'
+    tohtml += '<style type="text/css">\n'
+    #/*ul Styles*/
+    tohtml += 'html,body{margin:0;padding:0;height:100%;width:1500px}\n'
+    tohtml += 'div#header{background-color:#F3F2ED;}\n'
+    tohtml += 'div#header h1{text-align:center; height:80px;line-height:80px;margin:0;padding-left:10px;}\n'
+    tohtml += 'div#container{text-align:left;height:100%;width:1500px}\n'
+    tohtml += 'div#navigation{background:#F6F0E0;}\n'
+    tohtml += 'div#navigation{float:left;width:200px;height:100%}\n'
+
+    tohtml += '.menu-item ul { \n'
+    tohtml += 'background: #F6F0E0; \n'
+    tohtml += 'font-size: 13px; \n'
+    tohtml += 'line-height: 30px; \n'
+    tohtml += 'height: 0px; \n'
+    tohtml += 'list-style-type: none;'
+    tohtml += 'overflow: hidden; \n'
+    tohtml += 'padding: 0px; }\n'
+    
+    tohtml += '.menu-item:hover ul {  height: 220px; }\n '
+    #/* table *
+    tohtml += 'table{ margin:0;padding:0;width:1300px;table-layout:fixed;text-align:left; }\n'
+    tohtml += 'table > thead > tr.tableizer-firstrow > th {  padding: 10px;  background: lavenderblush;} \n'
+    #/*border: 4px solid #fff;*/ /*text-overflow: ellipsis;*/ /*overflow: hidden;*/
+    tohtml += 'table > tbody > tr > td{ padding: 10px; background: #f8f8f8; word-wrap: break word; } \n'
+    tohtml += 'div#footer{background:#BFBD93;}\n'
+    tohtml += 'div#footer p{margin:0;padding:5px 10px}\n'
+    tohtml += 'div#footer{clear:both;width:100%;text-align:center}\n'
+    tohtml += 'div#main{float:right;width:1300px}\n'
+    tohtml += 'a{text-decoration:none; color:#000000;}\n'
+    tohtml += 'a:hover {text-decoration: underline; }\n'
+    
+
+    tohtml += '</style> </head>\n'
+    tohtml += '<body>\n'
+    tohtml += '<div id ="container">\n'
+    tohtml += '<div id="header"><h1>BAMQC Report</h1><p text-align="left">Created On: '+datetime.now().strftime('%m-%d-%Y')+'</p></div>\n'
+
+    i = 0    
+    tohtml += '<div id="wrapper">\n'
+    tohtml += '<div class="summary" id="navigation">\n'
+    #tohtml += '<div id="update_time">\n'
+    #tohtml += 
+    #tohtml += '</div>\n'
+    tohtml += '<h2>Summary</h2>\n'
+    tohtml += '<ul>\n'
+        
+    #i = 0
+    for i in range(len(smps)) :
+        key = smps[i]
+        tohtml += '<li>'
+        tohtml += '<div class="menu-item">\n'
+        tohtml += '<h4>'+key+'</h4>\n'
+        tohtml += '<ul>\n'
+        tohtml += '<li><a href="#M'+str(i)+'0">Basic Statistics</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'1">Read Distribution</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'2">Mappability</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'3">Coverage</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'4">Read Length and Insertion Size</a></li>\n'
+        tohtml += '<li><a href="#M'+str(i)+'5">Duplication Levels</a></li>\n'
+        #tohtml += '<li><a href="#M'+str(i)+'6">rRNA contamination</a></li>\n'
+        tohtml += '</ul></div></li>\n'   
+        #i += 1 
+    
+    smp_corr_pos = len(smps)*6 + 100
+    
+    if len(res_list) > 1:
+        tohtml += '<li><div class="menu-item"><a href="#M'+str(smp_corr_pos)+'"><h4>Sample Correlation</h4></a></div></li>\n'
+        
+    tohtml += '</ul>\n'    
+    tohtml += '</div>\n'     
+    
+        
+    tohtml += '<div id="main" >\n'
+    for i in range(len(smps)):
+        key = smps[i] 
+        res = res_list[key]
+
+        tohtml += '<h2>'+res.filename+'</h2>\n'
+        tohtml += '<div class="module"><h2 id="M'+str(i)+'0">Basic Statistics</h2>\n'
+        tohtml += '<table>\n'
+        tohtml += '<thead><tr class=\"tableizer-firstrow\">\n';
+        tohtml += '<th>Measure</th><th>Value</th></tr></thead>\n'
+        tohtml += '<tbody><tr><td>Total Reads</td><td>'+str(res.total_reads)+'</td></tr>\n'
+        if not res.is_pairEnd :
+            tohtml += '<tr><td>Unique Reads</td><td>'+str(res.uniq_mapped_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Multi-reads</td><td>'+str(res.multi_mapped_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Unmapped Reads</td><td>'+str(res.unmapped_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Low Quality Reads</td><td>'+str(res.low_qual)+'</td></tr>\n'
+            tohtml += '<tr><td>Forward Reads</td><td>'+str(res.forward_read)+'</td></tr>\n'
+            tohtml += '<tr><td>Reverse Reads</td><td>'+str(res.reverse_read)+'</td></tr>\n'
+            tohtml += '<tr><td>Splice Reads</td><td>'+str(res.splice)+'</td></tr>\n'
+            tohtml += '<tr><td>Non-Splice Reads</td><td>'+str(res.noSplice)+'</td></tr></tbody></table></div>\n'
+        else : # paired read
+            tohtml += '<tr><td>Uniquely Mapped paires</td><td>'+str(res.paired_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Uniquely Mapped read1</td><td>'+str(res.mapped_read1)+'</td></tr>\n'
+            tohtml += '<tr><td>Uiquely Mapped read2</td><td>'+str(res.mapped_read2)+'</td></tr>\n'
+            tohtml += '<tr><td>Multi-reads</td><td>'+str(res.multi_mapped_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Unmapped Read1</td><td>'+str(res.unmapped_read1)+'</td></tr>\n'
+            tohtml += '<tr><td>Unmapped Read2</td><td>'+str(res.unmapped_read2)+'</td></tr>\n'
+            tohtml += '<tr><td>Fraction of read mapped "+,-" </td><td>'+str(res.mapped_plus_minus)+'</td></tr>\n'
+            tohtml += '<tr><td>Fraction of read mapped "+,+" </td><td>'+str(res.mapped_plus_plus)+'</td></tr>\n'
+            tohtml += '<tr><td>Fraction of read mapped "-,+" </td><td>'+str(res.mapped_minus_plus)+'</td></tr>\n'
+            tohtml += '<tr><td>Fraction of read mapped "-,-" </td><td>'+str(res.mapped_minus_minus)+'</td></tr>\n'            
+            tohtml += '<tr><td>Low Quality Read1</td><td>'+str(res.low_qual_read1)+'</td></tr>\n'
+            tohtml += '<tr><td>Low Quality Read2</td><td>'+str(res.low_qual_read2)+'</td></tr>\n'
+            tohtml += '<tr><td>Forward Reads</td><td>'+str(res.forward_read)+'</td></tr>\n'
+            tohtml += '<tr><td>Reverse Reads</td><td>'+str(res.reverse_read)+'</td></tr>\n'
+            tohtml += '<tr><td>Splice Reads</td><td>'+str(res.splice)+'</td></tr>\n'
+            tohtml += '<tr><td>Non-Splice Reads</td><td>'+str(res.noSplice)+'</td></tr>\n'
+            tohtml += '<tr><td>Pairs mapped to different chromosomes</td><td>'+str(res.paired_diff_chrom)+'</td></tr></tbody></table></div>\n'
+            
+        tohtml += '<div class="module"><h2 id="M'+str(i)+'1">Read Distribution</h2>\n'
+        tohtml += '<p><img class="indented" src="../'+res.read_dist_plot_file1+'" alt="Read Distribution"><img class="indented" src="../'+res.read_dist_plot_file2+'" alt="Read Distribution"></p></div>\n'
+        if res.no_clipping :
+            tohtml += '<div class="module"><h2 id="M'+str(i)+'2">Mappability Profile</h2>\n'
+            tohtml += '<p>There is no soft clipping. <img class="indented" src="../'+res.mapq_plot_file+'" alt="MapQ Profile"> </p></div>\n'
+        else :
+            tohtml += '<div class="module"><h2 id="M'+str(i)+'2">Mappability</h2>\n'
+            tohtml += '<p><img class="indented" src="../'+res.clipping_plot_file+'" alt="Mappablity Profile"> <img class="indented" src="../'+res.mapq_plot_file+'" alt="MapQ Profile"></p></div>\n'
+                        
+        tohtml += '<div class="module"><h2 id="M'+str(i)+'3">Coverage</h2>\n'
+        tohtml += '<p><img class="indented" src="../'+res.read_cov_plot_file+'" alt="Read Coverage"> <img class="indented" src="../'+res.trans_cov_plot_file+'" alt="Read Coverage"></p></div>\n'
+          
+        if res.is_pairEnd :
+                tohtml += '<div class="module"><h2 id="M'+str(i)+'4">Read Length and Insertion Size</h2>\n'
+                tohtml += '<p><img class="indented" src="../'+res.readLen_plot_file+'" alt="Read Length"> <img class="indented" src="../'+res.insert_plot_file+'" alt="Insertion Size"></p></div>\n'
+        else :
+                tohtml += '<div class="module"><h2 id="M'+str(i)+'4">Read Length</h2>\n'
+                tohtml += '<p><img class="indented" src="../'+res.readLen_plot_file+'" alt="Read Length"></p></div>\n'
+                
+        tohtml += '<div class="module"><h2 id="M'+str(i)+'5">Duplication Levels</h2>\n'
+        tohtml += '<p><img class="indented" src="../'+res.read_dup_plot_file +'" alt="Read Duplication"></p></div>\n'
+        
+    
+    if len(res_list) >1 :
+        tohtml += '<div class="Smp_corr"><h2 id="M'+str(smp_corr_pos)+'">Sample Correlation and Quality</h2>\n'
+        tohtml += '<p><img class="indented" src="../'+corr_plot_file+'" alt="Sample Correlation"><img class="indented" src="../'+smp_quality_plot_file+'" alt="Sample Correlation"></p>\n'
+        
+        if res.is_pairEnd :
+            tohtml += '<h2 id="M'+str(smp_corr_pos)+'">Sample Coverage and Insert size</h2>\n'
+            tohtml += '<p><img class="indented" src="../'+smp_cov_plot_file+'" alt="Sample Coverage"><img class="indented" src="../'+smp_inner_plot_file+'" alt="Sample insert size"></p></div>\n'
+        else :
+            tohtml += '<h2 id="M'+str(smp_corr_pos)+'">Sample Coverage</h2>\n'
+            tohtml += '<p><img class="indented" src="../'+smp_cov_plot_file+'" alt="Sample Coverage"></p></div>\n'
+
+        tohtml += '<h2 id="M'+str(smp_corr_pos)+'">Sample Duplication</h2>\n'
+        tohtml += '<p><img class="indented" src="../'+smp_dup_plot_file+'" alt="Sample Duplication"></p></div>\n'
+
+    tohtml += '</div>\n'
+
+
+    tohtml += '<div id="footer"><p>Produced by Bioinformatics Shared Resource at CSHL (version 0.5)</p></div></div></div></body></html>\n'
+    
+    try :
+        f = open(html_file,'w')
+    
+        f.write(tohtml+"\n")
+        f.close()
+    except :
+        sys.stderr.write("Cannot generate the final report. \n")
+        sys.exit(1)
+    
+    
+
+def prepare_parser ():
+    """ inputs(parameters) required/allowed in this pipeline """
+    desc = "Quality control of mapped NGS data (BAM/SAM files) . BAMqc version 0.5."
+                                                                                        
+                                                                                                   
+    exmp = "Example: BAMqc -f treat1.bam treat2.bam treat3.bam -r mm9_refGene.bed -o bamqc_out" 
+    parser = argparse.ArgumentParser(description = desc,epilog = exmp) 
+    parser.add_argument('-i', '--inputFile', metavar = 'alignment_files', dest = 'ifiles', nargs = '+', required = True,
+                   help = 'Alignment files. Could be multiple SAM/BAM files separated by space. Required.')
+    parser.add_argument('-r', '--refgene', metavar = 'refgene', dest='ref_gene_model', nargs = '?', type=str, required = True,help = 'refGene GTF file. Required')
+    
+    parser.add_argument('-f', metavar='attrID', dest='attrID', nargs='?', type=str, default="gene_id",
+                   help='The read summation at which feature level in the GTF file. DEFAULT: gene_id.')
+                   
+    parser.add_argument('--rRNA', metavar = 'rRNA', dest='rRNA_model', nargs = '?', type=str, default="",
+                    help = 'rRNA BED file.')
+    parser.add_argument('-o', '--outputDir', metavar = 'dir', dest='dir', nargs = '?', type=str, required = True,
+                   help = 'output directory. Required.')
+#    parser.add_argument('-i', '--index', metavar = 'transript_Index', dest='trIdx', nargs = '?',
+#                   help = 'Transcriptome index file.')
+    parser.add_argument('--stranded', metavar='stranded', dest='stranded', nargs='?', type=str, default="yes", choices=['yes','no','reverse'],
+                    help='Is this a stranded library? (yes, no, or reverse). DEFAULT: yes.')
+    
+    parser.add_argument('-q', '--mapq', metavar = 'mapq', dest='mapq', nargs = '?', default=30, type=int,
+                   help = 'Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30')
+    parser.add_argument('-l', '--lowBound', metavar = 'lb', dest='lb', nargs = '?', default=-250, type=int,
+                   help = 'Lower bound for plotting insert size distribution. DEFAULT:-250')
+    parser.add_argument('-u', '--upperBound', metavar = 'ub', dest='ub', nargs = '?', default=250, type=int,
+                   help = 'Upper bound for plotting insert size distribution. DEFAULT:250')
+    parser.add_argument('-s', '--stepSize', metavar = 'stepsize', dest='step_size', nargs = '?', default=5, type=int,
+                   help = 'Step size for plotting insert size distribution. DEFAULT:5')
+    parser.add_argument('-t','--label',metavar = 'labels', dest = 'labels', nargs = '+', 
+                   help = 'Labels of input files. DEFAULT:smp1 smp2 ...')
+    parser.add_argument('-p', '--processes', dest='numProc', default=1, type=int,help='Number of processes to use .')
+
+    return parser
+
+
+
+def read_opts(parser):
+    ''' object parser contains parsed options '''
+    
+    args = parser.parse_args()
+
+    # logging object
+    logging.basicConfig(level=20,
+                        format='%(levelname)-5s @ %(asctime)s: %(message)s ',
+                        datefmt='%a, %d %b %Y %H:%M:%S',
+                        stream=sys.stderr,
+                        filemode="w"
+                        )
+    
+    #treatment files
+    if args.labels is not None :
+        if len(args.labels) >0 and len(args.ifiles) != len(args.labels) :
+            logging.error("Number of labels does not match with the number of samples.\n")
+            sys.exit(1)
+    
+    
+    if args.labels is None :
+        args.labels = []
+            
+    for i in range(len(args.ifiles)) :
+        if not os.path.isfile(args.ifiles[i]) :
+            logging.error("No such file: %s !\n" % (args.ifiles[i]))
+            sys.exit(1)
+        if len(args.labels) < len(args.ifiles) :            
+            args.labels.append("smp"+str(i))
+        
+
+#    if args.trIdx is None :
+#        logging.warning("Trancsriptome index file is not available.\n")
+#
+#    else :
+#        if not os.path.isfile(args.trIdx) :
+#            logging.error("No such file : %s !\n" %(args.trIdx))
+#            sys.exit(1)
+
+    if args.stranded not in ['yes', 'no', 'reverse'] :
+        logging.error("Does not support such stranded value: %s !\n" % (args.stranded))
+        sys.exit(1)
+    
+    if args.mapq is None :
+        args.mapq = 30
+    
+    if args.rRNA_model is not None and args.rRNA_model != "":
+        if not os.path.isfile(args.rRNA_model) :
+            logging.error("No such file : %s \n" %(args.rRNA_model))
+            sys.exit(1)
+
+    if args.ref_gene_model is None :
+        logging.error("reference gene model is required.\n")
+        sys.exit(1)
+    else :
+        if not os.path.isfile(args.ref_gene_model) :
+            logging.error("No such file : %s !\n" %(args.ref_gene_model))
+            sys.exit(1)
+                         
+    # logging alias
+    args.critical = logging.critical
+    args.error   = logging.error
+    args.warn    = logging.warning
+    args.debug   = logging.debug
+    args.info    = logging.info        
+ 
+    return args 
+
+
+if __name__ == '__main__':
+    try:
+        start_time = time.time()
+        main()
+        end_time = time.time()
+        sys.stderr.write("Elapsed time was " + str(round((end_time - start_time) / 60, 2)) + " minutes.\n")
+    except KeyboardInterrupt:
+        sys.stderr.write("User interrupt !\n")
+        sys.exit(0)
