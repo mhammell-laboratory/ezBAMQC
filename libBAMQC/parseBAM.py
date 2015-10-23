@@ -48,7 +48,6 @@ def fetch_intron( st, cigar,format):
         
     return intron_bound
 
-
 def fetch_exon(chrom, st, cigar,format):
     ''' fetch exon regions defined by cigar. st must be zero based
         return list of tuple of (st, end)
