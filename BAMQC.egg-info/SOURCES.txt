@@ -1,4 +1,5 @@
 BAMqc_mp
+README.rst
 setup.cfg
 setup.py
 BAMQC.egg-info/PKG-INFO
