@@ -1,0 +1,5 @@
+include CONTACTS
+include COPYING
+include INSTALL
+include THANKS
+include src/*.h

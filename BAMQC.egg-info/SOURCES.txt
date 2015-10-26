@@ -1,5 +1,10 @@
 BAMqc_mp
+CONTACTS
+COPYING
+INSTALL
+MANIFEST.in
 README.rst
+THANKS
 setup.cfg
 setup.py
 BAMQC.egg-info/PKG-INFO
@@ -17,6 +22,9 @@ libBAMQC/Results.py
 libBAMQC/__init__.py
 libBAMQC/parseBAM.py
 src/GeneFeatures.cpp
+src/GeneFeatures.h
 src/IntervalTree.cpp
+src/IntervalTree.h
 src/PyGeneFeatures.cpp
 src/rRNA.cpp
+src/rRNA.h
