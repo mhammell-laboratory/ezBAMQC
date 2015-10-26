@@ -1,0 +1,10 @@
+Metadata-Version: 0.5
+Name: BAMQC
+Version: 0.5
+Summary: NGS data alignment file QC Package
+Author: Ying Jin
+Author-email: yjin@cshl.edu
+License: UNKNOWN
+Description: UNKNOWN
+Platform: Linux
+Platform: MacOS
