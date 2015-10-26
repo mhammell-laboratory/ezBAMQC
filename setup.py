@@ -28,7 +28,7 @@ except:
     pass
 
 setup(name = "BAMQC",
-      version = "0.5",
+      version = "0.5.5",
       description = 'Quality control tools for NGS alignment file',
       keywords='Quality control BAM file',
       packages = ['libBAMQC'],
