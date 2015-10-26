@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: BAMQC
-Version: 0.5.5
+Version: 0.5.6
 Summary: Quality control tools for NGS alignment file
 Home-page: http://hammelllab.labsites.cshl.edu/software#BAMqc
 Author: Ying Jin
@@ -9,7 +9,7 @@ License: GPLv3
 Description: BAMQC
         =====
         
-        *Version 0.5.5*
+        *Version 0.5.6*
         
         `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
         
