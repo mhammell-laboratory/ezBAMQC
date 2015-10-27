@@ -26,5 +26,7 @@ src/GeneFeatures.h
 src/IntervalTree.cpp
 src/IntervalTree.h
 src/PyGeneFeatures.cpp
+src/PyGeneFeatures.pyx
+src/__init__.py
 src/rRNA.cpp
 src/rRNA.h
