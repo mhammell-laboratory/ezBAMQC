@@ -20,11 +20,11 @@ Description: BAMQC
         Installation guide for BAMQC for from source installs
         -----------------------------------------------------
         
-        `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.5.5.tar.gz>`_
+        `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.5.6.tar.gz>`_
         
-        `With Prebuilt Binary <https://github.com/mhammell-laboratory/bamqc/releases/download/0.5.5/BAMQC-0.5.5.tar.gz>`_
+        `With Prebuilt Binary <https://github.com/mhammell-laboratory/bamqc/releases/download/0.5.6/BAMQC-0.5.6.tar.gz>`_
         
-        `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.5.5>`_
+        `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.5.6>`_
         
         *Prerequisites:*
            * python2.7
