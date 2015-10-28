@@ -24,20 +24,11 @@ if sys.version_info[0] != 2 or sys.version_info[1] != 7:
     print >>sys.stderr, "\nYou are using python" + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + " BAMQC needs python2.7!\n"
     sys.exit()
     
-#from libBAMQC.IntervalTree_new import *
-#from libBAMQC.IntervalTree import *
-#from libBAMQC.GeneFeatures import *
+
 from PyGeneFeatures import *
 from libBAMQC.parseBAM import *
 from libBAMQC.Results import *
-#from libBAMQC.rRNA import *
 
-#parallel computing
-#import pp
-#from matplotlib import pyplot as plt
-
-#rRNAIdx = rRNA()
-#geneIdx = GeneFeatures()
 
 
 def plot_multi_dup(smp_names,cur_data_dir,cur_fig_dir,reslist) :
@@ -74,18 +65,6 @@ def plot_multi_dup(smp_names,cur_data_dir,cur_fig_dir,reslist) :
     return destfile
 
 
-def worker_mt(in_queue,out_queue,queueLock1,queueLock2) :
-    #for (label,fname,param) in iter(in_queue.get,'STOP'):
-    queueLock1.acquire()
-    (label,fname,cur_data_dir,cur_fig_dir,mapq,stranded) = in_queue.get()
-    queueLock1.release()
-    
-    #global rRNAIdx
-    #global geneIdx
-    (label,res) = runQC_mp(fname,label,cur_data_dir,cur_fig_dir,rRNAIdx,geneIdx,mapq,stranded)
-    queueLock2.acquire()
-    out_queue.put((label,res))
-    queueLock2.release()
 
 def worker(in_queue,out_queue) :
     #for (label,fname,param) in iter(in_queue.get,'STOP'):
@@ -94,128 +73,10 @@ def worker(in_queue,out_queue) :
         (label,res) = runQC_mp2(fname,label,cur_data_dir,cur_fig_dir,rRNA_model,ref_gene_model,attrID,mapq,stranded)
         out_queue.put((label,res))
 
-# multithread
-def distr_mt_jobs(args,rRNAIdx,geneIdx,cur_data_dir,cur_fig_dir):
-    
-    #lock_rRNA = multiprocessing.Lock()
-    #lock_gene = multiprocessing.Lock()
-    
-    smp_res = dict()
-    try:
-        #mgr = multiprocessing.Manager()
-        #param = [cur_data_dir,cur_fig_dir,args.mapq,args.stranded]
-        if args.numProc <= len(args.ifiles) :
-            num_process = args.numProc
-        else :
-            num_process = len(args.ifiles)
-        
-        processed = 0
-        while processed < len(args.ifiles) :
-            
-            if processed  + num_process > len(args.ifiles) :
-                num_process = len(args.ifiles) - processed
-        
-            threads= []
-            queueLock1 = threading.Lock()
-            queueLock2 = threading.Lock()
-            result_queue = Queue.Queue(num_process)
-            input_queue = Queue.Queue(num_process)
-            
-            for i in range(processed,processed+num_process) :
-                label = args.labels[i]
-                fname = args.ifiles[i]
-                param = (label,fname,cur_data_dir,cur_fig_dir,args.mapq,args.stranded)
-                input_queue.put(param)
-                t = threading.Thread(target=worker_mt,args=[input_queue,result_queue,queueLock1,queueLock2])
-                threads.append(t)
-                t.start()
-            #task_queue.put('STOP')
-            for t in threads :
-                t.join()
-                processed += 1
-            for i in range(num_process) :
-                (label,res) = result_queue.get()
-                smp_res[label] = res
 
-    except:
-        sys.stderr.write("Error: %s\n" % str(sys.exc_info()[1]))
-        sys.stderr.write( "[Exception type: %s, raised in %s:%d]\n" %
-                         ( sys.exc_info()[1].__class__.__name__,
-                          os.path.basename(traceback.extract_tb( sys.exc_info()[2] )[-1][0]),
-                          traceback.extract_tb( sys.exc_info()[2] )[-1][1] ) )
-        sys.exit(1)
-    
-    return smp_res
 
-# multiprocess
-def distr_jobs(args,rRNAIdx,geneIdx,cur_data_dir,cur_fig_dir):
-    
-    #lock_rRNA = multiprocessing.Lock()
-    #lock_gene = multiprocessing.Lock()
-    
-    smp_res = dict()
-    try:
-        #mgr = multiprocessing.Manager()
-        #param = [cur_data_dir,cur_fig_dir,args.mapq,args.stranded]
-        if args.numProc <= len(args.ifiles) :
-            num_process = args.numProc
-        else :
-            num_process = len(args.ifiles)
-        
-        processed = 0
-        while processed < len(args.ifiles) :
-            task_queue = multiprocessing.Queue()
-            result_queue = multiprocessing.Queue()
-            
-            if processed  + num_process > len(args.ifiles) :
-                num_process = len(args.ifiles) - processed
-            
-            for i in range(processed,processed+num_process) :
-                label = args.labels[i]
-                fname = args.ifiles[i]
-                t = ((fname,label,cur_data_dir,cur_fig_dir,rRNAIdx,geneIdx,args.mapq,args.stranded))
-                task_queue.put(t)
-            
-            procs = []
-            for i in range(num_process) :
-                p = multiprocessing.Process(target=worker,args=(task_queue,result_queue))
-                #p.daemon=True
-                p.start()
-                procs.append(p)
-            #task_queue.put('STOP')
-            finished = 0
-            for p in procs :
-                p.join()
-                sys.stderr.write(p.exitcode+"\n")
-                if p.exitcode != 0 :
-                    sys.stderr.write("subprocess error %s " % (p.exitcode))
-                    sys.exit(1)
-                if p.exitcode == 0 :
-                    finished += 1
-                processed += 1
-                if finished == len(procs) :
-                    break
-    
-            for i in range(num_process) :
-                (label,res) = result_queue.get()
-                smp_res[label] = res
-                    
-    except:
-        sys.stderr.write("Error: %s\n" % str(sys.exc_info()[1]))
-        sys.stderr.write( "[Exception type: %s, raised in %s:%d]\n" %
-                         ( sys.exc_info()[1].__class__.__name__,
-                          os.path.basename(traceback.extract_tb( sys.exc_info()[2] )[-1][0]),
-                          traceback.extract_tb( sys.exc_info()[2] )[-1][1] ) )
-        sys.exit(1)
-    
-    return smp_res
 
 def distr_jobs2(args,rRNA_model,ref_gene_model,attrID,cur_data_dir,cur_fig_dir):
-    
-    #lock_rRNA = multiprocessing.Lock()
-    #lock_gene = multiprocessing.Lock()
-    #rRNAIdx = None
-    #geneIdx = None
     
     smp_res = dict()
     try:
@@ -286,8 +147,6 @@ def main():
     debug = args.debug
     error = args.error
     crit = args.critical
-    #global rRNAIdx
-    #global geneIdx
     rRNAIdx = None
     geneIdx = None
     
@@ -321,8 +180,6 @@ def main():
 
 
     if args.numProc >=2 :
-        #smp_res = distr_mt_jobs(args,rRNAIdx,geneIdx,cur_data_dir,cur_fig_dir)
-        #smp_res = distr_jobs(args,rRNAIdx,geneIdx,cur_data_dir,cur_fig_dir)
         smp_res = distr_jobs2(args,args.rRNA_model,args.ref_gene_model,args.attrID,cur_data_dir,cur_fig_dir)
     else :
         if args.rRNA_model is not None and args.rRNA_model != "" :
@@ -341,8 +198,7 @@ def main():
     
         try:
             info("*** Processing " + args.ref_gene_model + '...\n')
-            
-            #geneIdx.set(args.ref_gene_model,args.attrID)
+
             geneIdx = PyGeneFeatures(args.ref_gene_model,args.attrID)
             info("*** Gene model parsing done \n")
         except:
@@ -524,34 +380,6 @@ def main():
     
                 
 
-                #f.write("max_xx = round(log(max(MM),10),0)\n")
-                #f.write("max_avg = max_xx\n")
-                
-                #f.write("Fn_mm = matrix(0,nrow=(max_xx+1),ncol=length(MM[1,]))\n")
-                #f.write("max_xx = 10^max_xx\n")
-                
-                #f.write('Fn = ecdf(MM[,1])\n')
-                #f.write("max_x = round(log(max(knots(Fn)),10),0)\n")
-                #f.write("xx = c(0,10^seq(0,max_x,by=1))\n")
-                #f.write("y=Fn(xx)\n")
-                #f.write('plot(x=xx,y=y,type="l",col="blue",xlab="Number of Reads",ylab="CDF of Genes",xlim=c(0,max_xx),ylim=c(0,1.0))\n')
-                #f.write("Fn_mm[1:length(y),1] = y \n")
-                
-                #f.write('for(i in 2:length(MM[1,]) {\n')
-                #f.write('    Fn = ecdf(MM[,i])\n')
-                #f.write("    max_x = round(log(max(knots(Fn)),10),0)\n")
-                #f.write("    xx = c(0,10^seq(0,max_x,by=1))")
-                #f.write("    max_avg = max_avg + max_x \n")
-                #f.write("    y=Fn(xx)\n")
-                #f.write('    lines(x=xx,y=y,col="blue") }\n')
-                #f.write('    Fn_mm[1:length(y),i] = y \n')
-                
-                #f.write('max_avg = round(max_avg/length(MM[1,],0)\n')
-                #f.write('avg = rowMeans(Fn_mm)\n')
-                #f.write('sd = apply(Fn_mm,1,function(x){sd(x)}\n')
-                #f.write('polygon(c(c(0,10^seq(0,max_avg,by=1)),rev(c(0,10^seq(0,max_avg,by=1)))),c(avg[1:max_avg+1]-sd[1:max_avg+1],rev(avg[1:max_avg+1]+sd[1:max_avg+1])),col=col=rgb(0, 0, 1,0.5),border=NA)\n')
-
-                
                 f.close()
                 
                 subprocess.call("Rscript " + smp_corr_r , shell=True)
@@ -568,90 +396,6 @@ def main():
     outputToHTML(smp_res,args.labels,smp_corr_plot_file,smp_inner_plot_file, smp_quality_plot_file,smp_cov_plot_file,smp_dup_plot_file,html_file)
     info("*** BAM QC run completed. ***\n")
 
-#multi process
-def runQC_mp(ifile,label,cur_data_dir,cur_fig_dir,rRNAIdx,geneIdx,mapq,stranded):
-    
-        output_prefix_data = cur_data_dir + label
-        output_prefix_fig = cur_fig_dir + label
-    
-        obj = parseBAM(ifile,stranded)
-        #paired = False
-        
-        res = obj.qc(rRNAIdx,geneIdx,mapq,output_prefix_fig,output_prefix_data)
-    
-        try:
-            subprocess.call("Rscript "+output_prefix_data+'.read_distr.r',shell=True)
-        except :
-            print("Error in plotting read distributions.\n")
-            res.read_dist_plot_file1 = ""
-        pass
-    
-        try:
-            subprocess.call("Rscript "+output_prefix_data+'.read_distr_pie.r',shell=True)
-        except :
-            print("Error in plotting read distributions.\n")
-            res.read_dist_plot_file2 = ""
-            pass
-
-        res.filename = ifile
-        if os.path.isfile(output_prefix_data+'.clipping_profile.r') :
-            try:
-                subprocess.call("Rscript " + output_prefix_data + '.clipping_profile.r',shell=True)
-            #    subprocess.call("rm -rf "+ output_prefix + '.clipping_profile.r',shell=True)
-            except:
-                print("Cannot generate png file form " + output_prefix_data + '.clipping_profile.r\n')
-                res.clipping_plot_file = ""
-                pass
-        else :
-            res.no_clipping = True
-        
-        if os.path.isfile(output_prefix_data+'.mapq_profile.r') :
-            try:
-                subprocess.call("Rscript " + output_prefix_data + '.mapq_profile.r',shell=True)
-            
-            except:
-                print("Cannot generate png file form " + output_prefix_data + '.mapq_profile.r\n')
-                res.mapq_plot_file = ""
-                pass
-        else :
-            res.mapq_plot_file = ""
-        try:
-            subprocess.call("Rscript " + output_prefix_data + '.geneBodyCoverage_plot.r',shell=True)
-        
-        except:
-            print("Cannot generate png file from " + output_prefix_data + '.geneBodyCoverage_plot.r\n')
-            res.read_cov_plot_file = ""
-            pass
-        
-        try:
-            subprocess.call("Rscript " + output_prefix_data + '.TransCoverage.r',shell=True)
-        
-        except:
-            print("Cannot generate png file from " + output_prefix_data + '.TransCoverage.r\n')
-            res.trans_cov_plot_file = ""
-            pass
-        try:
-            subprocess.call("Rscript " + output_prefix_data +  ".ReadLen_plot.r", shell=True)
-
-        except:
-            print("Cannot generate png file form " + output_prefix_data + '.ReadLen_plot.rn')
-            pass
-        if res.is_pairEnd :
-            try:
-                subprocess.call("Rscript " + output_prefix_data + '.inner_distance_plot.r',shell=True)
-            except:
-                print("Cannot generate png file form " + output_prefix_data + '.inner_distance_plot.r\n')
-                res.insert_plot_file = ""
-                pass
-
-        try:
-            subprocess.call("Rscript " + output_prefix_data +  ".DupRate_plot.r", shell=True)
-
-        except:
-            print ("generate png file form " + output_prefix_data + '.DupRate_plot.r\n')
-            pass
-
-        return (label,res)
 
 def runQC_mp2(ifile,label,cur_data_dir,cur_fig_dir,rRNA_model,ref_gene_model,attrID,mapq,stranded):
     
@@ -697,7 +441,7 @@ def runQC_mp2(ifile,label,cur_data_dir,cur_fig_dir,rRNA_model,ref_gene_model,att
         res = obj.qc(rRNAIdx,geneIdx,mapq,output_prefix_fig,output_prefix_data)
     
         try:
-            #subprocess.call("cat "+output_prefix_data+'.read_distr.r' + " " +output_prefix_data+'.read_distr_pie.r' + " " + output_prefix_data + '.clipping_profile.r' ,shell=True)
+
             subprocess.call("Rscript "+output_prefix_data+'.read_distr.r',shell=True)
         except :
             print("Error in plotting read distributions.\n")
