@@ -81,15 +81,15 @@ libBAMqc.so: $(LOBJS) $(HTSLIB)
 	$(CC) -shared  -lpthread $(LDFLAGS) -o $@ $(LOBJS) $(HTSLIB) $(LDLIBS) -lz -lm
 #	ln -sf $@ libBAMqc.so.$(PACKAGE_VERSION)
 
-Constants_h = include/Constants.h
-IntervalTree_h = include/IntervalTree.h $(Constants_h)
-GeneFeatures_h = include/GeneFeatures.h $(Constants_h)
-rRNA_h = include/rRNA.h $(IntervalTree_h) $(GeneFeatures_h)
-Results_h = include/Resualts.h
-Mappability_h = include/Mappability.h $(Constants_h)
-InnerDist_prof_h = include/InnerDist_prof.h $(GeneFeatures_h)
-Coverage_prof_h = include/Coverage_prof.h $(GeneFeatures_h)
-parseBAM_h = include/parseBAM.h
+Constants_h = src/Constants.h
+IntervalTree_h = src/IntervalTree.h $(Constants_h)
+GeneFeatures_h = src/GeneFeatures.h $(Constants_h)
+rRNA_h = src/rRNA.h $(IntervalTree_h) $(GeneFeatures_h)
+Results_h = src/Resualts.h
+Mappability_h = src/Mappability.h $(Constants_h)
+InnerDist_prof_h = src/InnerDist_prof.h $(GeneFeatures_h)
+Coverage_prof_h = src/Coverage_prof.h $(GeneFeatures_h)
+parseBAM_h = src/parseBAM.h
 
 
 IntervalTree.o: src/IntervalTree.cpp $(IntervalTree_h)
