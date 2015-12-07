@@ -50,6 +50,11 @@ BAMQC_DOCS = [
     'doc/THANKS'
 ]
 
+HTSLIB = [
+    'htslib/',
+	'htslib/'
+]
+
 command_classes = {}
 
 setup(name = "BAMQC",
