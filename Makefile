@@ -53,7 +53,7 @@ all: $(PROGRAMS)
 
 
 # Adjust $(HTSDIR) to point to your top-level htslib directory
-HTSDIR = ./src/htslib-1.2.1_src
+HTSDIR = ./htslib
 include $(HTSDIR)/htslib.mk
 HTSLIB = $(HTSDIR)/libhts.a
 BGZIP  = $(HTSDIR)/bgzip
