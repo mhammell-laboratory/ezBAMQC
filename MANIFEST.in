@@ -10,7 +10,7 @@ include doc/COPYING
 include doc/INSTALL
 include doc/THANKS
 
-# SRC INCLUDES
+# SRC BAMQC INCLUDES
 include src/bamqc/Constants.h
 include src/bamqc/Coverage_prof.cpp
 include src/bamqc/Coverage_prof.h
@@ -30,3 +30,68 @@ include src/bamqc/Results.cpp
 include src/bamqc/Results.h
 include src/bamqc/rRNA.cpp
 include src/bamqc/rRNA.h
+
+# SRC HTSLIB INCLUDES
+include src/htslib/bgzf.c
+include src/htslib/bgzip.c
+include src/htslib/config.mk.in
+include src/htslib/configure
+include src/htslib/configure.ac
+include src/htslib/faidx.5
+include src/htslib/faidx.c
+include src/htslib/hfile.c
+include src/htslib/hfile_internal.h
+include src/htslib/hfile_irods.c
+include src/htslib/hfile_net.c
+include src/htslib/hts.c
+include src/htslib/htsfile.1
+include src/htslib/htsfile.c
+include src/htslib/htslib.mk
+include src/htslib/htslib.pc.in
+include src/htslib/htslib_vars.mk
+include src/htslib/INSTALL
+include src/htslib/kfunc.c
+include src/htslib/knetfile.c
+include src/htslib/kstring.c
+include src/htslib/libhts.a
+include src/htslib/LICENSE
+include src/htslib/Makefile
+include src/htslib/NEWS
+include src/htslib/README
+include src/htslib/regidx.c
+include src/htslib/sam.5
+include src/htslib/sam.c
+include src/htslib/synced_bcf_reader.c
+include src/htslib/tabix.1
+include src/htslib/tabix.c
+include src/htslib/tbx.c
+include src/htslib/test
+include src/htslib/vcf.5
+include src/htslib/vcf.c
+include src/htslib/vcf_sweep.c
+include src/htslib/vcfutils.c
+include src/htslib/version.h
+
+#SRC HTSLIB HEADER INCLUDES
+include src/htslib/htslib/bgzf.h
+include src/htslib/htslib/faidx.h
+include src/htslib/htslib/hfile.h
+include src/htslib/htslib/hts_defs.h
+include src/htslib/htslib/hts.h
+include src/htslib/htslib/kfunc.h
+include src/htslib/htslib/khash.h
+include src/htslib/htslib/khash_str2int.h
+include src/htslib/htslib/klist.h
+include src/htslib/htslib/knetfile.h
+include src/htslib/htslib/kseq.h
+include src/htslib/htslib/ksort.h
+include src/htslib/htslib/kstring.h
+include src/htslib/htslib/regidx.h
+include src/htslib/htslib/sam.h
+include src/htslib/htslib/synced_bcf_reader.h
+include src/htslib/htslib/tbx.h
+include src/htslib/htslib/vcf.h
+include src/htslib/htslib/vcf_sweep.h
+include src/htslib/htslib/vcfutils.h
+
+#SRC HTSLIB CRAM INCLUDES

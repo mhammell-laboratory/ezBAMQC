@@ -21,6 +21,7 @@ import ctypes
 
 import multiprocessing,threading,Queue
 
+#remember to set to os.environ[''] variable to try and find itself, also check local directory
 so=ctypes.CDLL('./libBAMqc.so')
 
 if sys.version_info[0] != 2 or sys.version_info[1] != 7:
