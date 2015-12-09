@@ -2,6 +2,8 @@ import sys
 from setuptools import setup, Extension
 import distutils.ccompiler
 
+###THIS FEATURE DOESN'T work yet###
+
 """
 Setup script for BAMQC  -- Comprehensive QC package for NGS data alignment file
 Copyright (c) 2015 Ying Jin <yjin@cshl.edu>
