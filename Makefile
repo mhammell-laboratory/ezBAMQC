@@ -53,7 +53,7 @@ all: $(PROGRAMS)
 
 
 # Adjust $(HTSDIR) to point to your top-level htslib directory
-HTSDIR = ./htslib
+HTSDIR = ./src/htslib
 include $(HTSDIR)/htslib.mk
 HTSLIB = $(HTSDIR)/libhts.a
 BGZIP  = $(HTSDIR)/bgzip
@@ -81,25 +81,25 @@ libBAMqc.so: $(LOBJS) $(HTSLIB)
 	$(CC) -shared  -lpthread $(LDFLAGS) -o $@ $(LOBJS) $(HTSLIB) $(LDLIBS) -lz -lm
 #	ln -sf $@ libBAMqc.so.$(PACKAGE_VERSION)
 
-Constants_h = src/Constants.h
-IntervalTree_h = src/IntervalTree.h $(Constants_h)
-GeneFeatures_h = src/GeneFeatures.h $(Constants_h)
-rRNA_h = src/rRNA.h $(IntervalTree_h) $(GeneFeatures_h)
-Results_h = src/Resualts.h
-Mappability_h = src/Mappability.h $(Constants_h)
-InnerDist_prof_h = src/InnerDist_prof.h $(GeneFeatures_h)
-Coverage_prof_h = src/Coverage_prof.h $(GeneFeatures_h)
-parseBAM_h = src/parseBAM.h
+Constants_h = src/bamqc/Constants.h
+IntervalTree_h = src/bamqc/IntervalTree.h $(Constants_h)
+GeneFeatures_h = src/bamqc/GeneFeatures.h $(Constants_h)
+rRNA_h = src/bamqc/rRNA.h $(IntervalTree_h) $(GeneFeatures_h)
+Results_h = src/bamqc/Resualts.h
+Mappability_h = src/bamqc/Mappability.h $(Constants_h)
+InnerDist_prof_h = src/bamqc/InnerDist_prof.h $(GeneFeatures_h)
+Coverage_prof_h = src/bamqc/Coverage_prof.h $(GeneFeatures_h)
+parseBAM_h = src/bamqc/parseBAM.h
 
 
-IntervalTree.o: src/IntervalTree.cpp $(IntervalTree_h)
-GeneFeatures.o: src/GeneFeatures.cpp $(GeneFeatures_h)
-rRNA.o: src/rRNA.cpp $(rRNA_h)
-Results.o: src/Results.cpp $(Results_h)
-Mappability.o: src/Mappability.cpp $(Mappability_h) $(htslib_sam_h)
-InnerDist_prof.o: src/InnerDist_prof.cpp $(InnerDist_prof_h) $(htslib_sam_h)
-Coverage_prof.o: src/Coverage_prof.cpp $(Coverage_prof_h)
-parseBAM.o: src/parseBAM.cpp $(parseBAM_h) $(htslib_sam_h) $(GeneFeatures_h) $(rRNA_h) $(Mappability_h) $(Coverage_prof_h) $(InnerDist_prof_h)
+IntervalTree.o: src/bamqc/IntervalTree.cpp $(IntervalTree_h)
+GeneFeatures.o: src/bamqc/GeneFeatures.cpp $(GeneFeatures_h)
+rRNA.o: src/bamqc/rRNA.cpp $(rRNA_h)
+Results.o: src/bamqc/Results.cpp $(Results_h)
+Mappability.o: src/bamqc/Mappability.cpp $(Mappability_h) $(htslib_sam_h)
+InnerDist_prof.o: src/bamqc/InnerDist_prof.cpp $(InnerDist_prof_h) $(htslib_sam_h)
+Coverage_prof.o: src/bamqc/Coverage_prof.cpp $(Coverage_prof_h)
+parseBAM.o: src/bamqc/parseBAM.cpp $(parseBAM_h) $(htslib_sam_h) $(GeneFeatures_h) $(rRNA_h) $(Mappability_h) $(Coverage_prof_h) $(InnerDist_prof_h)
 
 
 #install: $(PROGRAMS) $(BUILT_MISC_PROGRAMS)

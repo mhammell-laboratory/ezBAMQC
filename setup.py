@@ -18,29 +18,29 @@ if sys.version_info[0] != 2 or sys.version_info[1] < 7:
 	sys.exit()
 
 BAMQC_HEADER = [
-    'src/Constants.h',
-    'src/Coverage_prof.h',
-    'src/GeneFeatures.h',
-    'src/InnerDist_prof.h',
-    'src/IntervalTree.h',
-    'src/Mappability.h',
-    'src/parseBAM.h',
-    'src/ReadDup_prof.h',
-    'src/Results.h',
-    'src/rRNA.h'
+    'src/bamqc/Constants.h',
+    'src/bamqc/Coverage_prof.h',
+    'src/bamqc/GeneFeatures.h',
+    'src/bamqc/InnerDist_prof.h',
+    'src/bamqc/IntervalTree.h',
+    'src/bamqc/Mappability.h',
+    'src/bamqc/parseBAM.h',
+    'src/bamqc/ReadDup_prof.h',
+    'src/bamqc/Results.h',
+    'src/bamqc/rRNA.h'
 ]
 
 BAMQC_SOURCE = [
-    'src/Coverage_prof.cpp',
-    'src/Coverage_prof.cpp',
-    'src/GeneFeatures.cpp',
-    'src/InnerDist_prof.cpp',
-    'src/IntervalTree.cpp',
-    'src/Mappability.cpp',
-    'src/parseBAM.cpp',
-    'src/ReadDup_prof.cpp',
-    'src/Results.cpp',
-    'src/rRNA.cpp'
+    'src/bamqc/Coverage_prof.cpp',
+    'src/bamqc/Coverage_prof.cpp',
+    'src/bamqc/GeneFeatures.cpp',
+    'src/bamqc/InnerDist_prof.cpp',
+    'src/bamqc/IntervalTree.cpp',
+    'src/bamqc/Mappability.cpp',
+    'src/bamqc/parseBAM.cpp',
+    'src/bamqc/ReadDup_prof.cpp',
+    'src/bamqc/Results.cpp',
+    'src/bamqc/rRNA.cpp'
 ]
 
 BAMQC_DOCS = [
@@ -58,7 +58,7 @@ HTSLIB = [
 command_classes = {}
 
 setup(name = "BAMQC",
-    version = "0.6",
+    version = "0.6.0",
     description = 'Quality control tools for NGS alignment file',
     keywords='Quality control BAM file',
     packages = ['BAMqc'],
