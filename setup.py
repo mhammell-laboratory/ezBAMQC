@@ -6,6 +6,7 @@ import sys, os, subprocess
 # Thanks to Bo Peng (bpeng@mdanderson.org)
 # For the overloading functions for the 
 # distutils.compiler
+from distutils.core import setup, Extension
 
 try:
    from distutils.command.build_py import build_py_2to3 as build_py
@@ -91,13 +92,6 @@ BAMQC_SOURCE = [
     'src/bamqc/rRNA.cpp'
 ]
 
-BAMQC_DOCS = [
-    'doc/CONTACTS',
-    'doc/COPYING',
-    'doc/INSTALL',
-    'doc/THANKS'
-]
-
 HTSLIB_PUBLIC_HEADERS = [
 	'src/htslib/bgzf.h',
 	'src/htslib/faidx.h',
@@ -177,7 +171,7 @@ HTSLIB = [
 
 BAMqc_CFLAGS = ['-g','-fpermissive','-Wall',',-O9','-O3','-std=c++11','-fPIC'] 
 BAMqc_DFLAGS = ['-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE','-D_CURSES_LIB=1']
-BAMqc_INCLUDES = ['I./src/htslib']
+BAMqc_INCLUDES = ['./src/htslib']
 
 htslib_CFLAGS = ['-g','-Wall','-O2','-fPIC']
 
@@ -185,7 +179,6 @@ setup(name = "BAMQC",
     version = "0.6.0",
     description = 'Quality control tools for NGS alignment file',
     keywords = 'Quality control BAM file',
-    packages = ['BAMqc'],
 	# make sure to add all the nessacary requires
     install_requires = ['argparse'],
     scripts = ["BAMqc"],
@@ -208,17 +201,14 @@ setup(name = "BAMQC",
     zip_safe = False,
     include_package_data=True,
     ext_modules = [ 
-	      Extention('htslib',
-                    sources = [WRAPPER_CPP_FILE.format(PYVERSION)] + ASSOC_FILES
-                              + LIB_GSL + LIB_STAT,
-                    extra_compile_args = gccargs,
-                    library_dirs = [],
-                    libraries = libs ),
-		  Extention('BAMqc',
-                    sources = [WRAPPER_CPP_FILE.format(PYVERSION)] + ASSOC_FILES
-                              + LIB_GSL + LIB_STAT,
-                    extra_compile_args = gccargs,
-                    library_dirs = [],
-                    libraries = libs )
+	      Extension('htslib',
+                    sources = HTSLIB + HTSLIB_PUBLIC_HEADERS,
+                    extra_compile_args = htslib_CFLAGS
+                    ),
+		  Extension('BAMqc',
+                    sources = BAMQC_SOURCE + BAMQC_HEADER, 
+                    extra_compile_args = BAMqc_CFLAGS + BAMqc_DFLAGS,
+                    include_dirs = [BAMqc_INCLUDES]
+                    )
           ]        
     )
