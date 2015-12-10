@@ -175,13 +175,17 @@ HTSLIB = [
 	'src/cram/zfio.h'
 ]
 
+CFLAGS = ['-g','-fpermissive','-Wall',',-O9','-O3','-std=c++11','-fPIC'] 
+LDFLAGS = ['-O9','-fpermissive']
+DFLAGS = ['-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE','-D_CURSES_LIB=1']
+
 setup(name = "BAMQC",
     version = "0.6.0",
     description = 'Quality control tools for NGS alignment file',
-    keywords='Quality control BAM file',
+    keywords = 'Quality control BAM file',
     packages = ['BAMqc'],
 	# make sure to add all the nessacary requires
-    install_requires=['argparse'],
+    install_requires = ['argparse'],
     scripts = ["BAMqc"],
     author = "Ying Jin",
     author_email ="yjin@cshl.edu",
@@ -204,5 +208,6 @@ setup(name = "BAMQC",
     scripts=[
           'BAMqc'
     ],
-    cmdclassi = Extention
+    cmdclass = Extention('htslib',
+
     )
