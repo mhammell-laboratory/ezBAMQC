@@ -209,5 +209,9 @@ setup(name = "BAMQC",
           'BAMqc'
     ],
     cmdclass = Extention('htslib',
-
+          sources = [WRAPPER_CPP_FILE.format(PYVERSION)] + ASSOC_FILES
+                + LIB_GSL + LIB_STAT,
+          extra_compile_args = gccargs,
+          library_dirs = [],
+          libraries = libs          
     )
