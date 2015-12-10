@@ -175,9 +175,11 @@ HTSLIB = [
 	'src/cram/zfio.h'
 ]
 
-CFLAGS = ['-g','-fpermissive','-Wall',',-O9','-O3','-std=c++11','-fPIC'] 
-LDFLAGS = ['-O9','-fpermissive']
-DFLAGS = ['-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE','-D_CURSES_LIB=1']
+BAMqc_CFLAGS = ['-g','-fpermissive','-Wall',',-O9','-O3','-std=c++11','-fPIC'] 
+BAMqc_DFLAGS = ['-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE','-D_CURSES_LIB=1']
+BAMqc_INCLUDES = ['I./src/htslib']
+
+htslib_CFLAGS = ['-g','-Wall','-O2','-fPIC']
 
 setup(name = "BAMQC",
     version = "0.6.0",
@@ -205,10 +207,18 @@ setup(name = "BAMQC",
     ],
     zip_safe = False,
     include_package_data=True,
-    cmdclass = Extention('htslib',
-          sources = [WRAPPER_CPP_FILE.format(PYVERSION)] + ASSOC_FILES
-                + LIB_GSL + LIB_STAT,
-          extra_compile_args = gccargs,
-          library_dirs = [],
-          libraries = libs)         
+    ext_modules = [ 
+	      Extention('htslib',
+                    sources = [WRAPPER_CPP_FILE.format(PYVERSION)] + ASSOC_FILES
+                              + LIB_GSL + LIB_STAT,
+                    extra_compile_args = gccargs,
+                    library_dirs = [],
+                    libraries = libs ),
+		  Extention('BAMqc',
+                    sources = [WRAPPER_CPP_FILE.format(PYVERSION)] + ASSOC_FILES
+                              + LIB_GSL + LIB_STAT,
+                    extra_compile_args = gccargs,
+                    library_dirs = [],
+                    libraries = libs )
+          ]        
     )
