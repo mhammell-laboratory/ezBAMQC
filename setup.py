@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.7
 from distutils.core import setup, Extension
-import argparge
+import argparse
 import sys, os, subprocess
 
 # Thanks to Bo Peng (bpeng@mdanderson.org)
@@ -205,13 +205,10 @@ setup(name = "BAMQC",
     ],
     zip_safe = False,
     include_package_data=True,
-    scripts=[
-          'BAMqc'
-    ],
     cmdclass = Extention('htslib',
           sources = [WRAPPER_CPP_FILE.format(PYVERSION)] + ASSOC_FILES
                 + LIB_GSL + LIB_STAT,
           extra_compile_args = gccargs,
           library_dirs = [],
-          libraries = libs          
+          libraries = libs)         
     )
