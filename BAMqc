@@ -31,11 +31,11 @@ if os.path.exists('./libBAMqc.so'):
     so=ctypes.CDLL('./libBAMqc.so')
 elif in_path:
     so=ctypes.CDLL(in_path)
-elif inpython_path:
+elif in_pythonpath:
     so=ctypes.CDLL(in_pythonpath)
 else:
     print "can not find libBAMqc.so, you're not setup correctly, exiting\n"
-	sys.exit()
+    sys.exit()
     
 if sys.version_info[0] != 2 or sys.version_info[1] != 7:
     print >>sys.stderr, "\nYou are using python" + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + " BAMQC needs python2.7!\n"
