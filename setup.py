@@ -117,7 +117,7 @@ HTSLIB = [
 	'src/htslib/bgzf.c',
 	'src/htslib/faidx.c',
 	'src/htslib/hfile.c',
-	'src/htslib/hfile_irods.c',
+	#'src/htslib/hfile_irods.c',
 	'src/htslib/hfile_net.c',
 	'src/htslib/hts.c',
 	'src/htslib/knetfile.c',
@@ -148,7 +148,7 @@ HTSLIB = [
 	'src/htslib/cram/zfio.c'
 ]
 
-BAMqc_CFLAGS = ['-g','-fpermissive','-Wall',',-O9','-O3','-std=c++11','-fPIC'] 
+BAMqc_CFLAGS = ['-g','-fpermissive','-Wall','-O9','-O3','-std=c++11','-fPIC'] 
 BAMqc_DFLAGS = ['-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE','-D_CURSES_LIB=1']
 BAMqc_INCLUDES = ['./src/htslib']
 BAMqc_HEADERS = ['./src/bamqc']
@@ -161,7 +161,7 @@ setup(name = "BAMQC",
     description = 'Quality control tools for NGS alignment file',
     keywords = 'Quality control BAM file',
 	# make sure to add all the nessacary requires
-    install_requires = ['argparse'],
+    dependency_links=['https://gcc.gnu.org/gcc-4.8/','https://www.r-project.org/','https://cran.r-project.org/web/packages/corrplot/'],
     scripts = ["BAMqc"],
     author = "Ying Jin",
     author_email ="yjin@cshl.edu",
@@ -188,7 +188,7 @@ setup(name = "BAMQC",
                     include_dirs = htslib_HEADERS,
                     language = 'c++'
                     ),
-		  Extension('BAMqc',
+		  Extension('libBAMqc',
                     sources = BAMQC_SOURCE, 
                     extra_compile_args = BAMqc_CFLAGS + BAMqc_DFLAGS,
                     include_dirs = BAMqc_INCLUDES + BAMqc_HEADERS,

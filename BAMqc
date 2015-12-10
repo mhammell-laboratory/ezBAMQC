@@ -9,7 +9,6 @@ Created on July 24, 2015
 '''
 import argparse, subprocess,traceback
 import sys, os, time, string, re
-from math import floor
 import warnings, logging
 import collections
 import math, copy
