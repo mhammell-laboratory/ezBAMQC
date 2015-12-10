@@ -1,16 +1,62 @@
-import sys
-from setuptools import setup, Extension
+#!/usr/bin/env python2.7
+from distutils.core import setup, Extension
+import argparge
+import sys, os, subprocess
+
+# Thanks to Bo Peng (bpeng@mdanderson.org)
+# For the overloading functions for the 
+# distutils.compiler
+
+try:
+   from distutils.command.build_py import build_py_2to3 as build_py
+except ImportError:
+   from distutils.command.build_py import build_py
+
+# parallel compilation
+import multiprocessing, multiprocessing.pool
+
+def compile_parallel(
+        self,
+        sources,
+        output_dir=None,
+        macros=None,
+        include_dirs=None,
+        debug=0,
+        extra_preargs=None,
+        extra_postargs=None,
+        depends=None):
+
+    # Copied from distutils.ccompiler.CCompiler
+    macros, objects, extra_postargs, pp_opts, build = self._setup_compile(
+        output_dir, macros, include_dirs, sources, depends, extra_postargs)
+    cc_args = self._get_cc_args(pp_opts, debug, extra_preargs)
+    #
+    def _single_compile(obj):
+
+        try:
+            src, ext = build[obj]
+        except KeyError:
+            return
+        self._compile(obj, src, ext, cc_args, extra_postargs, pp_opts)
+    # convert to list, imap is evaluated on-demand
+    list(multiprocessing.pool.ThreadPool(multiprocessing.cpu_count()).imap(_single_compile, objects))
+    return objects
+
 import distutils.ccompiler
+distutils.ccompiler.CCompiler.compile=compile_parallel
 
-###THIS FEATURE DOESN'T work yet###
+# use ccache to speed up build
+# try:
+#     if subprocess.call(['ccache'], stderr = open(os.devnull, "w")):
+#         os.environ['CC'] = 'ccache gcc'
+# except OSError:
+#     pass
 
-"""
-Setup script for BAMQC  -- Comprehensive QC package for NGS data alignment file
-Copyright (c) 2015 Ying Jin <yjin@cshl.edu>
-This code is free software;you can redistribute it and/or modify it
-under the terms of the Artistic License (see the file COPYING included
-with the distribution).
-"""
+#
+# if building source package, we will need to have wrapper files for both
+# versions of Python
+#
+
 def readme():
 	with open('README.rst') as f:
 		return f.read()
@@ -129,14 +175,13 @@ HTSLIB = [
 	'src/cram/zfio.h'
 ]
 
-command_classes = {}
-
 setup(name = "BAMQC",
     version = "0.6.0",
     description = 'Quality control tools for NGS alignment file',
     keywords='Quality control BAM file',
     packages = ['BAMqc'],
-    install_requires=['argparse',''],
+	# make sure to add all the nessacary requires
+    install_requires=['argparse'],
     scripts = ["BAMqc"],
     author = "Ying Jin",
     author_email ="yjin@cshl.edu",
@@ -156,5 +201,8 @@ setup(name = "BAMQC",
     ],
     zip_safe = False,
     include_package_data=True,
-    cmdclass=command_classes,
+    scripts=[
+          'BAMqc'
+    ],
+    cmdclassi = Extention
     )

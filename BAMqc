@@ -16,14 +16,24 @@ import math, copy
 import sets
 from time import strftime
 from datetime import datetime
-
 import ctypes
-
 import multiprocessing,threading,Queue
 
-#remember to set to os.environ[''] variable to try and find itself, also check local directory
-so=ctypes.CDLL('./libBAMqc.so')
+def locBAMqc(loc):
+    for p in os.environ[loc].split(os.pathsep):
+	    if os.path.exists(os.path.join(p, 'libBAMqc.so')):
+             return os.path.join(p, 'libBAMqc.so')
 
+if os.path.exists('./libBAMqc.so'):
+    so=ctypes.CDLL('./libBAMqc.so')
+elif locBAMqc('PATH'):
+    print "PATH"
+elif locBAMqc('PYTHONPATH'):
+    print "PYTHONPATH"
+else:
+    print "can not find libBAMqc.so, you're not setup correctly, exiting\n"
+	sys.exit()
+    
 if sys.version_info[0] != 2 or sys.version_info[1] != 7:
     print >>sys.stderr, "\nYou are using python" + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + " BAMQC needs python2.7!\n"
     sys.exit()
