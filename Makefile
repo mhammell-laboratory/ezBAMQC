@@ -30,7 +30,7 @@ DFLAGS=     -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_CURSES_LIB=1
 LOBJS=      src/bamqc/GeneFeatures.o src/bamqc/rRNA.o src/bamqc/IntervalTree.o src/bamqc/InnerDist_prof.o \
             src/bamqc/Results.o src/bamqc/Mappability.o src/bamqc/Coverage_prof.o src/bamqc/parseBAM.o
 
-INCLUDES=   -I./include -I$(HTSDIR)
+INCLUDES=   -I$(HTSDIR)
 LIBCURSES=  -lcurses # -lXCurses
 
 prefix      = /usr/local
