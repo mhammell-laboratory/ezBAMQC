@@ -114,66 +114,47 @@ HTSLIB_PUBLIC_HEADERS = [
 ]
 
 HTSLIB = [
-	'src/bgzf.c',
-	'src/faidx.c',
-	'src/hfile_internal.h',
-	'src/hfile.c',
-	'src/hfile_irods.c',
-	'src/hfile_net.c',
-	'src/hts.c',
-	'src/knetfile.c',
-	'src/kstring.c',
-	'src/regidx.c',
-	'src/sam.c',
-	'src/synced_bcf_reader.c',
-	'src/tbx.c',
-	'src/vcf.c',
-	'src/vcf_sweep.c',
-	'src/vcfutils.c',
-	'src/cram/cram.h',
-	'src/cram/cram_codecs.c',
-	'src/cram/cram_codecs.h',
-	'src/cram/cram_decode.c',
-	'src/cram/cram_decode.h',
-	'src/cram/cram_encode.c',
-	'src/cram/cram_encode.h',
-	'src/cram/cram_index.c',
-	'src/cram/cram_index.h',
-	'src/cram/cram_io.c',
-	'src/cram/cram_io.h',
-	'src/cram/cram_samtools.c',
-	'src/cram/cram_samtools.h',
-	'src/cram/cram_stats.c',
-	'src/cram/cram_stats.h',
-	'src/cram/cram_structs.h',
-	'src/cram/files.c',
-	'src/cram/mFILE.c',
-	'src/cram/mFILE.h',
-	'src/cram/md5.c',
-	'src/cram/md5.h',
-	'src/cram/misc.h',
-	'src/cram/open_trace_file.c',
-	'src/cram/open_trace_file.h',
-	'src/cram/os.h',
-	'src/cram/pooled_alloc.c',
-	'src/cram/pooled_alloc.h',
-	'src/cram/sam_header.c',
-	'src/cram/sam_header.h',
-	'src/cram/string_alloc.c',
-	'src/cram/string_alloc.h',
-	'src/cram/thread_pool.c',
-	'src/cram/thread_pool.h',
-	'src/cram/vlen.c',
-	'src/cram/vlen.h',
-	'src/cram/zfio.c',
-	'src/cram/zfio.h'
+	'src/htslib/bgzf.c',
+	'src/htslib/faidx.c',
+	'src/htslib/hfile.c',
+	'src/htslib/hfile_irods.c',
+	'src/htslib/hfile_net.c',
+	'src/htslib/hts.c',
+	'src/htslib/knetfile.c',
+	'src/htslib/kstring.c',
+	'src/htslib/regidx.c',
+	'src/htslib/sam.c',
+	'src/htslib/synced_bcf_reader.c',
+	'src/htslib/tbx.c',
+	'src/htslib/vcf.c',
+	'src/htslib/vcf_sweep.c',
+	'src/htslib/vcfutils.c',
+	'src/htslib/cram/cram_codecs.c',
+	'src/htslib/cram/cram_decode.c',
+	'src/htslib/cram/cram_encode.c',
+	'src/htslib/cram/cram_index.c',
+	'src/htslib/cram/cram_io.c',
+	'src/htslib/cram/cram_samtools.c',
+	'src/htslib/cram/cram_stats.c',
+	'src/htslib/cram/files.c',
+	'src/htslib/cram/mFILE.c',
+	'src/htslib/cram/md5.c',
+	'src/htslib/cram/open_trace_file.c',
+	'src/htslib/cram/pooled_alloc.c',
+	'src/htslib/cram/sam_header.c',
+	'src/htslib/cram/string_alloc.c',
+	'src/htslib/cram/thread_pool.c',
+	'src/htslib/cram/vlen.c',
+	'src/htslib/cram/zfio.c'
 ]
 
 BAMqc_CFLAGS = ['-g','-fpermissive','-Wall',',-O9','-O3','-std=c++11','-fPIC'] 
 BAMqc_DFLAGS = ['-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE','-D_CURSES_LIB=1']
 BAMqc_INCLUDES = ['./src/htslib']
+BAMqc_HEADERS = ['./src/bamqc']
 
 htslib_CFLAGS = ['-g','-Wall','-O2','-fPIC']
+htslib_HEADERS = ['./src/htslib','./src/htslib/htslib','./src/htslib/cram']
 
 setup(name = "BAMQC",
     version = "0.6.0",
@@ -202,13 +183,16 @@ setup(name = "BAMQC",
     include_package_data=True,
     ext_modules = [ 
 	      Extension('htslib',
-                    sources = HTSLIB + HTSLIB_PUBLIC_HEADERS,
-                    extra_compile_args = htslib_CFLAGS
+                    sources = HTSLIB,
+                    extra_compile_args = htslib_CFLAGS,
+                    include_dirs = htslib_HEADERS,
+                    language = 'c++'
                     ),
 		  Extension('BAMqc',
-                    sources = BAMQC_SOURCE + BAMQC_HEADER, 
+                    sources = BAMQC_SOURCE, 
                     extra_compile_args = BAMqc_CFLAGS + BAMqc_DFLAGS,
-                    include_dirs = [BAMqc_INCLUDES]
+                    include_dirs = BAMqc_INCLUDES + BAMqc_HEADERS,
+                    language = 'c++'
                     )
           ]        
     )
