@@ -579,7 +579,7 @@ char *zlib_mem_inflate(char *cdata, size_t csize, size_t *size) {
 	}
 	s.avail_out += alloc_inc;
     }
-    inflateEnd(&s);
+    //inflateEnd(&s);
 
     *size = s.total_out;
     return (char *)data;

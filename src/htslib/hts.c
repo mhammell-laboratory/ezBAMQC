@@ -36,7 +36,8 @@ DEALINGS IN THE SOFTWARE.  */
 #include "htslib/hts.h"
 #include "cram/cram.h"
 #include "htslib/hfile.h"
-#include "version.h"
+//breaks setup.py
+//#include "version.h" 
 
 #include "htslib/kseq.h"
 #define KS_BGZF 1
@@ -52,10 +53,10 @@ KHASH_INIT2(s2i,, kh_cstr_t, int64_t, 1, kh_str_hash_func, kh_str_hash_equal)
 
 int hts_verbose = 3;
 
-const char *hts_version()
+/*const char *hts_version()
 {
     return HTS_VERSION;
-}
+}*/
 
 const unsigned char seq_nt16_table[256] = {
     15,15,15,15, 15,15,15,15, 15,15,15,15, 15,15,15,15,
@@ -142,7 +143,7 @@ static size_t decompress_peek(hFILE *fp, unsigned char *dest, size_t destsize)
         if (inflate(&zs, Z_SYNC_FLUSH) != Z_OK) break;
 
     destsize = zs.total_out;
-    inflateEnd(&zs);
+    //inflateEnd(&zs);
 
     return destsize;
 }
@@ -448,7 +449,7 @@ htsFile *hts_hopen(struct hFILE *hfile, const char *fn, const char *mode)
         #else
             // TODO Implement gzip hFILE adaptor
             hclose(hfile); // This won't work, especially for stdin
-            gzFile gzfp = strcmp(fn, "-")? gzopen(fn, "rb") : gzdopen(fileno(stdin), "rb");
+            //gzFile gzfp = strcmp(fn, "-")? gzopen(fn, "rb") : gzdopen(fileno(stdin), "rb");
         #endif
             if (gzfp) fp->fp.voidp = ks_init(gzfp);
             else goto error;
@@ -628,7 +629,7 @@ char **hts_readlist(const char *string, int is_file, int *_n)
 #if KS_BGZF
         BGZF *fp = bgzf_open(string, "r");
 #else
-        gzFile fp = gzopen(string, "r");
+        //gzFile fp = gzopen(string, "r");
 #endif
         if ( !fp ) return NULL;
 
