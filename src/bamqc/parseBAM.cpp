@@ -24,7 +24,7 @@
 #include <fstream>
 #include <unistd.h>
 
-#include "htslib/sam.h"
+#include "sam.h"
 
 
 

@@ -81,7 +81,6 @@ BAMQC_HEADER = [
 
 BAMQC_SOURCE = [
     'src/bamqc/Coverage_prof.cpp',
-    'src/bamqc/Coverage_prof.cpp',
     'src/bamqc/GeneFeatures.cpp',
     'src/bamqc/InnerDist_prof.cpp',
     'src/bamqc/IntervalTree.cpp',

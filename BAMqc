@@ -18,16 +18,23 @@ from datetime import datetime
 import ctypes
 import multiprocessing,threading,Queue
 
+def locate(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+             return os.path.join(root, name)
+
 def locBAMqc(loc):
     for p in os.environ[loc].split(os.pathsep):
-	    if os.path.exists(os.path.join(p, 'libBAMqc.so')):
-             return os.path.join(p, 'libBAMqc.so')
+        potential_file = locate('libBAMqc.so',p)
+        if potential_file:
+             return potential_file
 
 in_path = locBAMqc('PATH')
 in_pythonpath = locBAMqc('PYTHONPATH')
+in_local = locate('libBAMqc.so','./')
 
-if os.path.exists('./libBAMqc.so'):
-    so=ctypes.CDLL('./libBAMqc.so')
+if in_local:
+    so=ctypes.CDLL(in_local)
 elif in_path:
     so=ctypes.CDLL(in_path)
 elif in_pythonpath:
@@ -35,7 +42,9 @@ elif in_pythonpath:
 else:
     print "can not find libBAMqc.so, you're not setup correctly, exiting\n"
     sys.exit()
-    
+
+#so=ctypes.CDLL('/home/dmolik/bamqc/build/lib.linux-x86_64-2.7/libBAMqc.so')
+
 if sys.version_info[0] != 2 or sys.version_info[1] != 7:
     print >>sys.stderr, "\nYou are using python" + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + " BAMQC needs python2.7!\n"
     sys.exit()
