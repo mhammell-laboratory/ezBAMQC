@@ -1,62 +1,30 @@
 #!/usr/bin/env python2.7
-from distutils.core import setup, Extension
+# Setup for BAMqc, utilities for the Sequence Alignment/Map format.
+#
+#    Copyright (C) 2015 Bioinformatics Shared Resource, CSHL.
+#    Portions copyright (C) 2015 Cold Spring Harbor Laboratory.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+
 import argparse
 import sys, os, subprocess
-
-# Thanks to Bo Peng (bpeng@mdanderson.org)
-# For the overloading functions for the 
-# distutils.compiler
 from distutils.core import setup, Extension
-
-try:
-   from distutils.command.build_py import build_py_2to3 as build_py
-except ImportError:
-   from distutils.command.build_py import build_py
-
-# parallel compilation
-import multiprocessing, multiprocessing.pool
-
-def compile_parallel(
-        self,
-        sources,
-        output_dir=None,
-        macros=None,
-        include_dirs=None,
-        debug=0,
-        extra_preargs=None,
-        extra_postargs=None,
-        depends=None):
-
-    # Copied from distutils.ccompiler.CCompiler
-    macros, objects, extra_postargs, pp_opts, build = self._setup_compile(
-        output_dir, macros, include_dirs, sources, depends, extra_postargs)
-    cc_args = self._get_cc_args(pp_opts, debug, extra_preargs)
-    #
-    def _single_compile(obj):
-
-        try:
-            src, ext = build[obj]
-        except KeyError:
-            return
-        self._compile(obj, src, ext, cc_args, extra_postargs, pp_opts)
-    # convert to list, imap is evaluated on-demand
-    list(multiprocessing.pool.ThreadPool(multiprocessing.cpu_count()).imap(_single_compile, objects))
-    return objects
-
-import distutils.ccompiler
-distutils.ccompiler.CCompiler.compile=compile_parallel
-
-# use ccache to speed up build
-# try:
-#     if subprocess.call(['ccache'], stderr = open(os.devnull, "w")):
-#         os.environ['CC'] = 'ccache gcc'
-# except OSError:
-#     pass
-
-#
-# if building source package, we will need to have wrapper files for both
-# versions of Python
-#
 
 def readme():
 	with open('README.rst') as f:
@@ -147,12 +115,11 @@ HTSLIB = [
 	'src/htslib/cram/zfio.c'
 ]
 
-BAMqc_CFLAGS = ['-g','-fpermissive','-Wall','-O9','-O3','-std=c++11','-fPIC'] 
+BAMqc_CFLAGS = ['-fpermissive','-O3','-std=c++11'] 
 BAMqc_DFLAGS = ['-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE','-D_CURSES_LIB=1']
 BAMqc_INCLUDES = ['./src/htslib']
 BAMqc_HEADERS = ['./src/bamqc']
 
-htslib_CFLAGS = ['-g','-Wall','-O2','-fPIC']
 htslib_HEADERS = ['./src/htslib','./src/htslib/htslib','./src/htslib/cram']
 
 setup(name = "BAMQC",
@@ -183,15 +150,16 @@ setup(name = "BAMQC",
     ext_modules = [ 
 	      Extension('htslib',
                     sources = HTSLIB,
-                    extra_compile_args = htslib_CFLAGS,
                     include_dirs = htslib_HEADERS,
                     language = 'c++'
                     ),
 		  Extension('libBAMqc',
                     sources = BAMQC_SOURCE, 
                     extra_compile_args = BAMqc_CFLAGS + BAMqc_DFLAGS,
-                    include_dirs = BAMqc_INCLUDES + BAMqc_HEADERS,
-                    language = 'c++'
+                    include_dirs = BAMqc_HEADERS + htslib_HEADERS,
+                    #this needs to be made relative or take into acount final destination, testing is needed:
+                    extra_objects = ['build/lib.linux-x86_64-2.7/htslib.so'],
+                    language = 'c++',
                     )
           ]        
     )
