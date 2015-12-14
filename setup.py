@@ -157,13 +157,13 @@ setup(name = "BAMQC",
                     sources = HTSLIB,
                     include_dirs = htslib_HEADERS,
                     extra_compile_args = htslib_CFLAGS,
-                    define_macros = htslib_DFLAGS
+                    define_macros = htslib_DFLAGS,
+					libraries=['z']
                     ),
 		  Extension('libBAMqc',
                     sources = BAMQC_SOURCE, 
                     extra_compile_args = BAMqc_CFLAGS,
                     include_dirs = BAMqc_HEADERS + htslib_HEADERS,
-                    #this needs to be made relative or take into acount final destination, testing is needed:
                     extra_objects = BAMqc_EXTRA,
 					define_macros = BAMqc_DFLAGS
                     )
