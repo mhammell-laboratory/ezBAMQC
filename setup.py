@@ -160,7 +160,7 @@ setup(name = "BAMQC",
                     extra_compile_args = BAMqc_CFLAGS + BAMqc_DFLAGS,
                     include_dirs = BAMqc_HEADERS + htslib_HEADERS,
                     #this needs to be made relative or take into acount final destination, testing is needed:
-                    extra_objects = ['build/lib.linux-x86_64-2.7/htslib.so'],
+                    extra_objects = ['/usr/local/lib/libhts.a','/usr/local/lib/libhts.so',],
                     language = 'c++',
                     )
           ]        
