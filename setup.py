@@ -81,6 +81,7 @@ HTSLIB_PUBLIC_HEADERS = [
 	'src/htslib/vcfutils.h'
 ]
 
+
 HTSLIB = [
 	'src/htslib/bgzf.c',
 	'src/htslib/faidx.c',
