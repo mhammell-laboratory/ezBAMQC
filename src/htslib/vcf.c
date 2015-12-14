@@ -1219,7 +1219,7 @@ bcf_hdr_t *vcf_hdr_read(htsFile *fp)
             kstream_t *ks;
             kstring_t tmp;
             tmp.l = tmp.m = 0; tmp.s = 0;
-            //f = gzopen(fp->fn_aux, "r");
+            f = gzopen(fp->fn_aux, "r");
             ks = ks_init(f);
             while (ks_getuntil(ks, 0, &tmp, &dret) >= 0) {
                 int c;

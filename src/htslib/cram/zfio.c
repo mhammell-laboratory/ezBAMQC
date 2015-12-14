@@ -103,9 +103,9 @@ int zfpeek(zfp *zf) {
 }
 
 /* A replacement for either feof of gzeof */
-/*int zfeof(zfp *zf) {
+int zfeof(zfp *zf) {
     return zf->fp ? feof(zf->fp) : gzeof(zf->gz);
-}*/
+}
 
 /* A replacement for either fopen or gzopen */
 zfp *zfopen(const char *path, const char *mode) {

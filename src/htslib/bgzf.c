@@ -302,14 +302,14 @@ static int inflate_block(BGZF* fp, int block_length)
         return -1;
     }
     if (inflate(&zs, Z_FINISH) != Z_STREAM_END) {
-        //inflateEnd(&zs);
+        inflateEnd(&zs);
         fp->errcode |= BGZF_ERR_ZLIB;
         return -1;
     }
-    //if (inflateEnd(&zs) != Z_OK) {
-    //    fp->errcode |= BGZF_ERR_ZLIB;
-    //    return -1;
-    //}
+    if (inflateEnd(&zs) != Z_OK) {
+        fp->errcode |= BGZF_ERR_ZLIB;
+        return -1;
+    }
     return zs.total_out;
 }
 
@@ -810,12 +810,12 @@ int bgzf_close(BGZF* fp)
         if (fp->mt) mt_destroy(fp->mt);
 #endif
     }
-    //if ( fp->is_gzip )
-    //{
-    //    if (!fp->is_write) (void)inflateEnd(fp->gz_stream);
-    //    else (void)deflateEnd(fp->gz_stream);
-    //    free(fp->gz_stream);
-    //}
+    if ( fp->is_gzip )
+    {
+        if (!fp->is_write) (void)inflateEnd(fp->gz_stream);
+        else (void)deflateEnd(fp->gz_stream);
+        free(fp->gz_stream);
+    }
     ret = hclose(fp->fp);
     if (ret != 0) return -1;
     bgzf_index_destroy(fp);
