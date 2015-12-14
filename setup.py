@@ -59,6 +59,7 @@ BAMQC_SOURCE = [
     'src/bamqc/rRNA.cpp'
 ]
 
+###TODO HAVE TO SPLIT INTO TWO AND MAKE THE A FILE
 HTSLIB_PUBLIC_HEADERS = [
 	'src/htslib/bgzf.h',
 	'src/htslib/faidx.h',
