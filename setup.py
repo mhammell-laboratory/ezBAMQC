@@ -117,12 +117,15 @@ HTSLIB = [
 	'src/htslib/cram/zfio.c'
 ]
 
-BAMqc_CFLAGS = ['-fpermissive','-O3','-std=c++11'] 
-BAMqc_DFLAGS = ['-D_FILE_OFFSET_BITS=64','-D_LARGEFILE64_SOURCE','-D_CURSES_LIB=1']
+BAMqc_CFLAGS = ['-fpermissive','-O3','-std=c++11','-Wno-error=declaration-after-statement'] 
+BAMqc_DFLAGS = [('_FILE_OFFSET_BITS','64'),('_LARGEFILE64_SOURCE',''),('_CURSES_LIB','1')]
 BAMqc_INCLUDES = ['./src/htslib']
 BAMqc_HEADERS = ['./src/bamqc']
+BAMqc_EXTRA = ['build/lib.linux-x86_64-2.7/htslib.so']
 
+htslib_CFLAGS = ['-Wno-error=declaration-after-statement']
 htslib_HEADERS = ['./src/htslib','./src/htslib/htslib','./src/htslib/cram']
+htslib_DFLAGS = [('_FILE_OFFSET_BITS','64'),('_USE_KNETFILE','')]
 
 setup(name = "BAMQC",
     version = "0.6.0",
@@ -149,20 +152,20 @@ setup(name = "BAMQC",
     ],
     zip_safe = False,
     include_package_data=True,
-	cmdclass={'install': htslib},
     ext_modules = [ 
           Extension('htslib',
                     sources = HTSLIB,
                     include_dirs = htslib_HEADERS,
-                    language = 'c++'
+                    extra_compile_args = htslib_CFLAGS,
+                    define_macros = htslib_DFLAGS
                     ),
 		  Extension('libBAMqc',
                     sources = BAMQC_SOURCE, 
-                    extra_compile_args = BAMqc_CFLAGS + BAMqc_DFLAGS,
+                    extra_compile_args = BAMqc_CFLAGS,
                     include_dirs = BAMqc_HEADERS + htslib_HEADERS,
                     #this needs to be made relative or take into acount final destination, testing is needed:
-                    extra_objects = ['/usr/local/lib/libhts.so'],
-                    language = 'c++',
+                    extra_objects = BAMqc_EXTRA,
+					define_macros = BAMqc_DFLAGS
                     )
           ]        
     )
