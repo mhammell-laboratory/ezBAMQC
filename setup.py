@@ -149,19 +149,19 @@ setup(name = "BAMQC",
     ],
     zip_safe = False,
     include_package_data=True,
+	cmdclass={'install': htslib},
     ext_modules = [ 
-          #Extension('htslib',
-          #          sources = HTSLIB,
-          #          include_dirs = htslib_HEADERS,
-          #          language = 'c++'
-          #          ),
+          Extension('htslib',
+                    sources = HTSLIB,
+                    include_dirs = htslib_HEADERS,
+                    language = 'c++'
+                    ),
 		  Extension('libBAMqc',
                     sources = BAMQC_SOURCE, 
                     extra_compile_args = BAMqc_CFLAGS + BAMqc_DFLAGS,
                     include_dirs = BAMqc_HEADERS + htslib_HEADERS,
                     #this needs to be made relative or take into acount final destination, testing is needed:
-                    extra_objects = ['/usr/local/lib/libhts.a','/usr/local/lib/libhts.so'],
-					extra_link_args = ['-fPIC'],
+                    extra_objects = ['/usr/local/lib/libhts.so'],
                     language = 'c++',
                     )
           ]        
