@@ -106,8 +106,9 @@ int Coverage_prof::write(int totalReads){
         OUT4 << "max_x = round(log(max(knots(Fn)),2),0)\n";
         OUT4 << "xx = c(0,2^seq(0,max_x,by=2))\n";
         OUT4 << "y=Fn(xx)\n";
-        
-        OUT4 << "plot(x=xx,y=y,type=\"b\",col=\"blue\",pch=20,xlab=\"Number of Reads\",ylab=\"Cumulative proportion of Genes\")\n";
+        OUT4 << "xlog = log(xx[2:length(xx)],base=2)\n";
+        OUT4 << "plot(x=c(-1,xlog),y=y,xaxt = 'n',type=\"b\",col=\"blue\",pch=20,xlab=\"Number of Reads\",ylab=\"Cumulative proportion of Genes\")\n";
+        OUT4 << "axis(1,at = c(-1,seq(0,max_x,by=2)),labels=c(0,2^seq(0,max_x,by=2)))\n";
         OUT4 << "dev.state = dev.off()";
         OUT4.close();
         }    

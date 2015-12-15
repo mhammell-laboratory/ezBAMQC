@@ -43,8 +43,6 @@ else:
     print "can not find libBAMqc.so, you're not setup correctly, exiting\n"
     sys.exit()
 
-#so=ctypes.CDLL('/home/dmolik/bamqc/build/lib.linux-x86_64-2.7/libBAMqc.so')
-
 if sys.version_info[0] != 2 or sys.version_info[1] != 7:
     print >>sys.stderr, "\nYou are using python" + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + " BAMQC needs python2.7!\n"
     sys.exit()
@@ -312,7 +310,8 @@ def main():
     smp_res = dict()
 
     #working directory and output files
-    cur_dir = args.dir
+    cur_dir = os.path.abspath(args.dir)
+    cur_base_dir = os.path.basename(args.dir)
     cur_fig_dir = cur_dir+"/figs/"
     cur_data_dir = cur_dir + "/data/"
     data_file = cur_dir+"summary_data.txt"
@@ -348,6 +347,8 @@ def main():
 
     #sample correlation
     smp_corr_plot_file = cur_fig_dir+"smp_corr.png"
+    smp_repro_plot_file = cur_fig_dir+"smp_reproducibility.png"
+    smp_var_plot_file = cur_fig_dir+"smp_var.png"
     smp_inner_plot_file = cur_fig_dir+"smp_inner_dist.png"
     smp_cov_plot_file = cur_fig_dir+"smp_cov.png"
     smp_quality_plot_file = cur_fig_dir+"smp_qual.png"
@@ -372,17 +373,17 @@ def main():
         for k in range(len(args.labels)) :
             key = args.labels[k]
             if not smp_res[key].mapq_file == "" :
-                filenames_mapq += '"' + smp_res[key].mapq_file + '",'
+                filenames_mapq += '"' + cur_base_dir+ "/data/" + os.path.basename(smp_res[key].mapq_file) + '",'
                 header_mapq += '"'+key+'",'
             
             if not smp_res[key].insert_file == "" and smp_res[key].is_pairEnd:
                 pe_smp_cnt += 1
-                filenames_insert += '"' + smp_res[key].insert_file + '",'
+                filenames_insert += '"' + cur_base_dir + "/data/"+os.path.basename(smp_res[key].insert_file) + '",'
                 header_insert += '"'+key+'",'
             
             if not smp_res[key].geneCount_file == "" :
                 smp_cnt += 1
-                filenames_corr += '"' + smp_res[key].geneCount_file + '",'
+                filenames_corr += '"' + cur_base_dir + "/data/"+ os.path.basename(smp_res[key].geneCount_file) + '",'
                 header_corr += '"'+key+'",'
         
         header_corr = header_corr[0:len(header_corr)-1] + ')'
@@ -425,7 +426,36 @@ def main():
                 f.write("png(destfile,width=500,height=500,units='px')\n")
                 f.write("corrplot(M.cor,is.corr=T,order='FPC',method='color',type='full',add=F,diag=T)\n")
                 f.write("dev.state = dev.off()\n")
-                
+                f.write("nz_genes = length(M1[,1])\n")
+                f.write('destfile = "'+smp_repro_plot_file+'"\n')
+                f.write("if(nz_genes >0) { \n")
+                f.write("png(destfile,width=500,height=500,units='px')\n")
+                f.write("nz_gene_mm = rep(0,length(M1[1,]))\n")
+                f.write("for(i in 1:length(M1[1,])) { \n")
+                f.write("nz_gene_mm[i] = length(which(M1[,i]>0))/nz_genes * 100 } \n")
+                f.write("bplt <- barplot(nz_gene_mm,beside=T,border='NA',space=1.5,ylim=c(0,100),ylab='Genes reproducibly detected (%)',col='blue',names.arg=colnames(MM))\n")
+                f.write("text(y= nz_gene_mm+2, x= bplt, labels=paste(as.character(round(nz_gene_mm,digits=1)),'%',sep=''), xpd=TRUE)\n")
+                f.write("dev.state = dev.off()}\n")
+
+                f.write('destfile = "'+smp_var_plot_file+'"\n')
+                f.write("png(destfile,width=500,height=500,units='px')\n")
+                f.write("mad = rep(0,length(M1[,1]))\n")
+                f.write("nz_gene_median = rep(0,length(M1[,1]))\n")
+                f.write("for(i in 1:length(M1[,1])) { \n")
+                f.write("nz_gene_median[i] = median(M1[i,]) \n")
+                f.write("mad[i] = median(abs(M1[i,]-nz_gene_median[i])) } \n")
+                f.write("mad2 = mad[nz_gene_median >0] \n")
+                f.write("nz_gene_median2 = nz_gene_median[nz_gene_median>0] \n")
+                f.write("mad_vs_median = mad2/nz_gene_median2 \n")
+                f.write("nz_gene_median3 = log(nz_gene_median2, base=2)\n")
+                f.write("dd<-data.frame(nz_gene_median3,mad_vs_median) \n")
+                f.write("x = densCols(nz_gene_median3,mad_vs_median, colramp=colorRampPalette(c('black', 'white')))\n")
+                f.write("dd$dens <- col2rgb(x)[1,] + 1L \n")
+                f.write('cols <-  colorRampPalette(c("#000099", "#00FEFF", "#45FE4F", "#FCFF00", "#FF9400", "#FF3100"))(256)\n')
+                f.write('dd$col <- cols[dd$dens]\n')
+                f.write('plot(mad_vs_median ~ nz_gene_median3,data=dd[order(dd$dens),], col=col, pch=20,xlab="Gene expression (median RPM log2)",ylab="Median absolute deviation/median")\n')
+                f.write('dev.state = dev.off()\n')
+
                 #f.write('destfile = "'+smp_corr_plot_file2+'"\n')
                 #f.write("M.pc<-prcomp(t(MM_s))\n")
                 #f.write("png(destfile,width=500,height=500,units='px')\n")
@@ -515,24 +545,20 @@ def main():
             
             info("*** Correlation completed ***\n")
 
-    
-    outputToHTML(smp_res,args.labels,smp_corr_plot_file,smp_inner_plot_file, smp_quality_plot_file,smp_cov_plot_file,html_file)
+    #outputToHTML(smp_res,args.labels,smp_corr_plot_file,smp_inner_plot_file, smp_quality_plot_file,smp_cov_plot_file,html_file)
+    outputToHTML(smp_res,args.labels,html_file)
     info("*** BAM QC run completed. ***\n")
 
 
 def create_per_sample_plot(ifile,label,cur_data_dir,cur_fig_dir,res):
-    
         output_prefix_data = cur_data_dir + label
         output_prefix_fig = cur_fig_dir + label
-        
         try:
-
             subprocess.call("Rscript "+output_prefix_data+'.read_distr.r',shell=True)
         except :
             print("Error in plotting read distributions.\n")
             res.read_dist_plot_file1 = ""
         pass
-    
         try:
             subprocess.call("Rscript "+output_prefix_data+'.read_distr_pie.r',shell=True)
         except :
@@ -596,7 +622,8 @@ def create_per_sample_plot(ifile,label,cur_data_dir,cur_fig_dir,res):
 
 
 
-def outputToHTML(res_list,smps,corr_plot_file,smp_inner_plot_file,smp_quality_plot_file,smp_cov_plot_file,html_file):
+#def outputToHTML(res_list,smps,corr_plot_file,smp_inner_plot_file,smp_quality_plot_file,smp_cov_plot_file,html_file):
+def outputToHTML(res_list,smps,html_file):
     
     #smps = res_list.keys()
     tohtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">\n'
@@ -671,7 +698,6 @@ def outputToHTML(res_list,smps,corr_plot_file,smp_inner_plot_file,smp_quality_pl
         
     tohtml += '</ul>\n'    
     tohtml += '</div>\n'     
-    
         
     tohtml += '<div id="main" >\n'
     for i in range(len(smps)):
@@ -713,42 +739,38 @@ def outputToHTML(res_list,smps,corr_plot_file,smp_inner_plot_file,smp_quality_pl
             tohtml += '<tr><td>Pairs mapped to different chromosomes</td><td>'+str(res.paired_diff_chrom)+'</td></tr></tbody></table></div>\n'
             
         tohtml += '<div class="module"><h2 id="M'+str(i)+'1">Read Distribution</h2>\n'
-        tohtml += '<p><img class="indented" src="../'+res.read_dist_plot_file1+'" alt="Read Distribution"><img class="indented" src="../'+res.read_dist_plot_file2+'" alt="Read Distribution"></p></div>\n'
+        tohtml += '<p><img class="indented" src="./figs/'+os.path.basename(res.read_dist_plot_file1)+'" alt="Read Distribution"><img class="indented" src="./figs/'+os.path.basename(res.read_dist_plot_file2)+'" alt="Read Distribution"></p></div>\n'
         if res.no_clipping :
             tohtml += '<div class="module"><h2 id="M'+str(i)+'2">Mappability Profile</h2>\n'
-            tohtml += '<p>There is no soft clipping. <img class="indented" src="../'+res.mapq_plot_file+'" alt="MapQ Profile"> </p></div>\n'
+            tohtml += '<p>There is no soft clipping. <img class="indented" src="./figs/'+os.path.basename(res.mapq_plot_file)+'" alt="MapQ Profile"> </p></div>\n'
         else :
             tohtml += '<div class="module"><h2 id="M'+str(i)+'2">Mappability</h2>\n'
-            tohtml += '<p><img class="indented" src="../'+res.clipping_plot_file+'" alt="Mappablity Profile"> <img class="indented" src="../'+res.mapq_plot_file+'" alt="MapQ Profile"></p></div>\n'
+            tohtml += '<p><img class="indented" src="./figs/'+os.path.basename(res.clipping_plot_file)+'" alt="Mappablity Profile"> <img class="indented" src="./figs/'+os.path.basename(res.mapq_plot_file)+'" alt="MapQ Profile"></p></div>\n'
                         
         tohtml += '<div class="module"><h2 id="M'+str(i)+'3">Coverage</h2>\n'
-        tohtml += '<p><img class="indented" src="../'+res.read_cov_plot_file+'" alt="Read Coverage"> <img class="indented" src="../'+res.trans_cov_plot_file+'" alt="Read Coverage"></p></div>\n'
+        tohtml += '<p><img class="indented" src="./figs/'+os.path.basename(res.read_cov_plot_file)+'" alt="Read Coverage"> <img class="indented" src="./figs/'+os.path.basename(res.trans_cov_plot_file)+'" alt="Read Coverage"></p></div>\n'
           
         if res.is_pairEnd :
                 tohtml += '<div class="module"><h2 id="M'+str(i)+'4">Read Length and Insertion Size</h2>\n'
-                tohtml += '<p><img class="indented" src="../'+res.readLen_plot_file+'" alt="Read Length"> <img class="indented" src="../'+res.insert_plot_file+'" alt="Insertion Size"></p></div>\n'
+                tohtml += '<p><img class="indented" src="./figs/'+os.path.basename(res.readLen_plot_file)+'" alt="Read Length"> <img class="indented" src="./figs/'+os.path.basename(res.insert_plot_file)+'" alt="Insertion Size"></p></div>\n'
         else :
                 tohtml += '<div class="module"><h2 id="M'+str(i)+'4">Read Length</h2>\n'
-                tohtml += '<p><img class="indented" src="../'+res.readLen_plot_file+'" alt="Read Length"></p></div>\n'
+                tohtml += '<p><img class="indented" src="./figs/'+os.path.basename(res.readLen_plot_file)+'" alt="Read Length"></p></div>\n'
                 
-
-        
-    
     if len(res_list) >1 :
         tohtml += '<div class="Smp_corr"><h2 id="M'+str(smp_corr_pos)+'">Sample Correlation and Quality</h2>\n'
-        tohtml += '<p><img class="indented" src="../'+corr_plot_file+'" alt="Sample Correlation"><img class="indented" src="../'+smp_quality_plot_file+'" alt="Sample Correlation"></p>\n'
+        tohtml += '<p><img class="indented" src="./figs/smp_corr.png" alt="Sample Correlation"><img class="indented" src="./figs/smp_qual.png" alt="Sample Correlation"></p>\n'
         
         if res.is_pairEnd :
             tohtml += '<h2 id="M'+str(smp_corr_pos)+'">Sample Coverage and Insert size</h2>\n'
-            tohtml += '<p><img class="indented" src="../'+smp_cov_plot_file+'" alt="Sample Coverage"><img class="indented" src="../'+smp_inner_plot_file+'" alt="Sample insert size"></p></div>\n'
+            tohtml += '<p><img class="indented" src="./figs/smp_cov.png" alt="Sample Coverage"><img class="indented" src="./figs/smp_inner.png" alt="Sample insert size"></p></div>\n'
         else :
             tohtml += '<h2 id="M'+str(smp_corr_pos)+'">Sample Coverage</h2>\n'
-            tohtml += '<p><img class="indented" src="../'+smp_cov_plot_file+'" alt="Sample Coverage"></p></div>\n'
-
-
+            tohtml += '<p><img class="indented" src="./figs/smp_cov.png" alt="Sample Coverage"></p></div>\n'
+        tohtml += '<h2 id="M'+str(smp_corr_pos)+'">Sample Variation</h2>\n'
+        tohtml += '<p><img class="indented" src="./figs/smp_reproducibility.png" alt="Sample Variation"><img class="indented" src="./figs/smp_var.png" alt="Sample Variation"></p></div>\n'
 
     tohtml += '</div>\n'
-
 
     tohtml += '<div id="footer"><p>Produced by Bioinformatics Shared Resource at CSHL (version 0.5)</p></div></div></div></body></html>\n'
     

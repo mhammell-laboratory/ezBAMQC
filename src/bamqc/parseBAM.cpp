@@ -432,7 +432,7 @@ void process_aligned_fragment(global_context_t * global_context,thread_context_t
     if (global_context->rRNAIdx != NULL){
         if (global_context->rRNAIdx->is_rRNA(chrom1,exons1,strand) || global_context->rRNAIdx->is_rRNA(chrom2,exons2,strand)){
             thread_context->res->rRNA_read += 1;
-            std::cout << qname << std::endl;
+            //std::cout << qname << std::endl;
 	    if(cur_read1 != NULL){
 	       bam_destroy1(cur_read1);
 	    }
@@ -623,20 +623,14 @@ Results QC(std::string smp_name,GeneFeatures * geneIdx, rRNA * rRNAIdx,char * in
     //'''This class provides fuctions to parsing SAM or BAM files and quality controls.'''
     //'''constructor. input could be bam or sam'''
 
-    //int max_mapQ = 0;
     int q_cut = mapq;
-    //qc result
     global_context_t global_context;
     global_context.stranded = stranded;
     global_context.all_finished = 0;
     
-    //multi-thread
-    //pthread_t thread_object;
-    //threads = []
     //open SAM/BAM file
     samFile *fp_in = NULL;
     bam1_t * aligned_read = NULL;
-    //bam_header_t *bh = NULL;
     bam_hdr_t *header = NULL;
     
     std::string format = "BAM";
