@@ -5,7 +5,7 @@ Version 0.6.4
 
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
-.. `Pypi Page <https://pypi.python.org/pypi/BAMQC>`_
+`Pypi Page <https://pypi.python.org/pypi/BAMQC>`_
 
 `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
@@ -14,7 +14,7 @@ Installation guide for BAMQC for from source installs
 
 `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
 
-.. `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.1>`_
+`Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
 
 *Prerequisites:*
    * `python2.7 <https://www.python.org/download/releases/2.7/>`_
@@ -43,7 +43,7 @@ make sure that python2.7 is is in your PYTHONPATH, for permance add it to your .
 .. code: bash
  export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
-There are two methods of installation of BAMqc, from source and from pypi, once prequistes are setup. 
+There are three methods of installation of BAMqc, from source, setup.py, and from pypi, once prequistes are setup. 
 
 *From Source*
 
@@ -70,6 +70,11 @@ run make
 
 .. code: bash
   python2.7 setup.py install 
+
+*From Pypi*
+
+.. code: bash
+  pip2.7 install BAMqc
 
 Contacts
 --------
