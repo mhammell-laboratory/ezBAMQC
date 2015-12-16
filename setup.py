@@ -25,7 +25,6 @@
 import argparse
 import sys, os, subprocess
 from distutils.core import setup, Extension
-from setuptools import setup
 
 def readme():
 	with open('README.rst') as f:
