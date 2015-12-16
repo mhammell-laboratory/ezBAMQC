@@ -56,24 +56,24 @@ download source
 
 run make on htslib
 
-.. code: bash
+.. code:: bash
  cd src/htslib
  make 
 
 run make 
 
-.. code: bash
+.. code:: bash
  cd ../..
  make
 
 *From Setup.py*
 
-.. code: bash
+.. code:: bash
   python2.7 setup.py install 
 
 *From Pypi*
 
-.. code: bash
+.. code:: bash
   pip2.7 install BAMqc
 
 Contacts
