@@ -3,9 +3,6 @@ BAMQC
 
 *Version 0.5.6*
 
-THIS README IS IN THE PROCESS OF BEING UPDATED these instructions are for version 0.5.6
-=======================================================================================
-
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
 `Pypi Page <https://pypi.python.org/pypi/BAMQC>`_
