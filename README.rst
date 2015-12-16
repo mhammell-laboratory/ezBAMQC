@@ -1,7 +1,7 @@
 BAMQC
 =====
 
-*Version 0.5.6*
+*Version 0.6.1*
 
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
