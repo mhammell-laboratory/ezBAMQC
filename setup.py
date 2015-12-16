@@ -128,7 +128,7 @@ htslib_HEADERS = ['./src/htslib','./src/htslib/htslib','./src/htslib/cram']
 htslib_DFLAGS = [('_FILE_OFFSET_BITS','64'),('_USE_KNETFILE','')]
 
 setup(name = "BAMQC",
-    version = "0.6.3",
+    version = "0.6.4",
     description = 'Quality control tools for NGS alignment file',
     keywords = 'Quality control BAM file',
 	# make sure to add all the nessacary requires
