@@ -58,7 +58,7 @@ run make on htslib
 
 .. code: bash
  cd src/htslib
- make
+ make 
 
 run make 
 
@@ -66,12 +66,10 @@ run make
  cd ../..
  make
 
-*From Pypi*
-
-pip(2.7) install BAMqc
+*From Setup.py*
 
 .. code: bash
- pip install BAMqc
+  python2.7 setup.py install 
 
 Contacts
 --------
