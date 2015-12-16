@@ -21,7 +21,7 @@ Installation guide for BAMQC for from source installs
 *Prerequisites:*
    * `python2.7 <https://www.python.org/download/releases/2.7/>`_
    * `R <https://www.r-project.org/>`_
-   ** `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
+   * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
    * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_
 
 While there are multiple methods of installing the prerequistes it may
