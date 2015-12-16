@@ -12,47 +12,68 @@ BAMQC
 Installation guide for BAMQC for from source installs
 -----------------------------------------------------
 
-`Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.5.6.tar.gz>`_
+`Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.1.tar.gz>`_
 
-`With Prebuilt Binary <https://github.com/mhammell-laboratory/bamqc/releases/download/0.5.6/BAMQC-0.5.6.tar.gz>`_
+`With Prebuilt Binary <https://github.com/mhammell-laboratory/bamqc/releases/download/0.5.6/BAMQC-0.6.1.tar.gz>`_
 
-`Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.5.6>`_
+`Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.1>`_
 
 *Prerequisites:*
-   * python2.7
-   * R (corrplot package)
-   * GCC 4.8.1 or greater (Linux), Xcode 4.2 or greater (MacOSX) 
-     if compiling from source
+   * `python2.7 <https://www.python.org/download/releases/2.7/>`_
+   * `R <https://www.r-project.org/>`_
+   ** `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
+   * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_
 
-Below is an example of installing BAMQC on Linux system using BASH. You need to change '--prefix' directory, PYTHONPATH and PATH accordingly
+While there are multiple methods of installing the prerequistes it may
+help to look at (if using a yum based linux distro):
 
-::
+   * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
+   * `IUS <https://ius.io/>`_ for Python2.7
+   * `Software Collections <https://www.softwarecollections.org/>`_ for collections of software (like devtoolset 3 or python)
+   * `rpmfinder <https://www.rpmfind.net/>`_ for searching rpms across mutliple systems
 
-    tar -zxf BAMQC-VERSION.tar.gz
-    cd BAMQC-VERSION
+*Setup*
 
-To install BAMQC at the system level (which will require root privileges):
+make sure that the GCC comiler is in your PATH
 
-::
-
-    python setup.py install
-
-To install BAMQC in a custom location (e.g. /home/user/BAMQC):
-
-::
-
-    export PYTHONPATH=/home/user/BAMQC/lib/python2.7/site-packages:$PYTHONPATH.
-    # This sets up PYTHONPATH so that BAMQC knows where to install, later import, BAMQC modules.
-    export PATH=/home/user/BAMQC/bin:$PATH
-    # This sets up PATH, so that system knows where to find the executable file.
-    python setup.py install --prefix=/home/user/BAMQC
-    # This will install BAMQC at the user specified location (/home/user/BAMQC)
+.. code: bash
+ export PATH=/path/to/gcc:$PATH
 
 
-*NOTE:*
+make sure that python2.7 is is in your PYTHONPATH, for permance add it to your .bashrc
 
-* To produce graphical outputs, R (and the corrplot R package) must be installed.
-* If the installation failed with error like: /usr/bin/ld: cannot find -lz, you may need to install a shared zlib library on your system.
+.. code: bash
+ export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
+
+There are two methods of installation of BAMqc, from source and from pypi, once prequistes are setup. 
+
+*From Source*
+
+download source 
+
+.. code: bash
+ wget https://github.com/mhammell-laboratory/bamqc/archive/0.6.1.tar.gz
+ tar xvfz bamqc-0.6.1.tar.gz
+ cd bamqc-0.6.1
+
+run make on htslib
+
+.. code: bash
+ cd src/htslib
+ make
+
+run make 
+
+.. code: bash
+ cd ../..
+ make
+
+*From Pypi*
+
+pip(2.7) install BAMqc
+
+.. code: bash
+ pip install BAMqc
 
 Contacts
 --------
@@ -62,9 +83,9 @@ Ying Jin: yjin@cshl.edu
 Acknowledgements goes to
 ------------------------
 
-1. Samtools and pysam contributors
-2. Molly Hammell and members of her laboratory at Cold Spring Harbor Laboratory
-3. Users' valuable feedback
+#) Samtools and pysam contributors
+#) Molly Hammell and members of her laboratory at Cold Spring Harbor Laboratory
+#) Users' valuable feedback
 
 Copying & distribution
 ----------------------
