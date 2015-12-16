@@ -1,7 +1,7 @@
 BAMQC
 =====
 
-Version 0.6.3
+Version 0.6.4
 
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
@@ -12,7 +12,7 @@ Version 0.6.3
 Installation guide for BAMQC for from source installs
 -----------------------------------------------------
 
-`Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.1.tar.gz>`_
+`Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
 
 .. `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.1>`_
 
@@ -50,9 +50,9 @@ There are two methods of installation of BAMqc, from source and from pypi, once 
 download source 
 
 .. code: bash
- wget https://github.com/mhammell-laboratory/bamqc/archive/0.6.1.tar.gz
- tar xvfz bamqc-0.6.1.tar.gz
- cd bamqc-0.6.1
+ wget https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz
+ tar xvfz bamqc-0.6.4.tar.gz
+ cd bamqc-0.6.4
 
 run make on htslib
 
