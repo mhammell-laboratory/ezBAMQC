@@ -720,7 +720,7 @@ def outputToHTML(res_list,smps,html_file):
             tohtml += '<tr><td>Splice Reads</td><td>'+str(res.splice)+'</td></tr>\n'
             tohtml += '<tr><td>Non-Splice Reads</td><td>'+str(res.noSplice)+'</td></tr></tbody></table></div>\n'
         else : # paired read
-            tohtml += '<tr><td>Uniquely Mapped Paires</td><td>'+str(res.paired_reads)+'</td></tr>\n'
+            tohtml += '<tr><td>Uniquely Mapped Pairs</td><td>'+str(res.paired_reads)+'</td></tr>\n'
             tohtml += '<tr><td>Uniquely Mapped Read1</td><td>'+str(res.mapped_read1)+'</td></tr>\n'
             tohtml += '<tr><td>Uiquely Mapped Read2</td><td>'+str(res.mapped_read2)+'</td></tr>\n'
             tohtml += '<tr><td>Multi-reads</td><td>'+str(res.multi_mapped_reads)+'</td></tr>\n'
