@@ -34,13 +34,13 @@ help to look at (if using a yum based linux distro):
 
 make sure that the GCC comiler is in your PATH
 
-.. code: bash
+.. code:: bash
  export PATH=/path/to/gcc:$PATH
 
 
 make sure that python2.7 is is in your PYTHONPATH, for permance add it to your .bashrc
 
-.. code: bash
+.. code:: bash
  export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
 There are three methods of installation of BAMqc, from source, setup.py, and from pypi, once prequistes are setup. 
@@ -49,13 +49,14 @@ There are three methods of installation of BAMqc, from source, setup.py, and fro
 
 download source 
 
-.. code: bash
+.. code:: bash
  wget https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz
  tar xvfz bamqc-0.6.4.tar.gz
  cd bamqc-0.6.4
 
 run make on htslib
-note: make sure to have -fPIC in your cflags ie: `export CFLAGS="$CFLAGS -fPIC"`
+
+note: make sure to have -fPIC in your cflags ie: ``export CFLAGS="$CFLAGS -fPIC"``
 
 .. code:: bash
  
