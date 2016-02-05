@@ -55,6 +55,7 @@ download source
  cd bamqc-0.6.4
 
 run make on htslib
+note: make sure to have -fPIC in your cflags ie: `export CFLAGS="$CFLAGS -fPIC"`
 
 .. code:: bash
  
