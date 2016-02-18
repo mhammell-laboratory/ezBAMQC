@@ -3,6 +3,12 @@ BAMQC
 
 Version 0.6.4
 
+.. image:: picture.jpeg
+  :width: 200 px
+  :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
+  :align: right
+
+
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
 `Pypi Page <https://pypi.python.org/pypi/BAMQC>`_
