@@ -3,7 +3,7 @@ BAMQC
 
 Version 0.6.4
 
-.. image:: bamqc-icon.png
+.. image::bamqc-icon.png
   :width: 200 px
   :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
   :align: right
