@@ -1,13 +1,15 @@
+
+
+.. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
+   :width: 200 px
+   :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
+   :align: right
+   :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
+
 BAMQC
 =====
 
 Version 0.6.4
-
-.. image::https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
-  :width: 200 px
-  :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
-  :align: right
-  :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
 
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
