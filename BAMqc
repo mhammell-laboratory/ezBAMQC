@@ -122,6 +122,8 @@ def read_in_res(cur_data_dir,label):
             for line in f :
                 line = line.strip()
                 (name,value) = line.split('\t')
+                if name == "rRNA_read" :
+                    res.rRNA_read = int(value)
                 if name == "low_qual_read1" :
                     res.low_qual_read1 = int(value)
                 if name == "low_qual_read2" :
@@ -718,7 +720,8 @@ def outputToHTML(res_list,smps,html_file):
             tohtml += '<tr><td>Forward Reads</td><td>'+str(res.forward_read)+'</td></tr>\n'
             tohtml += '<tr><td>Reverse Reads</td><td>'+str(res.reverse_read)+'</td></tr>\n'
             tohtml += '<tr><td>Splice Reads</td><td>'+str(res.splice)+'</td></tr>\n'
-            tohtml += '<tr><td>Non-Splice Reads</td><td>'+str(res.noSplice)+'</td></tr></tbody></table></div>\n'
+            tohtml += '<tr><td>Non-Splice Reads</td><td>'+str(res.noSplice)+'</td></tr>\n'
+            tohtml += '<tr><td>rRNA Reads</td><td>'+str(res.rRNA_read)+'</td></tr></tbody></table></div>\n'
         else : # paired read
             tohtml += '<tr><td>Uniquely Mapped Pairs</td><td>'+str(res.paired_reads)+'</td></tr>\n'
             tohtml += '<tr><td>Uniquely Mapped Read1</td><td>'+str(res.mapped_read1)+'</td></tr>\n'
@@ -736,7 +739,8 @@ def outputToHTML(res_list,smps,html_file):
             tohtml += '<tr><td>Reverse Reads</td><td>'+str(res.reverse_read)+'</td></tr>\n'
             tohtml += '<tr><td>Splice Reads</td><td>'+str(res.splice)+'</td></tr>\n'
             tohtml += '<tr><td>Non-Splice Reads</td><td>'+str(res.noSplice)+'</td></tr>\n'
-            tohtml += '<tr><td>Pairs mapped to different chromosomes</td><td>'+str(res.paired_diff_chrom)+'</td></tr></tbody></table></div>\n'
+            tohtml += '<tr><td>Pairs mapped to different chromosomes</td><td>'+str(res.paired_diff_chrom)+'</td></tr>\n'
+            tohtml += '<tr><td>rRNA Reads</td><td>'+str(res.rRNA_read)+'</td></tr></tbody></table></div>\n'
             
         tohtml += '<div class="module"><h2 id="M'+str(i)+'1">Read Distribution</h2>\n'
         tohtml += '<p><img class="indented" src="./figs/'+os.path.basename(res.read_dist_plot_file1)+'" alt="Read Distribution"><img class="indented" src="./figs/'+os.path.basename(res.read_dist_plot_file2)+'" alt="Read Distribution"></p></div>\n'

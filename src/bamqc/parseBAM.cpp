@@ -57,12 +57,20 @@ DEF BAM_CDIFF      = 8*/
 
 typedef struct
 {
+    bam1_t * first;
+    bam1_t * second;
+    int type;
+} read_pair_t ;
+
+typedef struct
+{
     unsigned short thread_id;
     pthread_t thread_object;
     //pthread_spinlock_t cur_reads_lock;
     pthread_spinlock_t cur_reads_lock;
     
-    std::vector<std::pair<bam1_t *,bam1_t *> > *cur_reads;
+    //std::vector<std::pair<bam1_t *,bam1_t *> > *cur_reads;
+    std::vector<read_pair_t> * cur_reads;
     
     Results * res;
     InnerDist_prof * inDist_prof;
@@ -129,48 +137,6 @@ std::vector<std::pair<int, int> > fetch_exon(int st,uint32_t * cigar,uint32_t n_
     return exon_bound;
 }
 
-//return flag and gene id
-/*std::pair<int, int> ovp_gene(GeneFeatures * geneIdx,std::string chrom1,std::vector<std::pair<int,int> >exon_blocks1,std::string chrom2,std::vector<std::pair<int, int> > exon_blocks2,std::string strand,std::vector<int> * mapped_exons)
-{
-    std::vector<int> res1 = geneIdx->Gene_annotation(chrom1,exon_blocks1,strand,mapped_exons);
-    std::vector<int> res2 = geneIdx->Gene_annotation(chrom2,exon_blocks2,strand,mapped_exons);
-    
-    //intersect genes1 and genes2
-    if (res1.size() > 1 && res2.size() > 1 )
-    {
-        int type1 = res1[0];
-        int type2 = res2[0];
-        
-        if (res1.size() == 2 && res2.size() == 2){
-            if (res1[1] == res2[1]){
-                if(type1 < type2) {return std::pair<int,int> (type1,res1[1]);}
-                else { return std::pair<int,int> (type2,res1[1]); }
-            }
-            else { return std::pair<int,int> (-1,res1[1]);} //ambiguous
-            
-        }
-        if (res1.size() == 2 && res2.size() > 2) {
-            
-            return std::pair<int,int> (type1,res1[1]);
-        }
-        if (res2.size() == 2 && res1.size() >2) {
-            return std::pair<int,int> (type2,res2[1]);
-        }
-        if (res2.size() > 2 && res1.size() > 2) {
-            if(type1 < type2) { return std::pair<int,int> (type1,-1);}
-            else { return std::pair<int,int> (type2,-1); }
-        }
-        
-    }
-    if (res1.size() ==2 && res2.size() ==1 )
-    { return std::pair<int,int> (res1[0],res1[1]);}
-    
-    if (res2.size() == 2 && res1.size() == 1)
-    { return std::pair<int,int> (res2[0],res2[1]); }
-    
-    return std::pair<int, int> (-1,-1);
-    
-}*/
 
 std::pair<int, int> ovp_gene( GeneFeatures * geneIdx,std::string chrom1,std::vector<std::pair<int,int> >exon_blocks1,std::string chrom2,std::vector<std::pair<int, int> > exon_blocks2,std::string strand,std::vector<int> * mapped_exons)
 {
@@ -319,7 +285,8 @@ std::pair<int, int> ovp_gene( GeneFeatures * geneIdx,std::string chrom1,std::vec
     
 }
 
-void process_aligned_fragment(global_context_t * global_context,thread_context_t * thread_context,std::pair<bam1_t *,bam1_t *> read_pair)
+//void process_aligned_fragment(global_context_t * global_context,thread_context_t * thread_context,std::pair<bam1_t *,bam1_t *> read_pair)
+void process_aligned_fragment(global_context_t * global_context,thread_context_t * thread_context,read_pair_t  read_pair)
 {
     
     bam1_t * cur_read1 = read_pair.first;
@@ -341,7 +308,10 @@ void process_aligned_fragment(global_context_t * global_context,thread_context_t
         {
             uint32_t *cigar = bam_get_cigar(cur_read1);
             char * name = bam_get_qname(cur_read1);
-            thread_context-> clip_prof->set(cur_read1->core.l_qseq,cur_read1->core.n_cigar,cigar,cur_read1->core.qual);
+            
+            if (read_pair.type == 0) { //only for uniq-read
+                thread_context-> clip_prof->set(cur_read1->core.l_qseq,cur_read1->core.n_cigar,cigar,cur_read1->core.qual);
+            }
             chrom1_id  =  cur_read1->core.tid;
 
             qname = std::string(name);
@@ -349,7 +319,7 @@ void process_aligned_fragment(global_context_t * global_context,thread_context_t
 			chrom1 = global_context->refnames[cur_read1->core.tid];
 			}
 			else {
-			  std::cout <<"missing reference sequences." << std::endl;
+			  std::cout << (size_t)cur_read1->core.tid  << "\t" << "missing reference sequences." << std::endl;
 			  std::exit(1);
 			}
 
@@ -365,7 +335,9 @@ void process_aligned_fragment(global_context_t * global_context,thread_context_t
     if(cur_read2 != NULL){
         if(! IS_UNMAPPED(cur_read2)){
             uint32_t *cigar = bam_get_cigar(cur_read2);
-            thread_context->clip_prof->set(cur_read2->core.l_qseq,cur_read2->core.n_cigar,cigar,cur_read2->core.qual);
+            if (read_pair.type ==0) {
+                thread_context->clip_prof->set(cur_read2->core.l_qseq,cur_read2->core.n_cigar,cigar,cur_read2->core.qual);
+            }
             strand2 =  IS_REVERSE(cur_read2) ? "-" : "+";
             
             if (global_context-> stranded =="reverse") {
@@ -376,13 +348,43 @@ void process_aligned_fragment(global_context_t * global_context,thread_context_t
 			chrom2 = global_context->refnames[cur_read2->core.tid];
 			}
 			else {
-			  std::cout <<"missing reference sequences." << std::endl;
+			  std::cout << (size_t)cur_read2->core.tid << "\t" <<"missing reference sequences." << std::endl;
 			  std::exit(1);
 			}
             exons2 = fetch_exon(cur_read2->core.pos, cigar,cur_read2->core.n_cigar, global_context->format);
             intron_blocks2 = fetch_intron(cur_read2->core.pos,cigar,cur_read2->core.n_cigar,global_context->format);
         }
     }
+
+    if (cur_read1 == NULL || IS_UNMAPPED(cur_read1)) {
+        strand1 =  (strand2 == "-") ? "+" : "-";
+    }
+    std::string strand = strand1;
+    if (global_context->stranded == "no"){
+        strand = ".";
+    }
+
+    //type =1 means multi-read. rRNA read
+    if (read_pair.type == 1) {
+        
+        //std::cout << chrom1 << "\t" << chrom2 << std::endl;
+
+        if (global_context->rRNAIdx != NULL){
+            if (global_context->rRNAIdx->is_rRNA(chrom1,exons1,strand) || global_context->rRNAIdx->is_rRNA(chrom2,exons2,strand)){
+                thread_context->res->rRNA_read += 1;
+                //std::cout << qname << std::endl;
+                if(cur_read1 != NULL){
+                    bam_destroy1(cur_read1);
+                }
+                if(cur_read2 != NULL){
+                    bam_destroy1(cur_read2);
+                }
+            return;
+            }
+        }
+    }
+    else { //uniq read
+
     
     if (intron_blocks1.size() + intron_blocks2.size() == 0){
         thread_context->res->noSplice += 1;
@@ -408,25 +410,16 @@ void process_aligned_fragment(global_context_t * global_context,thread_context_t
         }
         if  (chrom1_id != chrom2_id ){
             thread_context->res->paired_diff_chrom += 1;
-	    if(cur_read1 != NULL){
-	        bam_destroy1(cur_read1);
-	    }
-	    if(cur_read2 != NULL){
-	        bam_destroy1(cur_read2);
-	    }
+	        if(cur_read1 != NULL){
+	            bam_destroy1(cur_read1);
+	        }
+	        if(cur_read2 != NULL){
+                bam_destroy1(cur_read2);
+	        }
             return;
         }
     }
-    
-    if (cur_read1 == NULL || IS_UNMAPPED(cur_read1)) {
-        strand1 =  (strand2 == "-") ? "+" : "-";
-    }
-    std::string strand = strand1;
-    if (global_context->stranded == "no"){
-        //strand1 = ".";
-        //strand2 = ".";
-        strand = ".";
-    }
+
     //mapped read len
     //rRNA read
     if (global_context->rRNAIdx != NULL){
@@ -501,6 +494,7 @@ void process_aligned_fragment(global_context_t * global_context,thread_context_t
 	if(cur_read2 != NULL){
 	    bam_destroy1(cur_read2);
 	}
+  }//uniq read
 }
 
 void* worker(void * vargs)
@@ -511,7 +505,8 @@ void* worker(void * vargs)
     delete args;
 
     while (1){
-        std::pair<bam1_t *, bam1_t *> cur_read_pair;
+        //std::pair<bam1_t *, bam1_t *> cur_read_pair;
+        read_pair_t  cur_read_pair;
         while(1){
             int is_retrieved = 0;
             pthread_spin_lock(&thread_context->cur_reads_lock);
@@ -545,7 +540,9 @@ void init_thread(global_context_t * global_context,unsigned short threadNumber,i
 	    thread_context_t *th_contx = new thread_context_t();
         pthread_spin_init(&th_contx->cur_reads_lock, PTHREAD_PROCESS_PRIVATE);
 		th_contx->thread_id = i;
-        th_contx->cur_reads = new std::vector<std::pair<bam1_t *,bam1_t *> >() ;
+       // th_contx->cur_reads = new std::vector<std::pair<bam1_t *,bam1_t *> >() ;
+        
+        th_contx->cur_reads = new std::vector<read_pair_t> ();
         
 		th_contx->res = new Results();
         th_contx->clip_prof = new Clipping_prof(mapq);
@@ -565,7 +562,8 @@ void init_thread(global_context_t * global_context,unsigned short threadNumber,i
     }
 	else {
 	    thread_context_t *th_contx = new thread_context_t();
-        th_contx->cur_reads = new std::vector<std::pair<bam1_t *,bam1_t *> >() ;
+        //th_contx->cur_reads = new std::vector<std::pair<bam1_t *,bam1_t *> >() ;
+        th_contx->cur_reads = new std::vector<read_pair_t> ();
         
 		th_contx->res = new Results();
         th_contx->clip_prof = new Clipping_prof(mapq);
@@ -673,14 +671,18 @@ Results QC(std::string smp_name,GeneFeatures * geneIdx, rRNA * rRNAIdx,char * in
     //ReadDup_prof main_rDup_prof(outdir,outdir_fig);
     InnerDist_prof main_inDist_prof(outdir+smp_name,outdir_fig+smp_name);
 
-    // int lineno = 0;
+    int lineno = 0;
 	global_context.geneIdx = geneIdx;
 	global_context.rRNAIdx = rRNAIdx;
     init_thread(&global_context, threadNumber,mapq);
    
     int current_thread_id = 0;
+    
     while(sam_read1(fp_in, header,aligned_read) > 0)
     {
+        lineno +=1 ;
+        //std::cout << lineno << std::endl;
+        
         std::string qname ="";
         char * name = bam_get_qname(aligned_read);
         if(name !=NULL)
@@ -728,32 +730,65 @@ Results QC(std::string smp_name,GeneFeatures * geneIdx, rRNA * rRNAIdx,char * in
                             bam_destroy1(cur_read);
                             cur_read = NULL;
                         }
+                        if (cur_read ){
+                            if (IS_REVERSE(cur_read)) {main_res.reverse_read += 1;}
+                            else {main_res.forward_read += 1;}
+                            read_pair_t read_pair; // = new read_pair_t();
+                            read_pair.first = cur_read;
+                            read_pair.second = NULL;
+                            read_pair.type = 0;
+                            
+                            if(global_context.thread_number >1){
+
+                                thread_context_t * thread_context = global_context.thread_contexts[current_thread_id];
+                                pthread_spin_lock(&thread_context->cur_reads_lock);
+                                
+                                //thread_context->cur_reads->push_back(std::pair<bam1_t *,bam1_t *>(cur_read,NULL));
+                                thread_context->cur_reads->push_back(read_pair);
+                                
+                                pthread_spin_unlock(&thread_context->cur_reads_lock);
+                                current_thread_id++;
+                                if(current_thread_id >= global_context.thread_number) current_thread_id = 0;
+                            }
+                            else {
+                               // process_aligned_fragment(&global_context,global_context.thread_contexts[0],std::pair<bam1_t *,bam1_t *> (cur_read,NULL));
+                                process_aligned_fragment(&global_context,global_context.thread_contexts[0],read_pair);
+                            } 
+                        }
+
                     }
                     else { //multi reads
                         main_res.multi_mapped_reads += 1;
                         main_res.total_reads += 1;
                         cur_read = alignments_per_read[0];
+                        //check whether it's rRNA read using only one of the multialignments
                         main_clip_prof.set_qual(cur_read->core.qual);
-                        for(unsigned int i=0;i<alignments_per_read.size();i++){
+                        
+                        //for(unsigned int i=0;i<alignments_per_read.size();i++){
+                        for(unsigned int i=1;i<alignments_per_read.size();i++){
                             bam_destroy1(alignments_per_read[i]);
                         }
-                        cur_read = NULL;
-                    }
-                    if (cur_read ){
-                        if (IS_REVERSE(cur_read)) {main_res.reverse_read += 1;}
-                        else {main_res.forward_read += 1;}
-                          if(global_context.thread_number >1){
+                        //cur_read = NULL;
+                        read_pair_t  read_pair; // = new read_pair_t();
+                        read_pair.first = cur_read;
+                        read_pair.second = NULL;
+                        read_pair.type = 1;
+                        
+                        if(global_context.thread_number >1){
                         //thread_context_t * thread_context = global_context.thread_contexts + current_thread_id;
                         thread_context_t * thread_context = global_context.thread_contexts[current_thread_id];
                         pthread_spin_lock(&thread_context->cur_reads_lock);
-                        thread_context->cur_reads->push_back(std::pair<bam1_t *,bam1_t *>(cur_read,NULL));
+                            
+                        thread_context->cur_reads->push_back(read_pair);
+                        //thread_context->cur_reads->push_back(std::pair<bam1_t *,bam1_t *>(cur_read,NULL));
                         pthread_spin_unlock(&thread_context->cur_reads_lock);
                         current_thread_id++;
                         if(current_thread_id >= global_context.thread_number) current_thread_id = 0;
                         }
 						else {
-                           process_aligned_fragment(&global_context,global_context.thread_contexts[0],std::pair<bam1_t *,bam1_t *> (cur_read,NULL));
-                        //cur_reads.push_back(std::pair<bam1_t *, bam1_t *> (cur_read,NULL));
+                           //process_aligned_fragment(&global_context,global_context.thread_contexts[0],std::pair<bam1_t *,bam1_t *> (cur_read,NULL));
+                            process_aligned_fragment(&global_context,global_context.thread_contexts[0],read_pair);
+                        
                        } 
                     }
                     alignments_per_read.clear();
@@ -782,19 +817,49 @@ Results QC(std::string smp_name,GeneFeatures * geneIdx, rRNA * rRNAIdx,char * in
                     //multi-reads
                     if (multi_read1.size() >1 || multi_read2.size() > 1){
                         main_res.multi_mapped_reads += 1;
+                        read_pair_t  read_pair;
+                        read_pair.first = NULL;
+                        read_pair.second = NULL;
+                        read_pair.type = 1;
+                        
                         if (multi_read1.size() > 1 ){
                             main_clip_prof.set_qual(multi_read1[0]->core.qual);
+                            read_pair.first = multi_read1[0];
                         }
                         if (multi_read2.size() > 1 ){
                             main_clip_prof.set_qual(multi_read2[0]->core.qual);
+                            read_pair.second = multi_read2[0];
                         }
-                        for(unsigned int i=0;i< multi_read1.size();i++)
+                        //for(unsigned int i=0;i< multi_read1.size();i++)
+                        for(unsigned int i=1;i< multi_read1.size();i++)
                         {
                             bam_destroy1(multi_read1[i]);
                         }
-                        for(unsigned int i=0;i< multi_read2.size();i++)
+                        //for(unsigned int i=0;i< multi_read2.size();i++)
+                        for(unsigned int i=1;i< multi_read2.size();i++)
                         {
                             bam_destroy1(multi_read2[i]);
+                        }
+                        //read_pair_t * read_pair = new read_pair_t();
+                        
+                        
+                        if(global_context.thread_number > 1){
+                            //thread_context_t * thread_context = global_context.thread_contexts + current_thread_id;
+                            thread_context_t * thread_context = global_context.thread_contexts[current_thread_id];
+                            
+                            pthread_spin_lock(&thread_context->cur_reads_lock);
+                            
+                            //thread_context->cur_reads->push_back(std::pair<bam1_t *,bam1_t *>(cur_read1,cur_read2));
+                            thread_context->cur_reads->push_back(read_pair);
+                            
+                            pthread_spin_unlock(&thread_context->cur_reads_lock);
+                            current_thread_id++;
+                            if(current_thread_id >= global_context.thread_number)
+                                current_thread_id = 0;
+                        }
+                        else {
+                            //process_aligned_fragment(&global_context,global_context.thread_contexts[0],std::pair<bam1_t *,bam1_t *> (cur_read1,cur_read2));
+                            process_aligned_fragment(&global_context,global_context.thread_contexts[0],read_pair);
                         }
                     }
                     else {
@@ -844,12 +909,20 @@ Results QC(std::string smp_name,GeneFeatures * geneIdx, rRNA * rRNAIdx,char * in
                         }
                             
                         if (cur_read1  || cur_read2 ){
+                            //read_pair_t * read_pair = new read_pair_t();
+                            read_pair_t  read_pair;
+                            read_pair.first = cur_read1;
+                            read_pair.second = cur_read2;
+                            read_pair.type = 0;
+                            
 						if(global_context.thread_number > 1){
                             //thread_context_t * thread_context = global_context.thread_contexts + current_thread_id;
                             thread_context_t * thread_context = global_context.thread_contexts[current_thread_id];
                             
 							pthread_spin_lock(&thread_context->cur_reads_lock);
-                            thread_context->cur_reads->push_back(std::pair<bam1_t *,bam1_t *>(cur_read1,cur_read2));
+                            
+                            //thread_context->cur_reads->push_back(std::pair<bam1_t *,bam1_t *>(cur_read1,cur_read2));
+                            thread_context->cur_reads->push_back(read_pair);
                             
                             pthread_spin_unlock(&thread_context->cur_reads_lock);
                             current_thread_id++;
@@ -857,8 +930,8 @@ Results QC(std::string smp_name,GeneFeatures * geneIdx, rRNA * rRNAIdx,char * in
 							    current_thread_id = 0;
                             }
 							else {
-							  
-                              process_aligned_fragment(&global_context,global_context.thread_contexts[0],std::pair<bam1_t *,bam1_t *> (cur_read1,cur_read2));
+                              //process_aligned_fragment(&global_context,global_context.thread_contexts[0],std::pair<bam1_t *,bam1_t *> (cur_read1,cur_read2));
+                              process_aligned_fragment(&global_context,global_context.thread_contexts[0],read_pair);
                             }
                         }
                     }
@@ -903,7 +976,8 @@ Results QC(std::string smp_name,GeneFeatures * geneIdx, rRNA * rRNAIdx,char * in
 
     main_res.read_dist_plot_file1 = outdir_fig +smp_name+ ".read_distr.png";
     main_res.read_dist_plot_file2 = outdir_fig + smp_name + ".read_distr_pie.png";
-        
+     
+    //std::cout << main_res.rRNA_read << std::endl;   
     try {
             std::ofstream ROUT;
         
