@@ -9,7 +9,7 @@
 BAMQC
 =====
 
-Version 0.6.4
+Version 0.6.5
 
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
@@ -22,7 +22,7 @@ Installation guide for BAMQC for from source installs
 
 `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
 
-`Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
+`Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.5>`_
 
 *Prerequisites:*
    * `python2.7 <https://www.python.org/download/releases/2.7/>`_
