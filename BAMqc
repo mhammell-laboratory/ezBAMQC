@@ -5,7 +5,7 @@ Created on July 24, 2015
 @author: Ying Jin
 @contact: yjin@cshl.edu
 @status: 
-@version: 0.5.6
+@version: 0.6.4
 '''
 import argparse, subprocess,traceback
 import sys, os, time, string, re
