@@ -28,8 +28,8 @@ RANLIB = ranlib
 
 CPPFLAGS = -I.
 # TODO: probably update cram code to make it compile cleanly with -Wc++-compat
-CFLAGS   = -g -Wall -O2
-EXTRA_CFLAGS_PIC = -fpic
+CFLAGS   = -g -Wall -O2 
+EXTRA_CFLAGS_PIC = -fPIC
 LDFLAGS  =
 LDLIBS   =
 
@@ -202,9 +202,9 @@ hfile_internal_h = hfile_internal.h $(htslib_hfile_h)
 sinclude config.mk
 
 
-libhts.a: $(LIBHTS_OBJS)
+libhts.a: $(LIBHTS_OBJS:.o=.pico)
 	@-rm -f $@
-	$(AR) -rc $@ $(LIBHTS_OBJS)
+	$(AR) -rc $@ $(LIBHTS_OBJS:.o=.pico)
 	-$(RANLIB) $@
 
 
