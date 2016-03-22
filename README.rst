@@ -31,6 +31,9 @@ applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChI
 :Authors:  
      Ying Jin, David Molik, and Molly Hammell
 
+:Version:
+
+
 :Contact: Ying Jin (yjin@cshl.edu)
 
 Installation guide for BAMQC for from source installs
@@ -77,7 +80,7 @@ Setup
 
     cd bamqc-0.6.4
   3) Run make:
-   .. code:: bash
+   .. code-block:: bash
 
     make
  -*From Setup.py*
