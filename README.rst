@@ -40,18 +40,20 @@ Installation guide for BAMQC for from source installs
 `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
 
 *Prerequisites:*
+~~~~~~~~~~~~~~~~
    * `python2.7 <https://www.python.org/download/releases/2.7/>`_
    * `R <https://www.r-project.org/>`_
    * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
    * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_
 
-*While there are multiple methods of installing the prerequistes it may help to look at (if using a yum based linux distro):*
+ *While there are multiple methods of installing the prerequistes it may help to look at (if using a yum based linux distro):*
    * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
    * `IUS <https://ius.io/>`_ for Python2.7
    * `Software Collections <https://www.softwarecollections.org/>`_ for collections of software (like devtoolset 3 or python)
    * `rpmfinder <https://www.rpmfind.net/>`_ for searching rpms across mutliple systems
 
 *Setup*
+~~~~~~
 
 1) Make sure that the GCC comiler is in your PATH:
   .. code:: bash
@@ -86,7 +88,7 @@ Installation guide for BAMQC for from source installs
    pip2.7 install BAMqc
 
 *Usage*
-
+~~~~~~
  *BAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]*
 
               *[-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]*
