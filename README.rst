@@ -87,21 +87,20 @@ Installation guide for BAMQC for from source installs
 
 *Usage*
 
- **BAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]**
+ *BAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]*
 
-              **[-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]**
+              *[-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]*
 
-              **[-q [mapq]] [-l labels [labels ...]] [-t NUMTHREADS]**
+              *[-q [mapq]] [-l labels [labels ...]] [-t NUMTHREADS]*
 
  optional arguments:
 
-  **-h, --help**            show this help message and exit
+  *-h, --help*            show this help message and exit
 
-  -i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]
-                        Alignment files. Could be multiple SAM/BAM files
-                        separated by space. Required.
+  *-i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]*
+                        Alignment files. Could be multiple SAM/BAM files separated by space. Required.
 
-  -r [refgene], --refgene [refgene] gene annotation file in GTF format. Required
+  *-r [refgene], --refgene [refgene]* gene annotation file in GTF format. Required
 
   -f [attrID]           The read summation at which feature level in the GTF
                         file. DEFAULT: gene_id.
