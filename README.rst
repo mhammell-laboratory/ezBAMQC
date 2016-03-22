@@ -42,10 +42,10 @@ Installation guide for BAMQC for from source installs
 Prerequisites
 ~~~~~~~~~~~~~~~~
 
-   * `python2.7 <https://www.python.org/download/releases/2.7/>`_
-   * `R <https://www.r-project.org/>`_
-   * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
-   * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_
+ * `python2.7 <https://www.python.org/download/releases/2.7/>`_
+ * `R <https://www.r-project.org/>`_
+ * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
+ * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_
 
  *While there are multiple methods of installing the prerequistes it may help to look at (if using a yum based linux distro):*
    * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
@@ -99,21 +99,21 @@ Usage
 
  optional arguments:
 
-  *-h, --help*            show this help message and exit
+  -*-h, --help*            show this help message and exit
 
-  *-i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]*
+  -*-i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]*
                         Alignment files. Could be multiple SAM/BAM files separated by space. Required.
 
-  *-r [refgene], --refgene [refgene]* gene annotation file in GTF format. Required
+  -*-r [refgene], --refgene [refgene]* gene annotation file in GTF format. Required
 
-  *-f [attrID]*           The read summation at which feature level in the GTF
+  -*-f [attrID]*           The read summation at which feature level in the GTF
                         file. DEFAULT: gene_id.
 
-  *--rRNA [rRNA]*         rRNA coordinates in BED format.
+  -*--rRNA [rRNA]*         rRNA coordinates in BED format.
  
-  *-o [dir], --outputDir [dir]*    output directory. Required.
+  -*-o [dir], --outputDir [dir]*    output directory. Required.
   
-  *--stranded [stranded]*    strandness of the library? 
+  -*--stranded [stranded]*    strandness of the library? 
 
                         yes : sense stranded
 
@@ -123,11 +123,11 @@ Usage
 
                         DEFAULT: yes.
 
-  *-q [mapq], --mapq [mapq]*     Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30
+  -*-q [mapq], --mapq [mapq]*     Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30
 
-  *-l labels [labels ...], --label labels [labels ...]*     Labels of input files. DEFAULT:smp1 smp2 ...
+  -*-l labels [labels ...], --label labels [labels ...]*     Labels of input files. DEFAULT:smp1 smp2 ...
 
-  *-t NUMTHREADS, --threads NUMTHREADS*    Number of threads to use. DEFAULT:1
+  -*-t NUMTHREADS, --threads NUMTHREADS*    Number of threads to use. DEFAULT:1
 
  Example: BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
