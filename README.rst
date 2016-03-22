@@ -39,8 +39,9 @@ Installation guide for BAMQC for from source installs
 
 `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
 
-*Prerequisites:*
+Prerequisites
 ~~~~~~~~~~~~~~~~
+
    * `python2.7 <https://www.python.org/download/releases/2.7/>`_
    * `R <https://www.r-project.org/>`_
    * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
@@ -52,7 +53,7 @@ Installation guide for BAMQC for from source installs
    * `Software Collections <https://www.softwarecollections.org/>`_ for collections of software (like devtoolset 3 or python)
    * `rpmfinder <https://www.rpmfind.net/>`_ for searching rpms across mutliple systems
 
-*Setup*
+Setup
 ~~~~~~
 
 1) Make sure that the GCC comiler is in your PATH:
@@ -87,8 +88,9 @@ Installation guide for BAMQC for from source installs
 
    pip2.7 install BAMqc
 
-*Usage*
+Usage
 ~~~~~~
+
  *BAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]*
 
               *[-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]*
@@ -104,14 +106,14 @@ Installation guide for BAMQC for from source installs
 
   *-r [refgene], --refgene [refgene]* gene annotation file in GTF format. Required
 
-  -f [attrID]           The read summation at which feature level in the GTF
+  *-f [attrID]*           The read summation at which feature level in the GTF
                         file. DEFAULT: gene_id.
 
-  --rRNA [rRNA]         rRNA coordinates in BED format.
-
-  -o [dir], --outputDir [dir] output directory. Required.
-
-  --stranded [stranded] strandness of the library? 
+  *--rRNA [rRNA]*         rRNA coordinates in BED format.
+ 
+  *-o [dir], --outputDir [dir]*    output directory. Required.
+  
+  *--stranded [stranded]*    strandness of the library? 
 
                         yes : sense stranded
 
@@ -121,11 +123,11 @@ Installation guide for BAMQC for from source installs
 
                         DEFAULT: yes.
 
-  -q [mapq], --mapq [mapq] Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30
+  *-q [mapq], --mapq [mapq]*     Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30
 
-  -l labels [labels ...], --label labels [labels ...] Labels of input files. DEFAULT:smp1 smp2 ...
+  *-l labels [labels ...], --label labels [labels ...]*     Labels of input files. DEFAULT:smp1 smp2 ...
 
-  -t NUMTHREADS, --threads NUMTHREADS Number of threads to use. DEFAULT:1
+  *-t NUMTHREADS, --threads NUMTHREADS*    Number of threads to use. DEFAULT:1
 
  Example: BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
