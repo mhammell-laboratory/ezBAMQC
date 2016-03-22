@@ -99,22 +99,22 @@ Usage
 
  optional arguments:
 
-  -h, --help             show this help message and exit.
-  -i, --inputFi          alignment files. Could be multiple SAM/BAM files separated by space. Required.
-  -r, --refgene          gene annotation file in GTF format. Required
-  -f                     the read summation at which feature level in the GTF file. DEFAULT: gene_id.
-  --rRNA                 rRNA coordinates in BED format.
-  -o, --outputDir        output directory. Required.
-  --stranded             strandness of the library? 
+  -h, --help               show this help message and exit.
+  -i, --inputFile          alignment files. Could be multiple SAM/BAM files separated by space. Required.
+  -r, --refgene            gene annotation file in GTF format. Required
+  -f                       the read summation at which feature level in the GTF file. DEFAULT: gene_id.
+  --rRNA                   rRNA coordinates in BED format.
+  -o, --outputDir          output directory. Required.
+  --stranded               strandness of the library? 
 
-                          yes : sense stranded
-                          reverse : reverse stranded
-                          no : not stranded
+                            yes : sense stranded
+                            reverse : reverse stranded
+                            no : not stranded
 
-                         DEFAULT: yes.
-  -q, --mapq             Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30
-  -l, --label            Labels of input files. DEFAULT:smp1 smp2 ...
-  -t, --threads          Number of threads to use. DEFAULT:1
+                           DEFAULT: yes.
+  -q, --mapq               Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30
+  -l, --label              Labels of input files. DEFAULT:smp1 smp2 ...
+  -t, --threads            Number of threads to use. DEFAULT:1
 
  Example: BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
