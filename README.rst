@@ -64,7 +64,6 @@ Installation guide for BAMQC for from source installs
   export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
 3) There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
-
  -*From Source*
   1) Download source 
   2) Unpack tarball and go to the directory of the package: 
