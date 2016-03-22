@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.7
-# Setup for BAMqc, utilities for the Sequence Alignment/Map format.
+# Setup for BAMQC, utilities for the Sequence Alignment/Map format.
 #
 #    Copyright (C) 2015 Bioinformatics Shared Resource, CSHL.
 #    Portions copyright (C) 2015 Cold Spring Harbor Laboratory.
@@ -188,7 +188,7 @@ setup(name = "BAMQC",
 	# make sure to add all the nessacary requires
     dependency_links=['https://gcc.gnu.org/gcc-4.8/','https://www.r-project.org/','https://cran.r-project.org/web/packages/corrplot/'],
     cmdclass = { 'install_data':    wx_smart_install_data },
-    scripts = ["BAMqc"],
+    scripts = ["BAMQC"],
     author = "Ying Jin",
     author_email ="yjin@cshl.edu",
     license='GPLv3',

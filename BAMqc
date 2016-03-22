@@ -791,10 +791,10 @@ def outputToHTML(res_list,smps,html_file):
 
 def prepare_parser ():
     """ inputs(parameters) required/allowed in this pipeline """
-    desc = "Quality control of mapped NGS data (BAM/SAM files) . BAMqc version 0.5."
+    desc = "Quality control of mapped NGS data (BAM/SAM files) ."
                                                                                         
                                                                                                    
-    exmp = "Example: BAMqc -f treat1.bam treat2.bam treat3.bam -r mm9_refGene.bed -o bamqc_out" 
+    exmp = "Example: BAMQC -r mm9_refGene.gtf -i treat1.bam treat2.bam treat3.bam -q 30 --rRNA mm9_rRNA.bed -o bamqc_out" 
     parser = argparse.ArgumentParser(description = desc,epilog = exmp) 
     parser.add_argument('-i', '--inputFile', metavar = 'alignment_files', dest = 'ifiles', nargs = '+', required = True,
                    help = 'Alignment files. Could be multiple SAM/BAM files separated by space. Required.')

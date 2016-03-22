@@ -1,5 +1,5 @@
 
-::
+
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
    :width: 200 px
    :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
@@ -54,13 +54,13 @@ Installation guide for BAMQC for from source installs
 *Setup*
 
 1) Make sure that the GCC comiler is in your PATH:
- ::
   .. code:: bash
+
    export PATH=/path/to/gcc:$PATH
 
 2) Make sure that python2.7 is in your PYTHONPATH:
- ::
   .. code:: bash
+
    export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
 3) There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
@@ -74,19 +74,47 @@ Installation guide for BAMQC for from source installs
     cd bamqc-0.6.4
   3) Run make:
    .. code:: bash
+
     make
-
  -*From Setup.py*
-
   .. code:: bash
 
    python2.7 setup.py install 
-
  -*From Pypi*
-
   .. code:: bash
 
    pip2.7 install BAMqc
+
+*Usage*
+ usage: BAMqc [-h] -i alignment_files [alignment_files ...] -r [refgene]
+             [-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]
+             [-q [mapq]] [-l labels [labels ...]] [-t NUMTHREADS]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]
+                        Alignment files. Could be multiple SAM/BAM files
+                        separated by space. Required.
+  -r [refgene], --refgene [refgene]
+                        refGene GTF file. Required
+  -f [attrID]           The read summation at which feature level in the GTF
+                        file. DEFAULT: gene_id.
+  --rRNA [rRNA]         rRNA BED file.
+  -o [dir], --outputDir [dir]
+                        output directory. Required.
+  --stranded [stranded]
+                        Is this a stranded library? (yes, no, or reverse).
+                        DEFAULT: yes.
+  -q [mapq], --mapq [mapq]
+                        Minimum mapping quality (phred scaled) for an
+                        alignment to be called uniquely mapped. DEFAULT:30
+  -l labels [labels ...], --label labels [labels ...]
+                        Labels of input files. DEFAULT:smp1 smp2 ...
+  -t NUMTHREADS, --threads NUMTHREADS
+                        Number of threads to use .DEFAULT:1
+
+Example: BAMqc -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
+
 
 Acknowledgements goes to
 ------------------------
