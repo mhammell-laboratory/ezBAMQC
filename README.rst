@@ -87,13 +87,15 @@ Installation guide for BAMQC for from source installs
 
 *Usage*
 
- usage: BAMqc [-h] -i alignment_files [alignment_files ...] -r [refgene]
-              [-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]
-              [-q [mapq]] [-l labels [labels ...]] [-t NUMTHREADS]
+ **BAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]**
+
+              **[-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]**
+
+              **[-q [mapq]] [-l labels [labels ...]] [-t NUMTHREADS]**
 
  optional arguments:
 
-  -h, --help            show this help message and exit
+  **-h, --help**            show this help message and exit
 
   -i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]
                         Alignment files. Could be multiple SAM/BAM files
@@ -109,6 +111,7 @@ Installation guide for BAMQC for from source installs
   -o [dir], --outputDir [dir] output directory. Required.
 
   --stranded [stranded] strandness of the library? 
+
                         yes : sense stranded
 
                         reverse : reverse stranded
