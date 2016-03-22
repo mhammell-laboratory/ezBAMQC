@@ -32,7 +32,6 @@ Installation guide for BAMQC for from source installs
 
 While there are multiple methods of installing the prerequistes it may
 help to look at (if using a yum based linux distro):
-
    * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
    * `IUS <https://ius.io/>`_ for Python2.7
    * `Software Collections <https://www.softwarecollections.org/>`_ for collections of software (like devtoolset 3 or python)
