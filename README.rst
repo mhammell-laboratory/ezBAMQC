@@ -86,24 +86,26 @@ Installation guide for BAMQC for from source installs
    pip2.7 install BAMqc
 
 *Usage*
- usage: BAMqc [-h] -i alignment_files [alignment_files ...] -r [refgene]
-             [-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]
-             [-q [mapq]] [-l labels [labels ...]] [-t NUMTHREADS]
 
-optional arguments:
+ usage: BAMqc [-h] -i alignment_files [alignment_files ...] -r [refgene]
+              [-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]
+              [-q [mapq]] [-l labels [labels ...]] [-t NUMTHREADS]
+
+ optional arguments:
+
   -h, --help            show this help message and exit
   -i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]
                         Alignment files. Could be multiple SAM/BAM files
                         separated by space. Required.
-  -r [refgene], --refgene [refgene]
-                        refGene GTF file. Required
+  -r [refgene], --refgene [refgene] gene annotation file in GTF format. Required
   -f [attrID]           The read summation at which feature level in the GTF
                         file. DEFAULT: gene_id.
-  --rRNA [rRNA]         rRNA BED file.
-  -o [dir], --outputDir [dir]
-                        output directory. Required.
-  --stranded [stranded]
-                        Is this a stranded library? (yes, no, or reverse).
+  --rRNA [rRNA]         rRNA coordinates in BED format.
+  -o [dir], --outputDir [dir] output directory. Required.
+  --stranded [stranded] strandness of the library? 
+                        yes : sense stranded
+                        reverse : reverse stranded
+                        no : not stranded
                         DEFAULT: yes.
   -q [mapq], --mapq [mapq]
                         Minimum mapping quality (phred scaled) for an
@@ -113,7 +115,7 @@ optional arguments:
   -t NUMTHREADS, --threads NUMTHREADS
                         Number of threads to use .DEFAULT:1
 
-Example: BAMqc -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
+  Example: BAMqc -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
 
 Acknowledgements goes to
