@@ -94,28 +94,36 @@ Installation guide for BAMQC for from source installs
  optional arguments:
 
   -h, --help            show this help message and exit
+
   -i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]
                         Alignment files. Could be multiple SAM/BAM files
                         separated by space. Required.
+
   -r [refgene], --refgene [refgene] gene annotation file in GTF format. Required
+
   -f [attrID]           The read summation at which feature level in the GTF
                         file. DEFAULT: gene_id.
+
   --rRNA [rRNA]         rRNA coordinates in BED format.
+
   -o [dir], --outputDir [dir] output directory. Required.
+
   --stranded [stranded] strandness of the library? 
                         yes : sense stranded
-                        reverse : reverse stranded
-                        no : not stranded
-                        DEFAULT: yes.
-  -q [mapq], --mapq [mapq]
-                        Minimum mapping quality (phred scaled) for an
-                        alignment to be called uniquely mapped. DEFAULT:30
-  -l labels [labels ...], --label labels [labels ...]
-                        Labels of input files. DEFAULT:smp1 smp2 ...
-  -t NUMTHREADS, --threads NUMTHREADS
-                        Number of threads to use .DEFAULT:1
 
-  Example: BAMqc -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
+                        reverse : reverse stranded
+
+                        no : not stranded
+
+                        DEFAULT: yes.
+
+  -q [mapq], --mapq [mapq] Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30
+
+  -l labels [labels ...], --label labels [labels ...] Labels of input files. DEFAULT:smp1 smp2 ...
+
+  -t NUMTHREADS, --threads NUMTHREADS Number of threads to use. DEFAULT:1
+
+ Example: BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
 
 Acknowledgements goes to
