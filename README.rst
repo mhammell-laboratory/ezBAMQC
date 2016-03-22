@@ -99,8 +99,8 @@ Usage
 
  optional arguments:
 
-  -h, --help                                                    show this help message and exit
-  -i, --inputFile alignment_files [alignment_files ...]         alignment files. Could be multiple SAM/BAM files separated by space. Required.
+  -h, --help               show this help message and exit
+  -i, --inputFile          alignment files. Could be multiple SAM/BAM files separated by space. Required.
   -r, --refgene [refgene]                                       gene annotation file in GTF format. Required
 
   -*-f [attrID]*           The read summation at which feature level in the GTF
