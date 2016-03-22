@@ -123,13 +123,13 @@ Usage
  Example: BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
 
-Acknowledgements goes to
+Acknowledgements
 ------------------------
 
 #) Samtools and pysam contributors
 #) Users' valuable feedback
 
-Copying & distribution
+Copying & Distribution
 ----------------------
 
 BAMQC is free software: you can redistribute it and/or modify
