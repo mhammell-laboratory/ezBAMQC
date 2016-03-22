@@ -75,8 +75,8 @@ PACKAGE_VERSION = 0.5
 #libbam.a:$(LOBJS)
 #	$(AR) -csru $@ $(LOBJS)
 
-libBAMqc.so: $(LOBJS) $(HTSLIB)
-	$(CC) -pthread $(LDFLAGS) -o $@ $(AOBJS) $(HTSLIB) $(LDLIBS) $(LIBCURSES) -lm -lz
+#libBAMqc.so: $(LOBJS) $(HTSLIB)
+#	$(CC) -pthread $(LDFLAGS) -o $@ $(AOBJS) $(HTSLIB) $(LDLIBS) $(LIBCURSES) -lm -lz
 
 libBAMqc.so: $(LOBJS) $(HTSLIB)
 #	$(CC) -shared -Wl,-soname, libBAMqc.so.$(PACKAGE_VERSION) -lpthread $(LDFLAGS) -o $@ $(LOBJS) $(HTSLIB) $(LDLIBS) -lz -lm
