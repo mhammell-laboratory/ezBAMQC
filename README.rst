@@ -1,8 +1,10 @@
+
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
    :width: 200 px
    :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
    :align: right
    :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
+
 
 BAMQC
 =====
@@ -17,6 +19,7 @@ dropout rate, sample correlations, sample reproducibility, sample variations. It
 page that contains a summary of the results. Many metrics are designed for RNA-seq data specifically, but BAMQC can be
 applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChIP-seq, DNA-seq and so on.
 
+
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
 `Pypi Page <https://pypi.python.org/pypi/BAMQC>`_
@@ -24,6 +27,7 @@ applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChI
 `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
 Created by Ying Jin, David Molik, and Molly Hammell, 2015
+
 Contact: Ying Jin (yjin@cshl.edu)
 
 Installation guide for BAMQC for from source installs
@@ -39,9 +43,7 @@ Installation guide for BAMQC for from source installs
    * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
    * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_
 
-*While there are multiple methods of installing the prerequistes it may
-help to look at (if using a yum based linux distro):*
-
+*While there are multiple methods of installing the prerequistes it may help to look at (if using a yum based linux distro):*
    * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
    * `IUS <https://ius.io/>`_ for Python2.7
    * `Software Collections <https://www.softwarecollections.org/>`_ for collections of software (like devtoolset 3 or python)
@@ -50,36 +52,35 @@ help to look at (if using a yum based linux distro):*
 *Setup*
 
 1) Make sure that the GCC comiler is in your PATH
-
-.. code:: bash
- export PATH=/path/to/gcc:$PATH
-
+ .. code:: bash
+  export PATH=/path/to/gcc:$PATH
 
 2) Make sure that python2.7 is in your PYTHONPATH
+ .. code:: bash
+  export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
-.. code:: bash
- export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
+ There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
 
-There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
-
--*From Source*
-
+ -*From Source*
   1) Download source 
-  2) Unpack tarball 
+  2) Unpack tarball and go to the directory of the package 
    .. code:: bash
+
     tar xvfz bamqc-0.6.4.tar.gz
+
     cd bamqc-0.6.4
   3) Run make
    .. code:: bash
+
     make
 
--*From Setup.py*
+ -*From Setup.py*
 
   .. code:: bash
 
    python2.7 setup.py install 
 
--*From Pypi*
+ -*From Pypi*
 
   .. code:: bash
 
