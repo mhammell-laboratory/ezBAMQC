@@ -100,7 +100,7 @@ Usage
  optional arguments:
 
   -h, --help             show this help message and exit.
-  -i, --inputFile        alignment files. Could be multiple SAM/BAM files separated by space. Required.
+  -i, --inputFi          alignment files. Could be multiple SAM/BAM files separated by space. Required.
   -r, --refgene          gene annotation file in GTF format. Required
   -f                     the read summation at which feature level in the GTF file. DEFAULT: gene_id.
   --rRNA                 rRNA coordinates in BED format.
