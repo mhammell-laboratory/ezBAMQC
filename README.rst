@@ -1,5 +1,3 @@
-
-
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
    :width: 200 px
    :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
@@ -41,14 +39,9 @@ Installation guide for BAMQC for from source installs
    * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
    * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_
 
-<<<<<<< HEAD
 *While there are multiple methods of installing the prerequistes it may
 help to look at (if using a yum based linux distro):*
 
-=======
-While there are multiple methods of installing the prerequistes it may
-help to look at (if using a yum based linux distro):
->>>>>>> 619c25fce0f8600c268d6eb4338b582fbc02b6db
    * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
    * `IUS <https://ius.io/>`_ for Python2.7
    * `Software Collections <https://www.softwarecollections.org/>`_ for collections of software (like devtoolset 3 or python)
