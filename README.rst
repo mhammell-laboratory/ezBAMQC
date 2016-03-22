@@ -28,9 +28,10 @@ applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChI
 
 `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
-Created by Ying Jin, David Molik, and Molly Hammell, 2015
+:Authors:  
+     Ying Jin, David Molik, and Molly Hammell
 
-Contact: Ying Jin (yjin@cshl.edu)
+:Contact: Ying Jin (yjin@cshl.edu)
 
 Installation guide for BAMQC for from source installs
 -----------------------------------------------------
