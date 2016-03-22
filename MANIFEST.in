@@ -1,7 +1,7 @@
 
 # BASIC INCLUDES
 include setup.py
-include BAMqc
+include BAMQC
 include README.rst
 
 # DOC INCLUDES
