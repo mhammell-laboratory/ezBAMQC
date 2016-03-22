@@ -99,9 +99,9 @@ Usage
 
  optional arguments:
 
-  -*-h, --help*            show this help message and exit
+  -h, --help            show this help message and exit
 
-  -*-i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]*
+  -i alignment_files [alignment_files ...], --inputFile alignment_files [alignment_files ...]
                         Alignment files. Could be multiple SAM/BAM files separated by space. Required.
 
   -*-r [refgene], --refgene [refgene]* gene annotation file in GTF format. Required
