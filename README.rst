@@ -1,9 +1,11 @@
 
+
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
    :width: 200 px
    :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
    :align: right
    :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
+
 
 
 BAMQC
@@ -52,26 +54,27 @@ Installation guide for BAMQC for from source installs
 *Setup*
 
 1) Make sure that the GCC comiler is in your PATH
+
  .. code:: bash
   export PATH=/path/to/gcc:$PATH
 
 2) Make sure that python2.7 is in your PYTHONPATH
+
  .. code:: bash
   export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
- There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
+3) There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
 
  -*From Source*
   1) Download source 
-  2) Unpack tarball and go to the directory of the package 
+  2) Unpack tarball and go to the directory of the package: 
    .. code:: bash
 
     tar xvfz bamqc-0.6.4.tar.gz
 
     cd bamqc-0.6.4
-  3) Run make
+  3) Run make:
    .. code:: bash
-
     make
 
  -*From Setup.py*
