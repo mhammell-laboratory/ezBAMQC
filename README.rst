@@ -53,12 +53,12 @@ Installation guide for BAMQC for from source installs
 
 *Setup*
 
-1) Make sure that the GCC comiler is in your PATH
+1) Make sure that the GCC comiler is in your PATH:
 
  .. code:: bash
   export PATH=/path/to/gcc:$PATH
 
-2) Make sure that python2.7 is in your PYTHONPATH
+2) Make sure that python2.7 is in your PYTHONPATH:
 
  .. code:: bash
   export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
