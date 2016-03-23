@@ -1,5 +1,3 @@
-
-
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
    :width: 200 px
    :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
@@ -29,12 +27,13 @@ applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChI
 `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
 :Authors:  
-     Ying Jin, David Molik, and Molly Hammell
+    Ying Jin, David Molik, and Molly Hammell
 
 :Version:
+    0.6.4
 
-
-:Contact: Ying Jin (yjin@cshl.edu)
+:Contact: 
+    Ying Jin (yjin@cshl.edu)
 
 Installation guide for BAMQC for from source installs
 -----------------------------------------------------
@@ -144,4 +143,3 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with BAMQC.  If not, see `this website <http://www.gnu.org/licenses/>`_.
-
