@@ -1,15 +1,16 @@
-=====
-BAMQC
-=====
----------------------------------------------------
-*"BAMQC, a tool to check the quality of BAM Files"*
----------------------------------------------------
 
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
    :width: 200 px
    :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
    :align: right
    :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
+
+=====
+BAMQC
+=====
+---------------------------------------------------
+*"BAMQC, a tool to check the quality of BAM Files"*
+---------------------------------------------------
 
 :Description:
 
