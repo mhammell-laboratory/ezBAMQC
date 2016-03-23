@@ -66,7 +66,7 @@ Setup
 
 2) Make sure that python2.7 is in your PYTHONPATH:
 
-.. code:: bash
+::
 
    export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
@@ -78,7 +78,7 @@ Setup
 
 2) Unpack tarball and go to the directory of the package: 
 
-.. code:: bash
+::
 
    tar xvfz bamqc-0.6.4.tar.gz
  
@@ -86,26 +86,26 @@ Setup
 
 3) Run make:
 
-.. code-block:: bash
+::
 
    make
    
 *From Setup.py*
 
-.. code-block:: bash
+::
 
    python2.7 setup.py install 
 
 *From Pypi*
 
-.. code:: bash
+::
 
    pip2.7 install BAMqc
 
 Usage
 ~~~~~~
 
-.. code:: bash
+::
 
    BAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]
    [-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]
@@ -113,8 +113,7 @@ Usage
 
 optional arguments:
 
-
-.. code:: bash
+::
 
    -h, --help               show this help message and exit.
    -i, --inputFile          alignment files. Could be multiple SAM/BAM files separated by space. Required.
@@ -133,7 +132,7 @@ optional arguments:
 
 Example: 
 
-.. code:: bash
+::
 
    BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
