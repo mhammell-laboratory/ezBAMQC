@@ -37,8 +37,9 @@ Installation guide for BAMQC for from source installs
 
 When installing BAMqc there are several options, but the main point is: since BAMqc uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code. 
 
-:Intallation Locations:
+:Intallation:
    `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
+
    `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
 
 :Prerequisites:
@@ -47,7 +48,7 @@ When installing BAMqc there are several options, but the main point is: since BA
     * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
     * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_ GCC 4.9.1 or greater is recomended for PyPi install 
 
-:Installation Notes:
+:Notes:
     * While there are multiple methods of installing the prerequistes it may help to look at (if using a yum based linux distro):*
     * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
     * `IUS <https://ius.io/>`_ for Python2.7
