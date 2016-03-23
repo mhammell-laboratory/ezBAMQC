@@ -7,9 +7,9 @@
 =====
 BAMQC
 =====
----------------------------------------------------
-*"BAMQC, a tool to check the quality of BAM Files"*
----------------------------------------------------
+-------------------------------------------------
+"BAMQC, a tool to check the quality of BAM Files"
+-------------------------------------------------
 
 :Description:
 
@@ -73,7 +73,7 @@ Setup
 3) There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
 
 From Source
------------
+~~~~~~~~~~~
 
 1) Download source 
 
@@ -92,14 +92,14 @@ From Source
    make
    
 From Setup.py
--------------
+~~~~~~~~~~~~~
 
 ::
 
    python2.7 setup.py install 
 
 From Pypi
----------
+~~~~~~~~~
 
 ::
 
