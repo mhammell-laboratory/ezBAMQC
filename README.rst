@@ -7,9 +7,8 @@
 =====
 BAMQC
 =====
--------------------------------------------------
-"BAMQC, a tool to check the quality of BAM Files"
--------------------------------------------------
+*"BAMQC, a tool to check the quality of BAM Files"*
+
 
 :Description:
 
