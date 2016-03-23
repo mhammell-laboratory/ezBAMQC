@@ -60,7 +60,7 @@ Setup
 
 1) Make sure that the GCC comiler is in your PATH:
 
-..
+::
 
    export PATH=/path/to/gcc:$PATH
 
