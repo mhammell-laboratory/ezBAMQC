@@ -33,7 +33,7 @@ BAMQC
     Ying Jin (yjin@cshl.edu)
 
 Installation guide for BAMQC for from source installs
------------------------------------------------------
+=====================================================
 
 When installing BAMqc there are several options, but the main point is: since BAMqc uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code. 
 
@@ -56,7 +56,7 @@ When installing BAMqc there are several options, but the main point is: since BA
     * `rpmfinder <https://www.rpmfind.net/>`_ for searching rpms across mutliple systems
 
 Setup
-~~~~~
+-----
 
 1) Make sure that the GCC comiler is in your PATH:
 
@@ -103,7 +103,7 @@ Setup
    pip2.7 install BAMqc
 
 Usage
-~~~~~
+-----
 
 ::
 
