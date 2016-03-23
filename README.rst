@@ -40,12 +40,12 @@ Installation guide for BAMQC for from source installs
 Prerequisites
 ~~~~~~~~~~~~~
 
- * `python2.7 <https://www.python.org/download/releases/2.7/>`_
- * `R <https://www.r-project.org/>`_
- * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
- * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_ GCC 4.9.1 or greater is recomended for PyPi install 
+* `python2.7 <https://www.python.org/download/releases/2.7/>`_
+* `R <https://www.r-project.org/>`_
+* `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
+* `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_ GCC 4.9.1 or greater is recomended for PyPi install 
 
- *While there are multiple methods of installing the prerequistes it may help to look at (if using a yum based linux distro):*
+*While there are multiple methods of installing the prerequistes it may help to look at (if using a yum based linux distro):*
    * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
    * `IUS <https://ius.io/>`_ for Python2.7
    * `Software Collections <https://www.softwarecollections.org/>`_ for collections of software (like devtoolset 3 or python)
@@ -55,37 +55,52 @@ Setup
 ~~~~~
 
 1) Make sure that the GCC comiler is in your PATH:
+
 .. code:: bash
 
    export PATH=/path/to/gcc:$PATH
 
 2) Make sure that python2.7 is in your PYTHONPATH:
+
 .. code:: bash
 
    export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
 3) There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
- -*From Source*
-  1) Download source 
-  2) Unpack tarball and go to the directory of the package: 
-   .. code:: bash
+
+*From Source*
+
+1) Download source 
+
+2) Unpack tarball and go to the directory of the package: 
+
+.. code:: bash
+
    tar xvfz bamqc-0.6.4.tar.gz
+ 
    cd bamqc-0.6.4
-  3) Run make:
-   .. code-block:: bash
+
+3) Run make:
+
+.. code-block:: bash
+
    make
    
- -*From Setup.py*
-.. code:: bash
+*From Setup.py*
+
+.. code-block:: bash
+
    python2.7 setup.py install 
 
- -*From Pypi*
+*From Pypi*
+
 .. code:: bash
+
    pip2.7 install BAMqc
 
 Usage
 ~~~~~~
-
+.. code:: bash
  BAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]
 
               [-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]
@@ -102,16 +117,16 @@ Usage
   -o, --outputDir          output directory. Required.
   --stranded               strandness of the library? 
 
-                              yes : sense stranded
-                            reverse : reverse stranded
-                            no : not stranded
+                           yes : sense stranded
+                           reverse : reverse stranded
+                           no : not stranded
 
                            DEFAULT: yes.
   -q, --mapq               Minimum mapping quality (phred scaled) for an alignment to be called uniquely mapped. DEFAULT:30
   -l, --label              Labels of input files. DEFAULT:smp1 smp2 ...
   -t, --threads            Number of threads to use. DEFAULT:1
 
- Example: BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
+   Example: BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
 Acknowledgements
 ----------------
