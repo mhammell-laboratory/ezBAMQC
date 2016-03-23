@@ -1,15 +1,15 @@
-.. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
-   :width: 200 px
-   :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
-   :align: right
-   :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
-
 =====
 BAMQC
 =====
 ---------------------------------------------------
 *"BAMQC, a tool to check the quality of BAM Files"*
 ---------------------------------------------------
+
+.. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
+   :width: 200 px
+   :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
+   :align: right
+   :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
 
 :Description:
 
@@ -72,7 +72,7 @@ Setup
 
 3) There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
 
-*From Source*
+**From Source**
 
 1) Download source 
 
@@ -90,20 +90,20 @@ Setup
 
    make
    
-*From Setup.py*
+**From Setup.py**
 
 ::
 
    python2.7 setup.py install 
 
-*From Pypi*
+**From Pypi**
 
 ::
 
    pip2.7 install BAMqc
 
 Usage
-~~~~~~
+~~~~~
 
 ::
 
