@@ -7,9 +7,9 @@
 =====
 BAMQC
 =====
--------------------------------------------------
-*BAMQC, a tool to check the quality of BAM Files*
--------------------------------------------------
+---------------------------------------------------
+*"BAMQC, a tool to check the quality of BAM Files"*
+---------------------------------------------------
 
 :Description:
 
@@ -60,7 +60,7 @@ Setup
 
 1) Make sure that the GCC comiler is in your PATH:
 
-.. code:: bash
+..
 
    export PATH=/path/to/gcc:$PATH
 
