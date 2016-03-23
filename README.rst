@@ -25,8 +25,7 @@ BAMQC
 :Authors:  
     Ying Jin, David Molik, and Molly Hammell
 
-:Version:
-    0.6.4
+:Version: 0.6.4
 
 :Contact: 
     Ying Jin (yjin@cshl.edu)
