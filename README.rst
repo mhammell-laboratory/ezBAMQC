@@ -56,7 +56,7 @@ When installing BAMqc there are several options, but the main point is: since BA
     * `rpmfinder <https://www.rpmfind.net/>`_ for searching rpms across mutliple systems
 
 Setup
------
+=====
 
 1) Make sure that the GCC comiler is in your PATH:
 
@@ -103,7 +103,7 @@ Setup
    pip2.7 install BAMqc
 
 Usage
------
+=====
 
 ::
 
@@ -137,13 +137,13 @@ Example:
    BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
 Acknowledgements
-----------------
+================
 
 #) Samtools and pysam contributors
 #) Users' valuable feedback
 
 Copying & Distribution
-----------------------
+======================
 
 BAMQC is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
