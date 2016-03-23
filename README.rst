@@ -21,11 +21,11 @@ applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChI
 
 :Links:
 
-`Github Page <https://github.com/mhammell-laboratory/bamqc>`_
+    `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
-`Pypi Page <https://pypi.python.org/pypi/BAMQC>`_
+    `Pypi Page <https://pypi.python.org/pypi/BAMQC>`_
 
-`MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
+    `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
 :Authors:  
     Ying Jin, David Molik, and Molly Hammell
