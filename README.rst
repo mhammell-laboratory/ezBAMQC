@@ -4,18 +4,12 @@
    :align: right
    :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
 
-
-
 BAMQC
 =====
 
-BAMQC is a tool to check the quality of either one or many mapped next-generation-sequencing
-datasets. It conducts comprehensive evaluations of aligned sequencing data from multiple aspects including: clipping
-profile, mapping quality distribution, mapped read length distribution, genomic/transcriptomic mapping distribution, inner
-distance distribution (for paired-end reads), ribosomal RNA contamination, transcript 5’ and 3’ end bias, transcription
-dropout rate, sample correlations, sample reproducibility, sample variations. It outputs a set of tables and plots and one HTML
-page that contains a summary of the results. Many metrics are designed for RNA-seq data specifically, but BAMQC can be
-applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChIP-seq, DNA-seq and so on.
+:Description:
+
+   BAMQC is a tool to check the quality of either one or many mapped next-generation-sequencing datasets. It conducts comprehensive evaluations of aligned sequencing data from multiple aspects including: clipping profile, mapping quality distribution, mapped read length distribution, genomic/transcriptomic mapping distribution, inner distance distribution (for paired-end reads), ribosomal RNA contamination, transcript 5’ and 3’ end bias, transcription dropout rate, sample correlations, sample reproducibility, sample variations. It outputs a set of tables and plots and one HTML page that contains a summary of the results. Many metrics are designed for RNA-seq data specifically, but BAMQC can be applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChIP-seq, DNA-seq and so on. ::
 
 :Links:
 
@@ -37,17 +31,19 @@ applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChI
 Installation guide for BAMQC for from source installs
 -----------------------------------------------------
 
-`Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
+:Intallation Locations:
 
-`Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
+   `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
+
+   `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
 
 Prerequisites
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
  * `python2.7 <https://www.python.org/download/releases/2.7/>`_
  * `R <https://www.r-project.org/>`_
  * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
- * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_
+ * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_ GCC 4.9.1 or greater is recomended for PyPi install 
 
  *While there are multiple methods of installing the prerequistes it may help to look at (if using a yum based linux distro):*
    * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
@@ -56,15 +52,15 @@ Prerequisites
    * `rpmfinder <https://www.rpmfind.net/>`_ for searching rpms across mutliple systems
 
 Setup
-~~~~~~
+~~~~~
 
 1) Make sure that the GCC comiler is in your PATH:
-  .. code:: bash
+.. code:: bash
 
    export PATH=/path/to/gcc:$PATH
 
 2) Make sure that python2.7 is in your PYTHONPATH:
-  .. code:: bash
+.. code:: bash
 
    export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
@@ -73,21 +69,18 @@ Setup
   1) Download source 
   2) Unpack tarball and go to the directory of the package: 
    .. code:: bash
-
-    tar xvfz bamqc-0.6.4.tar.gz
-
-    cd bamqc-0.6.4
+   tar xvfz bamqc-0.6.4.tar.gz
+   cd bamqc-0.6.4
   3) Run make:
    .. code-block:: bash
-
-    make
+   make
+   
  -*From Setup.py*
-  .. code:: bash
-
+.. code:: bash
    python2.7 setup.py install 
- -*From Pypi*
-  .. code:: bash
 
+ -*From Pypi*
+.. code:: bash
    pip2.7 install BAMqc
 
 Usage
@@ -109,7 +102,7 @@ Usage
   -o, --outputDir          output directory. Required.
   --stranded               strandness of the library? 
 
-                            yes : sense stranded
+                              yes : sense stranded
                             reverse : reverse stranded
                             no : not stranded
 
@@ -120,9 +113,8 @@ Usage
 
  Example: BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
-
 Acknowledgements
-------------------------
+----------------
 
 #) Samtools and pysam contributors
 #) Users' valuable feedback
@@ -141,4 +133,4 @@ but *WITHOUT ANY WARRANTY*; without even the implied warranty of
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with BAMQC.  If not, see `this website <http://www.gnu.org/licenses/>`_.
+along with BAMQC.  If not, see `this website <http://www.gnu.org/licenses/>`_
