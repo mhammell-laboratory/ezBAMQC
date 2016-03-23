@@ -19,6 +19,7 @@ dropout rate, sample correlations, sample reproducibility, sample variations. It
 page that contains a summary of the results. Many metrics are designed for RNA-seq data specifically, but BAMQC can be
 applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChIP-seq, DNA-seq and so on.
 
+:Links:
 
 `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
