@@ -9,8 +9,6 @@
 BAMQC
 =====
 
-Version 0.6.4
-
 BAMQC is a tool to check the quality of either one or many mapped next-generation-sequencing
 datasets. It conducts comprehensive evaluations of aligned sequencing data from multiple aspects including: clipping
 profile, mapping quality distribution, mapped read length distribution, genomic/transcriptomic mapping distribution, inner
