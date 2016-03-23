@@ -4,9 +4,12 @@
    :align: right
    :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
 
+=====
 BAMQC
 =====
-    *BAMQC, a tool to check the quality*
+-------------------------------------------------
+*BAMQC, a tool to check the quality of BAM Files*
+-------------------------------------------------
 
 :Description:
 
