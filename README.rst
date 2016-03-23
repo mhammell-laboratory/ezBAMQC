@@ -6,6 +6,7 @@
 
 BAMQC
 =====
+    *BAMQC, a tool to check the quality*
 
 :Description:
 
