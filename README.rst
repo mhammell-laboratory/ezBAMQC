@@ -134,7 +134,7 @@ Example:
 
 ::
 
-   ezBAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
+   ezBAMQC -i exp/exp_data/treat1.bam exp/exp_data/treat2.bam exp/exp_data/treat3.bam -r hg9_refGene.gtf -q 30 --rRNA hg19_rRNA.bed -o exp_output2
 
    Please find the example output from folder ./exp/.
 
