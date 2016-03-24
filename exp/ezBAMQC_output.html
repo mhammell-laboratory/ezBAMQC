@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">
+<html>
+<head><title>ezBAMQC Report</title>
+<style type="text/css">
+html,body{margin:0;padding:0;height:100%;width:1500px}
+div#header{background-color:#F3F2ED;}
+div#header h1{text-align:center; height:80px;line-height:80px;margin:0;padding-left:10px;}
+div#container{text-align:left;height:100%;width:1500px}
+div#navigation{background:#F6F0E0;}
+div#navigation{float:left;width:200px;height:100%}
+.menu-item ul { 
+background: #F6F0E0; 
+font-size: 13px; 
+line-height: 30px; 
+height: 0px; 
+list-style-type: none;overflow: hidden; 
+padding: 0px; }
+.menu-item:hover ul {  height: 220px; }
+ table{ margin:0;padding:0;width:1300px;table-layout:fixed;text-align:left; }
+table > thead > tr.tableizer-firstrow > th {  padding: 10px;  background: lavenderblush;} 
+table > tbody > tr > td{ padding: 10px; background: #f8f8f8; word-wrap: break word; } 
+div#footer{background:#BFBD93;}
+div#footer p{margin:0;padding:5px 10px}
+div#footer{clear:both;width:100%;text-align:center}
+div#main{float:right;width:1300px}
+a{text-decoration:none; color:#000000;}
+a:hover {text-decoration: underline; }
+</style> </head>
+<body>
+<div id ="container">
+<div id="header"><h1>ezBAMQC Report</h1><p text-align="left">Created On: 03-24-2016</p></div>
+<div id="wrapper">
+<div class="summary" id="navigation">
+<h2>Summary</h2>
+<ul>
+<li><div class="menu-item">
+<h4>smp0</h4>
+<ul>
+<li><a href="#M00">Basic Statistics</a></li>
+<li><a href="#M01">Read Distribution</a></li>
+<li><a href="#M02">Mappability</a></li>
+<li><a href="#M03">Coverage</a></li>
+<li><a href="#M04">Read Length and Insertion Size</a></li>
+</ul></div></li>
+<li><div class="menu-item">
+<h4>smp1</h4>
+<ul>
+<li><a href="#M10">Basic Statistics</a></li>
+<li><a href="#M11">Read Distribution</a></li>
+<li><a href="#M12">Mappability</a></li>
+<li><a href="#M13">Coverage</a></li>
+<li><a href="#M14">Read Length and Insertion Size</a></li>
+</ul></div></li>
+<li><div class="menu-item">
+<h4>smp2</h4>
+<ul>
+<li><a href="#M20">Basic Statistics</a></li>
+<li><a href="#M21">Read Distribution</a></li>
+<li><a href="#M22">Mappability</a></li>
+<li><a href="#M23">Coverage</a></li>
+<li><a href="#M24">Read Length and Insertion Size</a></li>
+</ul></div></li>
+<li><div class="menu-item"><a href="#M115"><h4>Sample Correlation</h4></a></div></li>
+</ul>
+</div>
+<div id="main" >
+<h2>smp0</h2>
+<div class="module"><h2 id="M00">Basic Statistics</h2>
+<table>
+<thead><tr class="tableizer-firstrow">
+<th>Measure</th><th>Value</th></tr></thead>
+<tbody><tr><td>Total Reads</td><td>77686</td></tr>
+<tr><td>Unique Reads</td><td>64349</td></tr>
+<tr><td>Multi-reads</td><td>13337</td></tr>
+<tr><td>Unmapped Reads</td><td>0</td></tr>
+<tr><td>Low Quality Reads</td><td>0</td></tr>
+<tr><td>Forward Reads</td><td>31875</td></tr>
+<tr><td>Reverse Reads</td><td>32474</td></tr>
+<tr><td>Splice Reads</td><td>13900</td></tr>
+<tr><td>Non-Splice Reads</td><td>50449</td></tr>
+<tr><td>rRNA Reads</td><td>8521</td></tr></tbody></table></div>
+<div class="module"><h2 id="M01">Read Distribution</h2>
+<p><img class="indented" src="./figs/smp0.read_distr.png" alt="Read Distribution"><img class="indented" src="./figs/smp0.read_distr_pie.png" alt="Read Distribution"></p></div>
+<div class="module"><h2 id="M02">Mappability</h2>
+<p><img class="indented" src="./figs/smp0.clipping_profile.png" alt="Mappablity Profile"> <img class="indented" src="./figs/smp0.mapq_profile.png" alt="MapQ Profile"></p></div>
+<div class="module"><h2 id="M03">Coverage</h2>
+<p><img class="indented" src="./figs/smp0.geneBodyCoverage.png" alt="Read Coverage"> <img class="indented" src="./figs/smp0.TransCoverage.png" alt="Read Coverage"></p></div>
+<div class="module"><h2 id="M04">Read Length</h2>
+<p><img class="indented" src="./figs/smp0.readlen_profile.png" alt="Read Length"></p></div>
+<h2>smp1</h2>
+<div class="module"><h2 id="M10">Basic Statistics</h2>
+<table>
+<thead><tr class="tableizer-firstrow">
+<th>Measure</th><th>Value</th></tr></thead>
+<tbody><tr><td>Total Reads</td><td>79258</td></tr>
+<tr><td>Unique Reads</td><td>66672</td></tr>
+<tr><td>Multi-reads</td><td>12586</td></tr>
+<tr><td>Unmapped Reads</td><td>0</td></tr>
+<tr><td>Low Quality Reads</td><td>0</td></tr>
+<tr><td>Forward Reads</td><td>33207</td></tr>
+<tr><td>Reverse Reads</td><td>33465</td></tr>
+<tr><td>Splice Reads</td><td>14459</td></tr>
+<tr><td>Non-Splice Reads</td><td>52213</td></tr>
+<tr><td>rRNA Reads</td><td>7563</td></tr></tbody></table></div>
+<div class="module"><h2 id="M11">Read Distribution</h2>
+<p><img class="indented" src="./figs/smp1.read_distr.png" alt="Read Distribution"><img class="indented" src="./figs/smp1.read_distr_pie.png" alt="Read Distribution"></p></div>
+<div class="module"><h2 id="M12">Mappability</h2>
+<p><img class="indented" src="./figs/smp1.clipping_profile.png" alt="Mappablity Profile"> <img class="indented" src="./figs/smp1.mapq_profile.png" alt="MapQ Profile"></p></div>
+<div class="module"><h2 id="M13">Coverage</h2>
+<p><img class="indented" src="./figs/smp1.geneBodyCoverage.png" alt="Read Coverage"> <img class="indented" src="./figs/smp1.TransCoverage.png" alt="Read Coverage"></p></div>
+<div class="module"><h2 id="M14">Read Length</h2>
+<p><img class="indented" src="./figs/smp1.readlen_profile.png" alt="Read Length"></p></div>
+<h2>smp2</h2>
+<div class="module"><h2 id="M20">Basic Statistics</h2>
+<table>
+<thead><tr class="tableizer-firstrow">
+<th>Measure</th><th>Value</th></tr></thead>
+<tbody><tr><td>Total Reads</td><td>80603</td></tr>
+<tr><td>Unique Reads</td><td>69389</td></tr>
+<tr><td>Multi-reads</td><td>11214</td></tr>
+<tr><td>Unmapped Reads</td><td>0</td></tr>
+<tr><td>Low Quality Reads</td><td>0</td></tr>
+<tr><td>Forward Reads</td><td>34065</td></tr>
+<tr><td>Reverse Reads</td><td>35324</td></tr>
+<tr><td>Splice Reads</td><td>12624</td></tr>
+<tr><td>Non-Splice Reads</td><td>56765</td></tr>
+<tr><td>rRNA Reads</td><td>5939</td></tr></tbody></table></div>
+<div class="module"><h2 id="M21">Read Distribution</h2>
+<p><img class="indented" src="./figs/smp2.read_distr.png" alt="Read Distribution"><img class="indented" src="./figs/smp2.read_distr_pie.png" alt="Read Distribution"></p></div>
+<div class="module"><h2 id="M22">Mappability</h2>
+<p><img class="indented" src="./figs/smp2.clipping_profile.png" alt="Mappablity Profile"> <img class="indented" src="./figs/smp2.mapq_profile.png" alt="MapQ Profile"></p></div>
+<div class="module"><h2 id="M23">Coverage</h2>
+<p><img class="indented" src="./figs/smp2.geneBodyCoverage.png" alt="Read Coverage"> <img class="indented" src="./figs/smp2.TransCoverage.png" alt="Read Coverage"></p></div>
+<div class="module"><h2 id="M24">Read Length</h2>
+<p><img class="indented" src="./figs/smp2.readlen_profile.png" alt="Read Length"></p></div>
+<div class="Smp_corr"><h2 id="M115">Sample Correlation and Quality</h2>
+<p><img class="indented" src="./figs/smp_corr.png" alt="Sample Correlation"><img class="indented" src="./figs/smp_qual.png" alt="Sample Correlation"></p>
+<h2 id="M115">Sample Coverage</h2>
+<p><img class="indented" src="./figs/smp_cov.png" alt="Sample Coverage"></p></div>
+<h2 id="M115">Sample Variation</h2>
+<p><img class="indented" src="./figs/smp_reproducibility.png" alt="Sample Variation"><img class="indented" src="./figs/smp_var.png" alt="Sample Variation"></p></div>
+</div>
+<div id="footer"><p>Produced by Bioinformatics Shared Resource at CSHL </p></div></div></div></body></html>
+
