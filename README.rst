@@ -17,7 +17,7 @@ ezBAMQC
 
     `Github Page <https://github.com/mhammell-laboratory/bamqc>`_
 
-    `Pypi Page <https://pypi.python.org/pypi/BAMQC>`_
+    `Pypi Page <https://pypi.python.org/pypi/ezBAMQC>`_
 
     `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
@@ -35,9 +35,9 @@ Installation guide for ezBAMQC for from source installs
 When installing ezBAMQC there are several options, but the main point is: since ezBAMQC uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code.
 
 :Intallation:
-   `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/>`_
+   `Source Code <https://github.com/mhammell-laboratory/ezBAMQC/releases>`_
 
-   `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
+   `Pypi <https://pypi.python.org/pypi?:action=display&name=ezBAMQC>`_
 
 :Prerequisites:
     * `python2.7 <https://www.python.org/download/releases/2.7/>`_
@@ -78,9 +78,9 @@ From Source
 
 ::
 
-   tar xvfz bamqc-0.6.4.tar.gz
+   tar xvfz bamqc-0.6.6.tar.gz
 
-   cd bamqc-0.6.4
+   cd bamqc-0.6.6
 
 3) Run make:
 
