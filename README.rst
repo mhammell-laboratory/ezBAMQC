@@ -5,14 +5,14 @@
    :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
 
 =====
-BAMQC
+ezBAMQC
 =====
-*"BAMQC, a tool to check the quality of BAM Files"*
+*"ezBAMQC, a tool to check the quality of mapped next generation sequencing files."*
 
 
 :Description:
 
-   BAMQC is a tool to check the quality of either one or many mapped next-generation-sequencing datasets. It conducts comprehensive evaluations of aligned sequencing data from multiple aspects including: clipping profile, mapping quality distribution, mapped read length distribution, genomic/transcriptomic mapping distribution, inner distance distribution (for paired-end reads), ribosomal RNA contamination, transcript 5’ and 3’ end bias, transcription dropout rate, sample correlations, sample reproducibility, sample variations. It outputs a set of tables and plots and one HTML page that contains a summary of the results. Many metrics are designed for RNA-seq data specifically, but BAMQC can be applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChIP-seq, DNA-seq and so on. ::
+   ezBAMQC is a tool to check the quality of either one or many mapped next-generation-sequencing datasets. It conducts comprehensive evaluations of aligned sequencing data from multiple aspects including: clipping profile, mapping quality distribution, mapped read length distribution, genomic/transcriptomic mapping distribution, inner distance distribution (for paired-end reads), ribosomal RNA contamination, transcript 5’ and 3’ end bias, transcription dropout rate, sample correlations, sample reproducibility, sample variations. It outputs a set of tables and plots and one HTML page that contains a summary of the results. Many metrics are designed for RNA-seq data specifically, but ezBAMQC can be applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChIP-seq, DNA-seq and so on. ::
 
 :Links:
 
@@ -25,16 +25,20 @@ BAMQC
 :Authors:  
     Ying Jin, David Molik, and Molly Hammell
 
+<<<<<<< HEAD
 :Version:
     0.6.5
+=======
+:Version: 0.6.4
+>>>>>>> 7647db74fecfd03d9d72f9929e958ea81dfff4cf
 
 :Contact: 
     Ying Jin (yjin@cshl.edu)
 
-Installation guide for BAMQC for from source installs
+Installation guide for ezBAMQC for from source installs
 =====================================================
 
-When installing BAMqc there are several options, but the main point is: since BAMqc uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code. 
+When installing ezBAMQC there are several options, but the main point is: since ezBAMQC uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code. 
 
 :Intallation:
    `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
@@ -69,7 +73,7 @@ Setup
 
    export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
-3) There are three methods of installation of BAMQC, from source, setup.py, and from pypi, once prequistes are setup. 
+3) There are three methods of installation of ezBAMQC, from source, from setup.py, and from pypi, once prequistes are setup. 
 
 From Source
 ~~~~~~~~~~~
@@ -109,7 +113,7 @@ Usage
 
 ::
 
-   BAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]
+   ezBAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]
    [-f [attrID]] [--rRNA [rRNA]] -o [dir] [--stranded [stranded]]
    [-q [mapq]] [-l labels [labels ...]] [-t NUMTHREADS]
 
@@ -136,18 +140,34 @@ Example:
 
 ::
 
-   BAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
+   ezBAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
+
+   Please find the example output from folder ./exp/.
+
+FQA
+====
+Q: Why the total number of reads reported by ezBAMQC does not match with samtools flagstat?
+
+A: The difference is because of non-uniquely mapped reads or multiply aligned reads (multi-reads). Samtools flagstat counts each multiple aligment as a different reads, but ezBAMQC counts reads accoriding to the read ID, i.e., each individual read will be counted once no matter that it is a uniquely mapped read or multi-read. 
+
+Q: What is "Low Quality Reads" ?
+
+A: Reads marked as qc fail accoriding to SAM format or reads with mapping quality lower than the value set by the option -q will be considered as "Low Quality Reads".
+
+Q: How the setting of option -q alter the results? 
+
+A: Reads with low quality, i.e., did not pass -q cutoff, are only counted in Total Reads, Mapped Reads, and Mappability by mapping quality plot.
 
 Acknowledgements
 ================
 
-#) Samtools and pysam contributors
+#) Samtools contributors
 #) Users' valuable feedback
 
 Copying & Distribution
 ======================
 
-BAMQC is free software: you can redistribute it and/or modify
+ezBAMQC is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -158,4 +178,4 @@ but *WITHOUT ANY WARRANTY*; without even the implied warranty of
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with BAMQC.  If not, see `this website <http://www.gnu.org/licenses/>`_
+along with ezBAMQC.  If not, see `this website <http://www.gnu.org/licenses/>`_
