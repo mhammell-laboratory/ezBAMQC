@@ -150,7 +150,12 @@ A: Reads marked as qc fail accoriding to SAM format or reads with mapping qualit
 
 Q: How the setting of option -q alter the results? 
 
-A: Reads with low quality, i.e., did not pass -q cutoff, are only counted in Total Reads, Mapped Reads, and Mappability by mapping quality plot.
+A: Reads with low quality, i.e., did not pass -q cutoff, are only counted in Total Reads, Mapped Reads, and Mappability by mapping quality plot. The rest of the report does not include low quality reads. 
+
+Q: Do multi-reads (non-uniquely mapped reads) have been considered in Read distribution and gene quantification?
+
+A: No. Only uniquely mapped reads were counted. 
+
 
 Acknowledgements
 ================
