@@ -9,7 +9,6 @@ ezBAMQC
 =====
 *"ezBAMQC, a tool to check the quality of mapped next generation sequencing files."*
 
-
 :Description:
 
    ezBAMQC is a tool to check the quality of either one or many mapped next-generation-sequencing datasets. It conducts comprehensive evaluations of aligned sequencing data from multiple aspects including: clipping profile, mapping quality distribution, mapped read length distribution, genomic/transcriptomic mapping distribution, inner distance distribution (for paired-end reads), ribosomal RNA contamination, transcript 5’ and 3’ end bias, transcription dropout rate, sample correlations, sample reproducibility, sample variations. It outputs a set of tables and plots and one HTML page that contains a summary of the results. Many metrics are designed for RNA-seq data specifically, but ezBAMQC can be applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChIP-seq, DNA-seq and so on. ::
@@ -22,23 +21,18 @@ ezBAMQC
 
     `MHammell Lab <http://hammelllab.labsites.cshl.edu/software>`_
 
-:Authors:  
+:Authors:
     Ying Jin, David Molik, and Molly Hammell
 
-<<<<<<< HEAD
-:Version:
-    0.6.5
-=======
-:Version: 0.6.4
->>>>>>> 7647db74fecfd03d9d72f9929e958ea81dfff4cf
+:Version: 0.6.5
 
-:Contact: 
+:Contact:
     Ying Jin (yjin@cshl.edu)
 
 Installation guide for ezBAMQC for from source installs
 =====================================================
 
-When installing ezBAMQC there are several options, but the main point is: since ezBAMQC uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code. 
+When installing ezBAMQC there are several options, but the main point is: since ezBAMQC uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code.
 
 :Intallation:
    `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
@@ -85,7 +79,7 @@ From Source
 ::
 
    tar xvfz bamqc-0.6.4.tar.gz
- 
+
    cd bamqc-0.6.4
 
 3) Run make:
@@ -93,7 +87,7 @@ From Source
 ::
 
    make
-   
+
 From Setup.py
 ~~~~~~~~~~~~~
 
@@ -144,7 +138,7 @@ Example:
 
    Please find the example output from folder ./exp/.
 
-FQA
+FAQ
 ====
 Q: Why the total number of reads reported by ezBAMQC does not match with samtools flagstat?
 
