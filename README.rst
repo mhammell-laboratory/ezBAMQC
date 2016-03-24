@@ -35,7 +35,7 @@ Installation guide for ezBAMQC for from source installs
 When installing ezBAMQC there are several options, but the main point is: since ezBAMQC uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code.
 
 :Intallation:
-   `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
+   `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/>`_
 
    `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
 
