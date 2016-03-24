@@ -140,6 +140,10 @@ Example:
 
 FAQ
 ====
+Q: Why use ezBAMQC?
+
+A: ezBAMQC is efficient and easy to use. With one command line, it reports a comprehensive evaluation of the data with a set of plots and tables.The ability to assess multiple samples together with high efficiency make it especially useful in cases where there are a large number of samples from the same condition, genotype, or treatment. ezBAMQC was written in C++ and supports multithreading. A mouse RNA-seq sample with 120M alignments can be done in 8 minutes with 5 threads.
+
 Q: Why the total number of reads reported by ezBAMQC does not match with samtools flagstat?
 
 A: The difference is because of non-uniquely mapped reads or multiply aligned reads (multi-reads). Samtools flagstat counts each multiple aligment as a different reads, but ezBAMQC counts reads accoriding to the read ID, i.e., each individual read will be counted once no matter that it is a uniquely mapped read or multi-read. 
