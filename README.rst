@@ -137,11 +137,13 @@ Example:
 
    ezBAMQC -i treat1.bam treat2.bam treat3.bam -r mm9_refGene.gtf -q 30 --rRNA mm9_rRNA.bed -o bamqc_out
 
+   Please find the example output from folder ./exp/.
+
 FQA
 ====
-Q) Why the total number of reads reported by ezBAMQC does not match with samtools flagstat?
+Q: Why the total number of reads reported by ezBAMQC does not match with samtools flagstat?
 
-A) The difference is because of non-uniquely mapped reads or multiply aligned reads (multi-reads). Samtools flagstat counts each multiple aligment as a different reads, but ezBAMQC counts reads accoriding to the read ID, i.e., each individual read will be counted once no matter that it is a uniquely mapped read or multi-read. 
+A: The difference is because of non-uniquely mapped reads or multiply aligned reads (multi-reads). Samtools flagstat counts each multiple aligment as a different reads, but ezBAMQC counts reads accoriding to the read ID, i.e., each individual read will be counted once no matter that it is a uniquely mapped read or multi-read. 
 
 Q) What is "Low Quality Reads" ?
 
