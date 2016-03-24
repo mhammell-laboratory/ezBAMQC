@@ -1,6 +1,6 @@
-# Makefile for BAMqc, utilities for the Sequence Alignment/Map format.
+# Makefile for ezBAMQC, utilities for the Sequence Alignment/Map format.
 #
-#    Version 0.5.6
+#    Version 0.6.5
 #
 #    Copyright (C) 2015 Bioinformatics Shared Resource, CSHL.
 #    Portions copyright (C) 2015 Cold Spring Harbor Laboratory.
@@ -29,8 +29,8 @@ CFLAGS   = -g -fpermissive -Wall -O9 -O3 -std=c++11 -fPIC
 LDFLAGS  = -O9 -fpermissive
 LDLIBS   =
 DFLAGS=     -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_CURSES_LIB=1
-LOBJS=      src/bamqc/GeneFeatures.o src/bamqc/rRNA.o src/bamqc/IntervalTree.o src/bamqc/InnerDist_prof.o \
-            src/bamqc/Results.o src/bamqc/Mappability.o src/bamqc/Coverage_prof.o src/bamqc/parseBAM.o
+LOBJS=      src/ezBAMQC/GeneFeatures.o src/ezBAMQC/rRNA.o src/ezBAMQC/IntervalTree.o src/ezBAMQC/InnerDist_prof.o \
+            src/ezBAMQC/Results.o src/ezBAMQC/Mappability.o src/ezBAMQC/Coverage_prof.o src/ezBAMQC/parseBAM.o
 
 INCLUDES=   -I$(HTSDIR)
 LIBCURSES=  -lcurses # -lXCurses
@@ -83,25 +83,25 @@ libBAMqc.so: $(LOBJS) $(HTSLIB)
 	$(CC) -shared  -lpthread $(LDFLAGS) -o $@ $(LOBJS) $(HTSLIB) $(LDLIBS) -lz -lm
 #	ln -sf $@ libBAMqc.so.$(PACKAGE_VERSION)
 
-Constants_h = src/bamqc/Constants.h
-IntervalTree_h = src/bamqc/IntervalTree.h $(Constants_h)
-GeneFeatures_h = src/bamqc/GeneFeatures.h $(Constants_h)
-rRNA_h = src/bamqc/rRNA.h $(IntervalTree_h) $(GeneFeatures_h)
-Results_h = src/bamqc/Resualts.h
-Mappability_h = src/bamqc/Mappability.h $(Constants_h)
-InnerDist_prof_h = src/bamqc/InnerDist_prof.h $(GeneFeatures_h)
-Coverage_prof_h = src/bamqc/Coverage_prof.h $(GeneFeatures_h)
-parseBAM_h = src/bamqc/parseBAM.h
+Constants_h = src/ezBAMQC/Constants.h
+IntervalTree_h = src/ezBAMQC/IntervalTree.h $(Constants_h)
+GeneFeatures_h = src/ezBAMQC/GeneFeatures.h $(Constants_h)
+rRNA_h = src/ezBAMQC/rRNA.h $(IntervalTree_h) $(GeneFeatures_h)
+Results_h = src/ezBAMQC/Resualts.h
+Mappability_h = src/ezBAMQC/Mappability.h $(Constants_h)
+InnerDist_prof_h = src/ezBAMQC/InnerDist_prof.h $(GeneFeatures_h)
+Coverage_prof_h = src/ezBAMQC/Coverage_prof.h $(GeneFeatures_h)
+parseBAM_h = src/ezBAMQC/parseBAM.h
 
 
-IntervalTree.o: src/bamqc/IntervalTree.cpp $(IntervalTree_h)
-GeneFeatures.o: src/bamqc/GeneFeatures.cpp $(GeneFeatures_h)
-rRNA.o: src/bamqc/rRNA.cpp $(rRNA_h)
-Results.o: src/bamqc/Results.cpp $(Results_h)
-Mappability.o: src/bamqc/Mappability.cpp $(Mappability_h) $(htslib_sam_h)
-InnerDist_prof.o: src/bamqc/InnerDist_prof.cpp $(InnerDist_prof_h) $(htslib_sam_h)
-Coverage_prof.o: src/bamqc/Coverage_prof.cpp $(Coverage_prof_h)
-parseBAM.o: src/bamqc/parseBAM.cpp $(parseBAM_h) $(htslib_sam_h) $(GeneFeatures_h) $(rRNA_h) $(Mappability_h) $(Coverage_prof_h) $(InnerDist_prof_h)
+IntervalTree.o: src/ezBAMQC/IntervalTree.cpp $(IntervalTree_h)
+GeneFeatures.o: src/ezBAMQC/GeneFeatures.cpp $(GeneFeatures_h)
+rRNA.o: src/ezBAMQC/rRNA.cpp $(rRNA_h)
+Results.o: src/ezBAMQC/Results.cpp $(Results_h)
+Mappability.o: src/ezBAMQC/Mappability.cpp $(Mappability_h) $(htslib_sam_h)
+InnerDist_prof.o: src/ezBAMQC/InnerDist_prof.cpp $(InnerDist_prof_h) $(htslib_sam_h)
+Coverage_prof.o: src/ezBAMQC/Coverage_prof.cpp $(Coverage_prof_h)
+parseBAM.o: src/ezBAMQC/parseBAM.cpp $(parseBAM_h) $(htslib_sam_h) $(GeneFeatures_h) $(rRNA_h) $(Mappability_h) $(Coverage_prof_h) $(InnerDist_prof_h)
 
 
 #install: $(PROGRAMS) $(BUILT_MISC_PROGRAMS)

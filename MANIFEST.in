@@ -1,14 +1,14 @@
 
 # BASIC INCLUDES
 include setup.py
-include BAMQC
+include ezBAMQC
 include README.rst
 
 # DOC INCLUDES
 include doc/*
 
-# SRC BAMQC INCLUDES
-include src/bamqc/*
+# SRC ezBAMQC INCLUDES
+include src/ezBAMQC/*
 
 # SRC HTSLIB INCLUDES
 include src/htslib/*

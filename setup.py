@@ -1,5 +1,5 @@
 #!/usr/bin/env python2.7
-# Setup for BAMQC, utilities for the Sequence Alignment/Map format.
+# Setup for ezBAMQC, utilities for the Sequence Alignment/Map format.
 #
 #    Copyright (C) 2015 Bioinformatics Shared Resource, CSHL.
 #    Portions copyright (C) 2015 Cold Spring Harbor Laboratory.
@@ -76,7 +76,7 @@ def find_data_files(srcdir, *wildcards, **kw):
 ## This is a list of files to install, and where:
 ## Make sure the MANIFEST.in file points to all the right 
 ## directories too.
-files = find_data_files('BAMQC/', '*.*')
+files = find_data_files('ezBAMQC/', '*.*')
 
 from distutils.core import setup
 
@@ -85,7 +85,7 @@ def readme():
 		return f.read()
 
 if sys.version_info[0] != 2 or sys.version_info[1] < 7:
-	print >> sys.stderr, "ERROR: BAMQC requires Python 2.7"
+	print >> sys.stderr, "ERROR: ezBAMQC requires Python 2.7"
 	sys.exit()
 
 BAMQC_HEADER = [
@@ -181,14 +181,14 @@ htslib_CFLAGS = ['-Wno-error=declaration-after-statement']
 htslib_HEADERS = ['./src/htslib','./src/htslib/htslib','./src/htslib/cram']
 htslib_DFLAGS = [('_FILE_OFFSET_BITS','64'),('_USE_KNETFILE','')]
 
-setup(name = "BAMQC",
+setup(name = "ezBAMQC",
     version = "0.6.4",
     description = 'Quality control tools for NGS alignment file',
     keywords = 'Quality control BAM file',
 	# make sure to add all the nessacary requires
     dependency_links=['https://gcc.gnu.org/gcc-4.8/','https://www.r-project.org/','https://cran.r-project.org/web/packages/corrplot/'],
     cmdclass = { 'install_data':    wx_smart_install_data },
-    scripts = ["BAMQC"],
+    scripts = ["ezBAMQC"],
     author = "Ying Jin",
     author_email ="yjin@cshl.edu",
     license='GPLv3',

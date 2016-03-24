@@ -1,66 +1,74 @@
-Installation guide for BAMQC for from source installs
------------------------------------------------------
 
-`Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.1.tar.gz>`_
+Installation guide for ezBAMQC for from source installs
+=====================================================
 
-`With Prebuilt Binary <https://github.com/mhammell-laboratory/bamqc/releases/download/0.5.6/BAMQC-0.6.1.tar.gz>`_
+When installing ezBAMQC there are several options, but the main point is: since ezBAMQC uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code.
 
-`Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.1>`_
+:Intallation:
+   `Source Code <https://github.com/mhammell-laboratory/bamqc/archive/0.6.4.tar.gz>`_
 
-*Prerequisites:*
-   * `python2.7 <https://www.python.org/download/releases/2.7/>`_
-   * `R <https://www.r-project.org/>`_
-   ** `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
-   * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_
+   `Pypi <https://pypi.python.org/pypi?:action=display&name=BAMQC&version=0.6.4>`_
 
-While there are multiple methods of installing the prerequistes it may
-help to look at (if using a yum based linux distro):
+:Prerequisites:
+    * `python2.7 <https://www.python.org/download/releases/2.7/>`_
+    * `R <https://www.r-project.org/>`_
+    * `corrplot <https://cran.r-project.org/web/packages/corrplot/>`_
+    * `GCC 4.8.1 or greater <https://gcc.gnu.org/gcc-4.8/>`_ GCC 4.9.1 or greater is recomended for PyPi install 
 
-   * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
-   * `IUS <https://ius.io/>`_ for Python2.7
-   * `Software Collections <https://www.softwarecollections.org/>`_ for collections of software (like devtoolset 3 or python)
-   * `rpmfinder <https://www.rpmfind.net/>`_ for searching rpms across mutliple systems
+:Notes:
+    * While there are multiple methods of installing the prerequistes it may help to look at (if using a yum based linux distro):*
+    * `Devtoolset-3 <https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/3/html/User_Guide/sect-Red_Hat_Developer_Toolset-Install.html>`_ for GCC compilers
+    * `IUS <https://ius.io/>`_ for Python2.7
+    * `Software Collections <https://www.softwarecollections.org/>`_ for collections of software (like devtoolset 3 or python)
+    * `rpmfinder <https://www.rpmfind.net/>`_ for searching rpms across mutliple systems
 
-*Setup*
+Setup
+=====
 
-make sure that the GCC comiler is in your PATH
+1) Make sure that the GCC comiler is in your PATH:
 
-.. code: bash
- export PATH=/path/to/gcc:$PATH
+::
 
+   export PATH=/path/to/gcc:$PATH
 
-make sure that python2.7 is is in your PYTHONPATH, for permance add it to your .bashrc
+2) Make sure that python2.7 is in your PYTHONPATH:
 
-.. code: bash
- export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
+::
 
-There are two methods of installation of BAMqc, from source and from pypi, once prequistes are setup. 
+   export PYTHONPATH=/path/to/python2.7/site-packages:$PYTHONPATH
 
-*From Source*
+3) There are three methods of installation of ezBAMQC, from source, from setup.py, and from pypi, once prequistes are setup. 
 
-download source 
+From Source
+~~~~~~~~~~~
 
-.. code: bash
- wget https://github.com/mhammell-laboratory/bamqc/archive/0.6.1.tar.gz
- tar xvfz bamqc-0.6.1.tar.gz
- cd bamqc-0.6.1
+1) Download source 
 
-run make on htslib
+2) Unpack tarball and go to the directory of the package: 
 
-.. code: bash
- cd src/htslib
- make
+::
 
-run make 
+   tar xvfz bamqc-0.6.4.tar.gz
 
-.. code: bash
- cd ../..
- make
+   cd bamqc-0.6.4
 
-*From Pypi*
+3) Run make:
 
-pip(2.7) install BAMqc
+::
 
-.. code: bash
- pip install BAMqc
+   make
+
+From Setup.py
+~~~~~~~~~~~~~
+
+::
+
+   python2.7 setup.py install 
+
+From Pypi
+~~~~~~~~~
+
+::
+
+   pip2.7 install BAMqc
 

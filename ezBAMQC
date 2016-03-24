@@ -44,7 +44,7 @@ else:
     sys.exit()
 
 if sys.version_info[0] != 2 or sys.version_info[1] != 7:
-    print >>sys.stderr, "\nYou are using python" + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + " BAMQC needs python2.7!\n"
+    print >>sys.stderr, "\nYou are using python" + str(sys.version_info[0]) + '.' + str(sys.version_info[1]) + " ezBAMQC needs python2.7!\n"
     sys.exit()
     
 
@@ -306,7 +306,7 @@ def main():
     #local_rRNAIdx = None
     #local_geneIdx = None
     
-    info("*** Starting BAMqc run. ***\n")
+    info("*** Starting ezBAMQC run. ***\n")
     
     #list of qc results
     smp_res = dict()
@@ -549,7 +549,7 @@ def main():
 
     #outputToHTML(smp_res,args.labels,smp_corr_plot_file,smp_inner_plot_file, smp_quality_plot_file,smp_cov_plot_file,html_file)
     outputToHTML(smp_res,args.labels,html_file)
-    info("*** BAM QC run completed. ***\n")
+    info("*** ezBAMQC run completed. ***\n")
 
 
 def create_per_sample_plot(ifile,label,cur_data_dir,cur_fig_dir,res):
@@ -630,7 +630,7 @@ def outputToHTML(res_list,smps,html_file):
     #smps = res_list.keys()
     tohtml = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">\n'
     tohtml += '<html>\n'
-    tohtml += '<head><title>BAMQC Report</title>\n'
+    tohtml += '<head><title>ezBAMQC Report</title>\n'
     tohtml += '<style type="text/css">\n'
     #/*ul Styles*/
     tohtml += 'html,body{margin:0;padding:0;height:100%;width:1500px}\n'
@@ -666,7 +666,7 @@ def outputToHTML(res_list,smps,html_file):
     tohtml += '</style> </head>\n'
     tohtml += '<body>\n'
     tohtml += '<div id ="container">\n'
-    tohtml += '<div id="header"><h1>BAMQC Report</h1><p text-align="left">Created On: '+datetime.now().strftime('%m-%d-%Y')+'</p></div>\n'
+    tohtml += '<div id="header"><h1>ezBAMQC Report</h1><p text-align="left">Created On: '+datetime.now().strftime('%m-%d-%Y')+'</p></div>\n'
 
     i = 0    
     tohtml += '<div id="wrapper">\n'
@@ -794,7 +794,7 @@ def prepare_parser ():
     desc = "Quality control of mapped NGS data (BAM/SAM files) ."
                                                                                         
                                                                                                    
-    exmp = "Example: BAMQC -r mm9_refGene.gtf -i treat1.bam treat2.bam treat3.bam -q 30 --rRNA mm9_rRNA.bed -o bamqc_out" 
+    exmp = "Example: ezBAMQC -r mm9_refGene.gtf -i treat1.bam treat2.bam treat3.bam -q 30 --rRNA mm9_rRNA.bed -o bamqc_out" 
     parser = argparse.ArgumentParser(description = desc,epilog = exmp) 
     parser.add_argument('-i', '--inputFile', metavar = 'alignment_files', dest = 'ifiles', nargs = '+', required = True,
                    help = 'Alignment files. Could be multiple SAM/BAM files separated by space. Required.')
