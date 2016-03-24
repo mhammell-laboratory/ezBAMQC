@@ -636,7 +636,7 @@ def main():
 
     data_file = cur_dir+"summary_data.txt"
 
-    html_file = cur_dir+"/bamqc_output.html"
+    html_file = cur_dir+"/ezBAMQC_output.html"
 
     
 
@@ -1554,7 +1554,7 @@ def outputToHTML(res_list,smps,html_file):
 
 
 
-    tohtml += '<div id="footer"><p>Produced by Bioinformatics Shared Resource at CSHL (version 0.5)</p></div></div></div></body></html>\n'
+    tohtml += '<div id="footer"><p>Produced by Bioinformatics Shared Resource at CSHL </p></div></div></div></body></html>\n'
 
     
 
