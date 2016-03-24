@@ -1,0 +1,5 @@
+png("/sonas-hs/bsr/hpc/data/yjin/test_BAMqc/exp/test1/figs/smp0.readlen_profile.png",width=500,height=500,units="px")
+readlen_val=c(67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100)
+readlen_count=c(220,212,287,315,327,323,420,437,447,422,435,429,427,487,438,487,492,492,518,536,517,565,503,550,723,808,803,859,881,927,945,1535,1897,44685)
+plot(readlen_val,(readlen_count/77686),pch=20,xlab="Mapped Read Length",ylab="Proportion",col="blue")
+dev.state=dev.off()
