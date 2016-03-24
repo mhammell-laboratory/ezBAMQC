@@ -145,11 +145,13 @@ Q: Why the total number of reads reported by ezBAMQC does not match with samtool
 
 A: The difference is because of non-uniquely mapped reads or multiply aligned reads (multi-reads). Samtools flagstat counts each multiple aligment as a different reads, but ezBAMQC counts reads accoriding to the read ID, i.e., each individual read will be counted once no matter that it is a uniquely mapped read or multi-read. 
 
-Q) What is "Low Quality Reads" ?
+Q: What is "Low Quality Reads" ?
 
-A) Reads marked as qc fail accoriding to SAM format or reads with mapping quality lower than the value set by the option -q will be considered as "Low Quality Reads".
+A: Reads marked as qc fail accoriding to SAM format or reads with mapping quality lower than the value set by the option -q will be considered as "Low Quality Reads".
 
- 
+Q: How the setting of option -q alter the results? 
+
+A: Reads with low quality, i.e., did not pass -q cutoff, are only counted in Total Reads, Mapped Reads, and Mappability by mapping quality plot.
 
 Acknowledgements
 ================
