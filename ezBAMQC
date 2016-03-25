@@ -872,7 +872,7 @@ def main():
 
                 f.write("nz_gene_mm[i] = length(which(M1[,i]>0))/nz_genes * 100 } \n")
 
-                f.write("bplt <- barplot(nz_gene_mm,beside=T,border='NA',space=1.5,ylim=c(0,100),ylab='Genes reproducibly detected (%)',col='blue',names.arg=colnames(MM))\n")
+                f.write("bplt <- barplot(nz_gene_mm,beside=T,border='NA',space=1.5,ylim=c(0,100),ylab='Genes reproducibly detected (%)',col='blue',names.arg=colnames(MM),las=2)\n")
 
                 f.write("text(y= nz_gene_mm+2, x= bplt, labels=paste(as.character(round(nz_gene_mm,digits=1)),'%',sep=''), xpd=TRUE)\n")
 
@@ -956,7 +956,7 @@ def main():
 
 
 
-                f.write('barplot(Fn_mm,main="Gene abundance (RPM)",xlab="Sample",ylab="Frequency",col=c("green","blue","red","yellow"),legend=xname)\n')
+                f.write('barplot(Fn_mm,main="Gene abundance (RPM)",xlab="Sample",ylab="Frequency",col=c("green","blue","red","yellow"),legend=xname,las=2)\n')
 
                 f.write("dev.state = dev.off()\n")
 
@@ -1022,7 +1022,7 @@ def main():
 
                 
 
-                f.write('barplot(Fn_mm,xlab="Sample",main="Mapping Quality",ylim=c(0,1),ylab="Frequency",col=c("blue","green","yellow","orange","red"),legend=xname)\n')
+                f.write('barplot(Fn_mm,xlab="Sample",main="Mapping Quality",ylim=c(0,1),ylab="Frequency",col=c("blue","green","yellow","orange","red"),legend=xname,las=2)\n')
 
                 f.write("dev.state = dev.off()\n")
 
