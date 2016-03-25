@@ -1,17 +1,18 @@
-.. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.png
-   :width: 200 px
-   :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
-   :align: right
-   :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
+.. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.gif
+  :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
+  :align: right
+  :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
 
-=====
+
+=======
 ezBAMQC
-=====
+=======
+
 *"ezBAMQC, a tool to check the quality of mapped next generation sequencing files."*
 
 :Description:
 
-   ezBAMQC is a tool to check the quality of either one or many mapped next-generation-sequencing datasets. It conducts comprehensive evaluations of aligned sequencing data from multiple aspects including: clipping profile, mapping quality distribution, mapped read length distribution, genomic/transcriptomic mapping distribution, inner distance distribution (for paired-end reads), ribosomal RNA contamination, transcript 5’ and 3’ end bias, transcription dropout rate, sample correlations, sample reproducibility, sample variations. It outputs a set of tables and plots and one HTML page that contains a summary of the results. Many metrics are designed for RNA-seq data specifically, but ezBAMQC can be applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChIP-seq, DNA-seq and so on. ::
+   ezBAMQC is a tool to check the quality of either one or many mapped next-generation-sequencing datasets. It conducts comprehensive evaluations of aligned sequencing data from multiple aspects including: clipping profile, mapping quality distribution, mapped read length distribution, genomic/transcriptomic mapping distribution, inner distance distribution (for paired-end reads), ribosomal RNA contamination, transcript 5’ and 3’ end bias, transcription dropout rate, sample correlations, sample reproducibility, sample variations. It outputs a set of tables and plots and one HTML page that contains a summary of the results. Many metrics are designed for RNA-seq data specifically, but ezBAMQC can be applied to any mapped sequencing dataset such as RNA-seq, CLIP-seq, GRO-seq, ChIP-seq, DNA-seq and so on.
 
 :Links:
 
@@ -30,7 +31,7 @@ ezBAMQC
     Ying Jin (yjin@cshl.edu)
 
 Installation guide for ezBAMQC for from source installs
-=====================================================
+=======================================================
 
 When installing ezBAMQC there are several options, but the main point is: since ezBAMQC uses C++ STD 11 you'll need a version of GCC that can support that, this useally means 4.8 or 4.9. beyond that, you'll need Python, R and Corrplot for interfacing with the C code.
 
@@ -70,7 +71,7 @@ Setup
 3) There are three methods of installation of ezBAMQC, from source, from setup.py, and from pypi, once prequistes are setup. 
 
 From Source
-~~~~~~~~~~~
+~~~~~~~~~~
 
 1) Download source 
 
@@ -89,14 +90,14 @@ From Source
    make
 
 From Setup.py
-~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 ::
 
    python2.7 setup.py install 
 
 From Pypi
-~~~~~~~~~
+~~~~~~~~
 
 ::
 
@@ -139,7 +140,7 @@ Example:
    Please find the example output from folder test-data.
 
 FAQ
-====
+===
 Q: Why use ezBAMQC?
 
 A: ezBAMQC is efficient and easy to use. With one command line, it reports a comprehensive evaluation of the data with a set of plots and tables.The ability to assess multiple samples together with high efficiency make it especially useful in cases where there are a large number of samples from the same condition, genotype, or treatment. ezBAMQC was written in C++ and supports multithreading. A mouse RNA-seq sample with 120M alignments can be done in 8 minutes with 5 threads.
