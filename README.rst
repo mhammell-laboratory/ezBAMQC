@@ -8,7 +8,7 @@ ezBAMQC
 
    .. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.gif
      :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
-     :align: center
+     :align: right
      :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
 
 :Description:
@@ -30,7 +30,6 @@ ezBAMQC
 
 :Contact:
     Ying Jin (yjin@cshl.edu)
-
 
 Installation guide for ezBAMQC for from source installs
 =======================================================
