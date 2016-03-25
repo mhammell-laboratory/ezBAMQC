@@ -1,6 +1,6 @@
 # Makefile for ezBAMQC, utilities for the Sequence Alignment/Map format.
 #
-#    Version 0.6.5
+#    Version 0.6.6
 #
 #    Copyright (C) 2015 Bioinformatics Shared Resource, CSHL.
 #    Portions copyright (C) 2015 Cold Spring Harbor Laboratory.
