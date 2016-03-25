@@ -8,7 +8,6 @@ ezBAMQC
 
    .. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.gif
      :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
-     :align: center
      :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
 
 :Description:
