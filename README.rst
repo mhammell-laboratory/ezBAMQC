@@ -24,7 +24,7 @@ ezBAMQC
 :Authors:
     Ying Jin, David Molik, and Molly Hammell
 
-:Version: 0.6.5
+:Version: 0.6.6
 
 :Contact:
     Ying Jin (yjin@cshl.edu)
