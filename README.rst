@@ -8,6 +8,7 @@ ezBAMQC
 
    .. image:: https://raw.githubusercontent.com/mhammell-laboratory/bamqc/master/doc/bamqc-icon.gif
      :alt: generated at codeology.braintreepayments.com/mhammell-laboratory/bamqc
+     :align: right
      :target: http://codeology.braintreepayments.com/mhammell-laboratory/bamqc
 
 :Description:
@@ -71,7 +72,7 @@ Setup
 3) There are three methods of installation of ezBAMQC, from source, from setup.py, and from pypi, once prequistes are setup. 
 
 From Source
-~~~~~~~~~~
+~~~~~~~~~~~
 
 1) Download source 
 
@@ -79,9 +80,9 @@ From Source
 
 ::
 
-   tar xvfz bamqc-0.6.6.tar.gz
+   tar xvfz bamqc-0.6.7.tar.gz
 
-   cd bamqc-0.6.6
+   cd bamqc-0.6.7
 
 3) Run make:
 
@@ -90,14 +91,14 @@ From Source
    make
 
 From Setup.py
-~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 ::
 
    python2.7 setup.py install 
 
 From Pypi
-~~~~~~~~
+~~~~~~~~~
 
 ::
 
