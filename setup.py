@@ -89,28 +89,28 @@ if sys.version_info[0] != 2 or sys.version_info[1] < 7:
 	sys.exit()
 
 BAMQC_HEADER = [
-    'src/bamqc/Constants.h',
-    'src/bamqc/Coverage_prof.h',
-    'src/bamqc/GeneFeatures.h',
-    'src/bamqc/InnerDist_prof.h',
-    'src/bamqc/IntervalTree.h',
-    'src/bamqc/Mappability.h',
-    'src/bamqc/parseBAM.h',
-    'src/bamqc/ReadDup_prof.h',
-    'src/bamqc/Results.h',
-    'src/bamqc/rRNA.h'
+    'src/ezBAMQC/Constants.h',
+    'src/ezBAMQC/Coverage_prof.h',
+    'src/ezBAMQC/GeneFeatures.h',
+    'src/ezBAMQC/InnerDist_prof.h',
+    'src/ezBAMQC/IntervalTree.h',
+    'src/ezBAMQC/Mappability.h',
+    'src/ezBAMQC/parseBAM.h',
+    'src/ezBAMQC/ReadDup_prof.h',
+    'src/ezBAMQC/Results.h',
+    'src/ezBAMQC/rRNA.h'
 ]
 
 BAMQC_SOURCE = [
-    'src/bamqc/Coverage_prof.cpp',
-    'src/bamqc/GeneFeatures.cpp',
-    'src/bamqc/InnerDist_prof.cpp',
-    'src/bamqc/IntervalTree.cpp',
-    'src/bamqc/Mappability.cpp',
-    'src/bamqc/parseBAM.cpp',
-    'src/bamqc/ReadDup_prof.cpp',
-    'src/bamqc/Results.cpp',
-    'src/bamqc/rRNA.cpp'
+    'src/ezBAMQC/Coverage_prof.cpp',
+    'src/ezBAMQC/GeneFeatures.cpp',
+    'src/ezBAMQC/InnerDist_prof.cpp',
+    'src/ezBAMQC/IntervalTree.cpp',
+    'src/ezBAMQC/Mappability.cpp',
+    'src/ezBAMQC/parseBAM.cpp',
+    'src/ezBAMQC/ReadDup_prof.cpp',
+    'src/ezBAMQC/Results.cpp',
+    'src/ezBAMQC/rRNA.cpp'
 ]
 
 ###TODO HAVE TO SPLIT INTO TWO AND MAKE THE A FILE
@@ -174,7 +174,7 @@ HTSLIB = [
 BAMqc_CFLAGS = ['-fpermissive','-O3','-std=c++11','-Wno-error=declaration-after-statement'] 
 BAMqc_DFLAGS = [('_FILE_OFFSET_BITS','64'),('_LARGEFILE64_SOURCE',''),('_CURSES_LIB','1')]
 BAMqc_INCLUDES = ['./src/htslib']
-BAMqc_HEADERS = ['./src/bamqc']
+BAMqc_HEADERS = ['./src/ezBAMQC']
 BAMqc_EXTRA = ['build/lib.linux-x86_64-2.7/htslib.so']
 
 htslib_CFLAGS = ['-Wno-error=declaration-after-statement']
