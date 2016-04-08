@@ -140,6 +140,15 @@ Example:
 
    Please find the example output from folder test-data.
 
+DEMO
+====
+
+Want to try ezBAMQC before trying it? you can now utilize our tool demo hosted on our `Yabi Demo <https://demo.bsr.tools/yabi>`_ to do so. 
+
+
+
+   *A note on Yabi, Yabi was created by the `Centre For Comparative Genomics <https://ccg.murdoch.edu.au/>`_. You can check our their more extensive `Yabi Demo <https://ccgapps.com.au/yabi/>`_ or their `Yabi Wiki <https://bitbucket.org/ccgmurdoch/yabi/wiki/Home>`_ for more information.*
+
 FAQ
 ===
 Q: Why use ezBAMQC?
