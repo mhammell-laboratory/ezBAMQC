@@ -143,11 +143,15 @@ Example:
 DEMO
 ====
 
-Want to try ezBAMQC before trying it? you can now utilize our tool demo hosted on our `Yabi Demo <https://demo.bsr.tools/yabi>`_ to do so. 
+Want to try ezBAMQC before trying it? you can now utilize our tool demo hosted on our `Yabi Demo <https://demo.bsr.tools/yabi>`_ to do so.
 
+   .. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-login.png
+   
+   .. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-show-all.png
+   
+   .. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-show-files.png
 
-
-  *A note on Yabi, Yabi was created by the `Centre For Comparative Genomics <https://ccg.murdoch.edu.au/>`_. You can check our their more extensive `Yabi Demo <https://ccgapps.com.au/yabi/>`_ or their `Yabi Wiki <https://bitbucket.org/ccgmurdoch/yabi/wiki/Home>`_ for more information.*
+  *A note on Yabi, Yabi was created by the Centre For Comparative Genomics, https://ccg.murdoch.edu.au/ . You can check our their more extensive Yabi Demo, https://ccgapps.com.au/yabi/ or their Yabi Wiki, https://bitbucket.org/ccgmurdoch/yabi/wiki/Home for more information.*
 
 FAQ
 ===
