@@ -152,20 +152,23 @@ to login use username and passord:
   :align: center
   :target: https://demo.bsr.tools/yabi
 
-+-------------------------------------------------------------------------------------------------------+
-|.. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-show-all.png  |
-|  :alt: The BSR/MHammell lab yabi installation                                                         |
-|  :align: center                                                                                       |
-|  :target: https://demo.bsr.tools/yabi                                                                 |
-|                                                                                                       |
-+-------------------------------------------------------------------------------------------------------+
+The login screen, usernname and password go in the top right corner.
+
+.. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-show-all.png
+  :alt: The BSR/MHammell lab yabi installation
+  :align: center
+  :target: https://demo.bsr.tools/yabi
+
+The "Design" Frame, use the "show all" button to make visable the ezBAMQC tool.
+
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-show-files.png
   :alt: The BSR/MHammell lab yabi installation
   :align: center
   :target: https://demo.bsr.tools/yabi
 
+The ezBAMQC tool page, select appropriate files from the S3 instance or upload your own. 
 
-*A note on Yabi, Yabi was created by the Centre For Comparative Genomics, https://ccg.murdoch.edu.au/ . You can check our their more extensive Yabi Demo, https://ccgapps.com.au/yabi/ or their Yabi Wiki, https://bitbucket.org/ccgmurdoch/yabi/wiki/Home for more information.*
+  *A note on Yabi, Yabi was created by the Centre For Comparative Genomics, https://ccg.murdoch.edu.au/ . You can check our their more extensive Yabi Demo, https://ccgapps.com.au/yabi/ or their Yabi Wiki, https://bitbucket.org/ccgmurdoch/yabi/wiki/Home for more information.*
 
 FAQ
 ===
