@@ -140,31 +140,32 @@ Example:
 
    Please find the example output from folder test-data.
 
-DEMO
-====
-
 Want to try ezBAMQC before trying it? you can now utilize our tool demo hosted on our `Yabi Demo <https://demo.bsr.tools/yabi>`_ to do so.
 
 to login use username and passord:
-username: tdemo
-password: tdemo
+
+- username: **tdemo**
+- password: **tdemo**
 
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-login.png
   :alt: The BSR/MHammell lab yabi installation
   :align: center
   :target: https://demo.bsr.tools/yabi
 
-.. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-show-all.png
-  :alt: The BSR/MHammell lab yabi installation
-  :align: center
-  :target: https://demo.bsr.tools/yabi
-
++-------------------------------------------------------------------------------------------------------+
+|.. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-show-all.png  |
+|  :alt: The BSR/MHammell lab yabi installation                                                         |
+|  :align: center                                                                                       |
+|  :target: https://demo.bsr.tools/yabi                                                                 |
+|                                                                                                       |
++-------------------------------------------------------------------------------------------------------+
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-show-files.png
   :alt: The BSR/MHammell lab yabi installation
   :align: center
   :target: https://demo.bsr.tools/yabi
 
-  *A note on Yabi, Yabi was created by the Centre For Comparative Genomics, https://ccg.murdoch.edu.au/ . You can check our their more extensive Yabi Demo, https://ccgapps.com.au/yabi/ or their Yabi Wiki, https://bitbucket.org/ccgmurdoch/yabi/wiki/Home for more information.*
+
+*A note on Yabi, Yabi was created by the Centre For Comparative Genomics, https://ccg.murdoch.edu.au/ . You can check our their more extensive Yabi Demo, https://ccgapps.com.au/yabi/ or their Yabi Wiki, https://bitbucket.org/ccgmurdoch/yabi/wiki/Home for more information.*
 
 FAQ
 ===
