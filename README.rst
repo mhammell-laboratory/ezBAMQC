@@ -147,7 +147,7 @@ Want to try ezBAMQC before trying it? you can now utilize our tool demo hosted o
 
 
 
-   *A note on Yabi, Yabi was created by the `Centre For Comparative Genomics <https://ccg.murdoch.edu.au/>`_. You can check our their more extensive `Yabi Demo <https://ccgapps.com.au/yabi/>`_ or their `Yabi Wiki <https://bitbucket.org/ccgmurdoch/yabi/wiki/Home>`_ for more information.*
+  *A note on Yabi, Yabi was created by the `Centre For Comparative Genomics <https://ccg.murdoch.edu.au/>`_. You can check our their more extensive `Yabi Demo <https://ccgapps.com.au/yabi/>`_ or their `Yabi Wiki <https://bitbucket.org/ccgmurdoch/yabi/wiki/Home>`_ for more information.*
 
 FAQ
 ===
