@@ -146,8 +146,8 @@ Demo
 Want to try ezBAMQC before trying it? you can now utilize our tool demo hosted on our `Yabi Demo <https://demo.bsr.tools/yabi>`_ to do so.
 
 +-----------------------------------+
-|to login use username and passord: |
-|                                   |
+|To login use username and passord: |
++===================================+
 |- username: **tdemo**              |
 |- password: **tdemo**              |
 +-----------------------------------+
@@ -156,7 +156,6 @@ Want to try ezBAMQC before trying it? you can now utilize our tool demo hosted o
   :alt: The BSR/MHammell lab yabi installation
   :align: center
   :target: https://demo.bsr.tools/yabi
-  :width: 888px
 The login screen, usernname and password go in the top right corner.
 
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-show-all.png
