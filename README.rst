@@ -148,8 +148,8 @@ Want to try ezBAMQC before trying it? you can now utilize our tool demo hosted o
 +-----------------------------------+
 |to login use username and passord: |
 |                                   |
-|- username: **tdemo**             |
-|- password: **tdemo**             |
+|- username: **tdemo**              |
+|- password: **tdemo**              |
 +-----------------------------------+
 
 .. image:: https://raw.githubusercontent.com/mhammell-laboratory/ezBAMQC/master/doc/demo-login.png
