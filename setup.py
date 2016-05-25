@@ -25,19 +25,13 @@
 import argparse
 import sys, os, glob, fnmatch
 
-## Added 10 Jan 2008
 from distutils.core import setup, Extension
 import distutils.command.install_data
 
-## Code borrowed from wxPython's setup and config files
-## Thanks to Robin Dunn for the suggestion.
-## I am not 100% sure what's going on, but it works!
 def opj(*args):
     path = os.path.join(*args)
     return os.path.normpath(path)
 
-## Added 10 Jan 2008
-# Specializations of some distutils command classes
 class wx_smart_install_data(distutils.command.install_data.install_data):
     """need to change self.install_dir to the actual library dir"""
     def run(self):
@@ -113,7 +107,6 @@ BAMQC_SOURCE = [
     'src/ezBAMQC/rRNA.cpp'
 ]
 
-###TODO HAVE TO SPLIT INTO TWO AND MAKE THE A FILE
 HTSLIB_PUBLIC_HEADERS = [
 	'src/htslib/bgzf.h',
 	'src/htslib/faidx.h',
@@ -177,9 +170,7 @@ BAMqc_INCLUDES = ['./src/htslib']
 BAMqc_HEADERS = ['./src/ezBAMQC']
 BAMqc_EXTRA = ['build/lib.linux-x86_64-2.7/htslib.so']
 
-htslib_CFLAGS = ['-Wno-error=declaration-after-statement']
 htslib_HEADERS = ['./src/htslib','./src/htslib/htslib','./src/htslib/cram']
-htslib_DFLAGS = [('_FILE_OFFSET_BITS','64'),('_USE_KNETFILE','')]
 
 setup(name = "ezBAMQC",
     version = "0.6.7",
@@ -187,6 +178,9 @@ setup(name = "ezBAMQC",
     keywords = 'Quality control BAM file',
 	# make sure to add all the nessacary requires
     dependency_links=['https://gcc.gnu.org/gcc-4.8/','https://www.r-project.org/','https://cran.r-project.org/web/packages/corrplot/'],
+    install_requires=[
+          'pysam',
+    ],
     cmdclass = { 'install_data':    wx_smart_install_data },
     scripts = ["ezBAMQC"],
     author = "Ying Jin",
@@ -208,13 +202,6 @@ setup(name = "ezBAMQC",
     zip_safe = False,
     include_package_data=True,
     ext_modules = [ 
-          Extension('htslib',
-                    sources = HTSLIB,
-                    include_dirs = htslib_HEADERS,
-                    extra_compile_args = htslib_CFLAGS,
-                    define_macros = htslib_DFLAGS,
-					libraries=['z']
-                    ),
 		  Extension('libBAMqc',
                     sources = BAMQC_SOURCE, 
                     extra_compile_args = BAMqc_CFLAGS,
