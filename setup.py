@@ -24,55 +24,8 @@
 
 import argparse
 import sys, os, glob, fnmatch
-
 from distutils.core import setup, Extension
-import distutils.command.install_data
-
-def opj(*args):
-    path = os.path.join(*args)
-    return os.path.normpath(path)
-
-class wx_smart_install_data(distutils.command.install_data.install_data):
-    """need to change self.install_dir to the actual library dir"""
-    def run(self):
-        install_cmd = self.get_finalized_command('install')
-        self.install_dir = getattr(install_cmd, 'install_lib')
-        return distutils.command.install_data.install_data.run(self)
-
-def find_data_files(srcdir, *wildcards, **kw):
-    # get a list of all files under the srcdir matching wildcards,
-    # returned in a format to be used for install_data
-    def walk_helper(arg, dirname, files):
-        if '.svn' in dirname:
-            return
-        names = []
-        lst, wildcards = arg
-        for wc in wildcards:
-            wc_name = opj(dirname, wc)
-            for f in files:
-                filename = opj(dirname, f)
-
-                if fnmatch.fnmatch(filename, wc_name) and not os.path.isdir(filename):
-                    names.append(filename)
-        if names:
-            lst.append( (dirname, names ) )
-
-    file_list = []
-    recursive = kw.get('recursive', True)
-    if recursive:
-        os.path.walk(srcdir, walk_helper, (file_list, wildcards))
-    else:
-        walk_helper((file_list, wildcards),
-                    srcdir,
-                    [os.path.basename(f) for f in glob.glob(opj(srcdir, '*'))])
-    return file_list
-
-## This is a list of files to install, and where:
-## Make sure the MANIFEST.in file points to all the right 
-## directories too.
-files = find_data_files('ezBAMQC/', '*.*')
-
-from distutils.core import setup
+import subprocess
 
 def readme():
 	with open('README.rst') as f:
@@ -81,6 +34,12 @@ def readme():
 if sys.version_info[0] != 2 or sys.version_info[1] < 7:
 	print >> sys.stderr, "ERROR: ezBAMQC requires Python 2.7"
 	sys.exit()
+
+os.chdir("src/htslib/")
+subprocess.call(( "./configure"), shell=True)
+subprocess.call(( "make install"), shell=True)
+os.chdir("../..")
+subprocess.call(( "make install"), shell=True)
 
 BAMQC_HEADER = [
     'src/ezBAMQC/Constants.h',
@@ -135,7 +94,7 @@ HTSLIB = [
 	'src/htslib/hfile.c',
 	'src/htslib/hfile_net.c',
 	'src/htslib/hts.c',
-    'src/htslib/kfunc.c',
+	'src/htslib/kfunc.c',
 	'src/htslib/knetfile.c',
 	'src/htslib/kstring.c',
 	'src/htslib/regidx.c',
@@ -156,7 +115,7 @@ HTSLIB = [
 	'src/htslib/cram/md5.c',
 	'src/htslib/cram/open_trace_file.c',
 	'src/htslib/cram/pooled_alloc.c',
-    'src/htslib/cram/rANS_static.c',
+	'src/htslib/cram/rANS_static.c',
 	'src/htslib/cram/sam_header.c',
 	'src/htslib/cram/string_alloc.c',
 	'src/htslib/cram/thread_pool.c',
@@ -164,24 +123,12 @@ HTSLIB = [
 	'src/htslib/cram/zfio.c'
 ]
 
-BAMqc_CFLAGS = ['-fpermissive','-O3','-std=c++11','-Wno-error=declaration-after-statement'] 
-BAMqc_DFLAGS = [('_FILE_OFFSET_BITS','64'),('_LARGEFILE64_SOURCE',''),('_CURSES_LIB','1')]
-BAMqc_INCLUDES = ['./src/htslib']
-BAMqc_HEADERS = ['./src/ezBAMQC']
-BAMqc_EXTRA = ['build/lib.linux-x86_64-2.7/htslib.so']
-
-htslib_HEADERS = ['./src/htslib','./src/htslib/htslib','./src/htslib/cram']
-
 setup(name = "ezBAMQC",
     version = "0.6.7",
     description = 'Quality control tools for NGS alignment file',
     keywords = 'Quality control BAM file',
 	# make sure to add all the nessacary requires
     dependency_links=['https://gcc.gnu.org/gcc-4.8/','https://www.r-project.org/','https://cran.r-project.org/web/packages/corrplot/'],
-    install_requires=[
-          'pysam',
-    ],
-    cmdclass = { 'install_data':    wx_smart_install_data },
     scripts = ["ezBAMQC"],
     author = "Ying Jin",
     author_email ="yjin@cshl.edu",
@@ -191,7 +138,6 @@ setup(name = "ezBAMQC",
     long_description=readme(),
     classifiers=[
           'Development Status :: 4 - Beta',
-          'Natural Language :: English',
           'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
           'Topic :: Scientific/Engineering :: Bio-Informatics',
           'Intended Audience :: Science/Research',
@@ -201,13 +147,4 @@ setup(name = "ezBAMQC",
     ],
     zip_safe = False,
     include_package_data=True,
-    ext_modules = [ 
-		  Extension('libBAMqc',
-                    sources = BAMQC_SOURCE, 
-                    extra_compile_args = BAMqc_CFLAGS,
-                    include_dirs = BAMqc_HEADERS + htslib_HEADERS,
-                    extra_objects = BAMqc_EXTRA,
-					define_macros = BAMqc_DFLAGS
-                    )
-          ]        
     )
