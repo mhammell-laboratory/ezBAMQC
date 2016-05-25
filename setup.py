@@ -37,9 +37,9 @@ if sys.version_info[0] != 2 or sys.version_info[1] < 7:
 
 os.chdir("src/htslib/")
 subprocess.call(( "./configure"), shell=True)
-subprocess.call(( "make install"), shell=True)
+subprocess.call(( "make"), shell=True)
 os.chdir("../..")
-subprocess.call(( "make install"), shell=True)
+subprocess.call(( "make"), shell=True)
 
 BAMQC_HEADER = [
     'src/ezBAMQC/Constants.h',

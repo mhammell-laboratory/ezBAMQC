@@ -62,7 +62,7 @@ def locBAMqc(loc):
 
 in_path = locBAMqc('PATH')
 
-in_pythonpath = locBAMqc('PYTHONPATH')
+in_library = locBAMqc('LIBRARY_PATH')
 
 in_local = locate('libBAMqc.so','./')
 
