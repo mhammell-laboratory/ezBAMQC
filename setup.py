@@ -24,8 +24,10 @@
 
 import argparse
 import sys, os, glob, fnmatch
-from distutils.core import setup, Extension
 import subprocess
+from distutils.core import setup, Extension
+from distutils.command.install import install as DistutilsInstall
+from distutils.command.build import build as DistutilsBuild
 
 def readme():
 	with open('README.rst') as f:
@@ -35,11 +37,23 @@ if sys.version_info[0] != 2 or sys.version_info[1] < 7:
 	print >> sys.stderr, "ERROR: ezBAMQC requires Python 2.7"
 	sys.exit()
 
-os.chdir("src/htslib/")
-subprocess.call(( "./configure"), shell=True)
-subprocess.call(( "make"), shell=True)
-os.chdir("../..")
-subprocess.call(( "make"), shell=True)
+class Compile_Things(DistutilsBuild):
+    def run(self):
+        os.chdir("src/htslib/")
+        subprocess.call(( "./configure"), shell=True)
+        subprocess.call(( "make"), shell=True)
+        os.chdir("../..")
+        subprocess.call(( "make"), shell=True)
+        DistutilsBuild.run(self)
+
+class Install_Things(DistutilsInstall):
+    def run(self):
+        os.chdir("src/htslib/")
+        subprocess.call(( "./configure"), shell=True)
+        subprocess.call(( "make"), shell=True)
+        os.chdir("../..")
+        subprocess.call(( "make"), shell=True)
+        DistutilsInstall.run(self)
 
 BAMQC_HEADER = [
     'src/ezBAMQC/Constants.h',
@@ -127,7 +141,6 @@ setup(name = "ezBAMQC",
     version = "0.6.7",
     description = 'Quality control tools for NGS alignment file',
     keywords = 'Quality control BAM file',
-	# make sure to add all the nessacary requires
     dependency_links=['https://gcc.gnu.org/gcc-4.8/','https://www.r-project.org/','https://cran.r-project.org/web/packages/corrplot/'],
     scripts = ["ezBAMQC"],
     author = "Ying Jin",
@@ -147,4 +160,6 @@ setup(name = "ezBAMQC",
     ],
     zip_safe = False,
     include_package_data=True,
+    cmdclass={'build': Compile_Things,
+              'install': Install_Things},
     )
