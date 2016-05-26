@@ -162,4 +162,7 @@ setup(name = "ezBAMQC",
     include_package_data=True,
     cmdclass={'build': Compile_Things,
               'install': Install_Things},
+    package_data={'': ['libBAMqc.so'],
+                  '': ['README.rst']},
     )
+
