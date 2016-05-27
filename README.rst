@@ -107,6 +107,8 @@ From Pypi
 Usage
 =====
 
+NOTE: Do not give ezBAMQC coordinate sorted files to munge on, this will cause ezBAMQC to report more reads then there actually are. 
+
 ::
 
    ezBAMQC [-h] -i alignment_files [alignment_files ...] -r [refgene]
