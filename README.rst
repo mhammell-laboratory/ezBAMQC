@@ -145,7 +145,7 @@ Example:
 Demo
 ====
 
-Want to try ezBAMQC before trying it? you can now utilize our tool demo hosted on our `Yabi Demo <https://demo.bsr.tools/yabi>`_ to do so.
+Want to try ezBAMQC before installing it? you can now utilize our tool demo hosted on our `Yabi Demo <https://demo.bsr.tools/yabi>`_ to do so.
 
 +------------------------------------+
 |To login use username and password: |
